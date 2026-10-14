@@ -1,0 +1,50 @@
+name: Verify and download Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'LogicLandKids-Android6.apk'
+      - '.github/workflows/download-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check APK archive and DEX
+        run: |
+          python3 - <<'PY'
+          import hashlib, struct, zipfile, zlib
+          from pathlib import Path
+          apk = Path('LogicLandKids-Android6.apk')
+          assert apk.is_file() and apk.stat().st_size > 0
+          with zipfile.ZipFile(apk) as z:
+              assert z.testzip() is None, 'Corrupt ZIP entry'
+              for name in ['AndroidManifest.xml', 'classes.dex', 'assets/index.html']:
+                  assert name in z.namelist(), f'Missing {name}'
+              manifest = z.read('AndroidManifest.xml')
+              assert struct.unpack_from('<HHI', manifest) == (3, 8, len(manifest))
+              dex = z.read('classes.dex')
+              assert dex[:8] == b'dex\n035\0'
+              assert hashlib.sha1(dex[32:]).digest() == dex[12:32]
+              assert zlib.adler32(dex[12:]) & 0xffffffff == struct.unpack_from('<I', dex, 8)[0]
+          print('APK bytes:', apk.stat().st_size)
+          print('SHA256:', hashlib.sha256(apk.read_bytes()).hexdigest())
+          PY
+      - name: Verify Android 6 signature
+        run: |
+          set -euo pipefail
+          signer=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          test -n "$signer"
+          "$signer" verify --verbose --min-sdk-version 23 --max-sdk-version 23 LogicLandKids-Android6.apk
+      - name: Upload verified APK for download
+        uses: actions/upload-artifact@v4
+        with:
+          name: LogicLandKids-Android6-APK
+          path: LogicLandKids-Android6.apk
+          if-no-files-found: error
+          retention-days: 30
