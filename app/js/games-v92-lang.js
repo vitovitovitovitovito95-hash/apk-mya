@@ -36,7 +36,7 @@ var __values = (this && this.__values) || function(o) {
         return o;
     }
     function audioBtns(text, voice, hideText) {
-        var t = NS.escapeHtml(text).replace(/'/g, '&#39;');
+        var t = NS.jsArg ? NS.jsArg(text) : NS.escapeHtml(text);
         return '<div class="speakRow"><button class="speak big" onclick="LogicLand.speakLine(\'' + t + '\',\'' + voice + '\')">🔊 ' + (hideText ? 'Ascolta' : 'Ascolta') + '</button><button class="speak slow" onclick="LogicLand.speakSlow()">🐢 Lento</button></div>';
     }
     // distrattori: stessa categoria a livelli alti (più difficile), parole “vicine” nel vocabolario

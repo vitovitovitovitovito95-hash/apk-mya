@@ -1,7 +1,9 @@
-# LogicLand Kids 9.2
+# LogicLand Kids 9.3
 
-Giochi di logica, numeri, memoria, inglese e spagnolo per bambini (28 giochi × 15 livelli), offline e senza pubblicità.
-Novità della 9.2 in `CHANGELOG.md`: tabella di 15 livelli scritta gioco per gioco (ogni livello più difficile
+Giochi di logica, numeri, memoria, inglese e spagnolo per bambini (33 giochi × 15 livelli), offline e senza pubblicità.
+Novità della 9.3 in `CHANGELOG.md` (5 nuovi giochi per la mente, Conta e Scegli rifatto, analisi completa di tutti i livelli).
+Versione iPhone/iPad: pagina web su claude.ai creata con `python3 tools/build_web.py` (vedi CHANGELOG 9.3).
+Novità della 9.2: tabella di 15 livelli scritta gioco per gioco (ogni livello più difficile
 del precedente, verificato da `tests/v92_levels_test.js`), giochi di spagnolo, 4 giochi di allenamento mentale,
 sblocco con le stelle, voce SVOX Pico per EN/IT/ES. Versione iPhone/iPad: PWA, vedi `docs/IOS.md`.
 
@@ -10,6 +12,7 @@ sblocco con le stelle, voce SVOX Pico per EN/IT/ES. Versione iPhone/iPad: PWA, v
 npm install --no-save typescript@5.9.3      # solo la prima volta
 node tools/transpile_legacy.js              # src/js → app/js (ES5 per Android 6)
 python3 tools/build_pwa.py                  # aggiorna app/sw.js (cache offline PWA)
+python3 tools/build_web.py                  # versione web per iPhone → dist/web
 for t in tests/*.js; do node "$t"; done     # test
 # audio (solo se cambia il vocabolario): apt install libttspico-utils ffmpeg
 python3 tools/build_audio_v92.py            # MP3 offline EN/IT/ES + app/js/audio-index.js
@@ -18,7 +21,7 @@ export LLK_S24_KEYSTORE=/percorso/LogicLandKids-v9-s24.p12
 python3 android/build_apk.py                # tablet Asus Android 6.0.1 → dist/
 python3 android/build_s24_v5native.py       # Samsung S24 Ultra → dist/
 ```
-APK pronti: `releases/v9.2/`. Le chiavi di firma **non** sono nel repository: usare sempre le stesse
+APK pronti: `releases/v9.3/`. Le chiavi di firma **non** sono nel repository: usare sempre le stesse
 per gli aggiornamenti, altrimenti Android rifiuta l'installazione sopra la versione precedente.
 
 ---

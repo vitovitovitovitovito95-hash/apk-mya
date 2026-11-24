@@ -27,3 +27,12 @@ Regole permanenti: 21 giochi, 15 livelli per gioco, tre vite, pulsante livello s
 - Giochi 70–72 sono puzzle interattivi (`NS.PuzzleGames.flashgrid/nback/stroop`), 73 è a domande.
 - Sblocco: tabella `UNLOCK` in `app.js`; `settings.unlockAll` lo disattiva.
 - Giochi ispirati al genere "brain training" ma originali: non copiare nomi, grafica o regole di prodotti esistenti.
+
+## Vincoli v9.3
+- `games-v93-brain.js` dopo `games-v92-brain.js` (giochi 74, 75, 77, 78 come `NS.PuzzleGames`, 76 a domande).
+- `NS.saveState` non deve mai lanciare eccezioni (pagina web in riquadro protetto, iPhone in privato).
+- Audio: un solo elemento `Audio` riutilizzato (`games-english.js`); nella versione web `NS.audioSource` fornisce
+  i data: URI dai pacchetti per lingua. Testo nei pulsanti 🔊: usare `NS.jsArg(text)`.
+- Niente `alert/confirm/prompt` (bloccati su iPhone/pagina web).
+- Water Sort: semi in `WATER_SEED` (`games-new.js`); se cambiano, `tests/water_levels_test.js` deve restare verde.
+- Versione web: `python3 tools/build_web.py`, poi ripubblicare `dist/web` sulla pagina claude.ai esistente.

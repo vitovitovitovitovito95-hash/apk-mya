@@ -4,11 +4,11 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 global.window=global;global.LogicLand={};global.document={querySelector:()=>null,getElementById:()=>null};
 global.btoa=s=>Buffer.from(s,'binary').toString('base64');global.atob=s=>Buffer.from(s,'base64').toString('binary');
 const dir=path.join(__dirname,'../app/js');
-for(const f of ['polyfills.js','core.js','data.js','data-es.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-new.js','games-v82-puzzles.js','games-v82-board.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js','games-v92-levels.js','games-v92-lang.js','games-v92-brain.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','data-es.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-new.js','games-v82-puzzles.js','games-v82-board.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js','games-v92-levels.js','games-v92-lang.js','games-v92-brain.js','games-v93-brain.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 const N=global.LogicLand, state=N.defaultState();
 function check(ok,msg){if(!ok)throw new Error(msg);}
 const metrics={
-  40:'operations',41:'equations',42:'baseSize',1:'terms',7:'visibleItems',8:'presentedItems',9:'holes',11:'blocks',14:'memoryItems',16:'vocabularyMinBand',21:'presentedItems',31:'countedItems',32:'pieces',33:'items',34:'vocabularyMinBand',35:'tiles',5:'holes',73:'operations',60:'vocabularyMinBand',61:'vocabularyMinBand'
+  40:'operations',41:'equations',42:'baseSize',1:'terms',7:'visibleItems',8:'presentedItems',9:'holes',11:'blocks',14:'memoryItems',16:'vocabularyMinBand',21:'presentedItems',31:'countedItems',32:'pieces',33:'items',34:'vocabularyMinBand',35:'tiles',5:'holes',73:'operations',76:'cells',60:'vocabularyMinBand',61:'vocabularyMinBand'
 };
 const rising={1:'terms',7:'visibleItems',8:'presentedItems',9:'holes',11:'countedItems',14:'memoryItems',21:'presentedItems',31:'countedItems',32:'pieces',33:'items',35:'tiles',5:'holes'};
 let questions=0;
@@ -56,5 +56,5 @@ for(let i=0;i<15;i++){
 for(let i=1;i<15;i++){
  check(N.newGameProfile(i+1,'water').mixes>N.newGameProfile(i,'water').mixes,'Water scramble count not progressive');
 }
-check(N.GAMES.length===28,'Expected 28 games');
+check(N.GAMES.length===33,'Expected 33 games');
 console.log('PASS v8.3: '+questions+' measured questions; Sudoku unique, Matrix holes increasing; 7 interactive progression contracts');

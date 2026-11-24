@@ -36,7 +36,7 @@ var __read = (this && this.__read) || function (o, n) {
         fn(); }, ms); s.timers.push(t); return t; }
     function head(title, desc) { return '<div class="brainHead"><strong>' + title + '</strong><p>' + desc + '</p></div>'; }
     /* ===== 70. Griglia Lampo ===== */
-    var T70 = [[3, 3, 1600, 3], [3, 4, 1500, 3], [4, 4, 1500, 3], [4, 5, 1400, 3], [4, 6, 1300, 4], [5, 6, 1300, 4], [5, 7, 1200, 4], [5, 8, 1100, 4], [5, 9, 1000, 4], [6, 9, 1000, 5], [6, 10, 950, 5], [6, 11, 900, 5], [6, 12, 850, 5], [7, 12, 800, 5], [7, 14, 750, 5]];
+    var T70 = [[3, 3, 1600, 3], [3, 4, 1500, 3], [4, 4, 1500, 3], [4, 5, 1400, 3], [5, 5, 1400, 4], [5, 6, 1300, 4], [6, 6, 1300, 4], [6, 7, 1200, 4], [7, 7, 1200, 4], [7, 8, 1100, 5], [8, 8, 1100, 5], [8, 9, 1000, 5], [8, 10, 950, 5], [8, 11, 900, 5], [8, 12, 800, 5]];
     NS.LEVEL_INFO[70] = T70.map(function (_a) {
         var _b = __read(_a, 4), g = _b[0], n = _b[1], ms = _b[2], r = _b[3];
         return 'Griglia ' + g + '×' + g + ' · ' + n + ' caselle accese · ' + (ms / 1000).toFixed(2).replace(/0$/, '') + ' s · ' + r + ' turni';
@@ -48,9 +48,10 @@ var __read = (this && this.__read) || function (o, n) {
         var el = b.el, s = b.s, _a = __read(T70[opts.level - 1], 4), g = _a[0], n = _a[1], ms = _a[2], R = _a[3];
         var round = 0, lit = {}, found = 0, canTap = false;
         function draw() {
-            var h = head('🟨 Griglia Lampo', 'Guarda le caselle che si accendono, poi toccale tutte. Turno ' + (round + 1) + ' di ' + R + '.') + '<div class="bgGrid" style="width:' + Math.min(340, g * 52) + 'px">';
+            var W = Math.min(Math.max(220, (el.clientWidth || 360) - 24), g * 58, 470), cs = Math.floor(W / g);
+            var h = head('🟨 Griglia Lampo', 'Griglia ' + g + '×' + g + ': guarda le caselle che si accendono, poi toccale tutte. Turno ' + (round + 1) + ' di ' + R + '.') + '<div class="bgGrid" style="width:' + (cs * g) + 'px">';
             for (var i = 0; i < g * g; i++)
-                h += '<button class="bgCell" data-i="' + i + '" style="width:' + (100 / g) + '%;height:' + Math.min(340, g * 52) / g + 'px"></button>';
+                h += '<button class="bgCell" data-i="' + i + '" style="width:' + cs + 'px;height:' + cs + 'px"></button>';
             el.innerHTML = h + '</div><div class="puzzleHint" id="bgMsg">Guarda bene…</div>';
             var cells = el.querySelectorAll('.bgCell');
             for (var i = 0; i < cells.length; i++)
@@ -101,12 +102,15 @@ var __read = (this && this.__read) || function (o, n) {
     }
     /* ===== 71. Uguale o Diverso (N indietro) ===== */
     var SETS = { easy: ['🍎', '🚗', '⭐', '🐟', '🎈', '⚽'], animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'], dots: ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '🟤', '⚫'], fruit: ['🍎', '🍏', '🍐', '🍊', '🍋', '🍑', '🍒', '🍓'] };
-    var T71 = [[1, 'easy', 3, 8, 4000], [1, 'easy', 4, 10, 3600], [1, 'animals', 4, 10, 3300], [1, 'easy', 5, 12, 3000], [1, 'animals', 6, 12, 2700], [1, 'dots', 6, 14, 2400], [1, 'fruit', 7, 14, 2200],
-        [2, 'easy', 3, 10, 4000], [2, 'easy', 4, 12, 3600], [2, 'animals', 5, 12, 3200], [2, 'dots', 6, 14, 2900], [2, 'fruit', 6, 14, 2600], [2, 'animals', 7, 16, 2400], [2, 'fruit', 8, 16, 2200], [3, 'easy', 5, 14, 3200]];
+    // [N indietro, insieme di simboli, quanti simboli, carte, ms per rispondere]
+    var T71 = [[1, 'easy', 3, 8, 4000], [1, 'easy', 4, 10, 3500], [1, 'animals', 5, 12, 3000], [1, 'fruit', 6, 12, 2600],
+        [2, 'easy', 3, 10, 4200], [2, 'easy', 4, 12, 3800], [2, 'animals', 5, 12, 3400], [2, 'dots', 6, 14, 3000], [2, 'fruit', 7, 14, 2700],
+        [3, 'easy', 3, 12, 4500], [3, 'easy', 4, 14, 4000], [3, 'animals', 5, 14, 3600], [3, 'dots', 6, 16, 3300], [3, 'fruit', 7, 16, 3000], [3, 'fruit', 8, 18, 2600]];
     NS.LEVEL_INFO[71] = T71.map(function (_a) {
         var _b = __read(_a, 5), nb = _b[0], set = _b[1], k = _b[2], c = _b[3], ms = _b[4];
         return 'Confronta con ' + (nb === 1 ? 'la carta PRECEDENTE' : nb === 2 ? 'la carta di 2 passi fa' : 'la carta di 3 passi fa') + ' · ' + k + ' simboli ' + (set === 'easy' ? 'diversi' : 'simili') + ' · ' + c + ' carte · ' + (ms / 1000).toFixed(1) + ' s';
     });
+    var NB_BG = ['#fff7d6', '#dff3ff', '#ffe3ef', '#e2fbe9', '#efe6ff', '#ffe9d6'];
     function nback(opts) {
         var b = begin(opts);
         if (!b)
@@ -127,8 +131,10 @@ var __read = (this && this.__read) || function (o, n) {
         var target = count - nb;
         var done = 0;
         var what = nb === 1 ? 'quella di prima' : nb === 2 ? 'quella di 2 carte fa' : 'quella di 3 carte fa';
-        el.innerHTML = head('🔁 Uguale o Diverso', 'La carta è UGUALE a ' + what + '?') + '<div class="nbTrail" id="nbTrail"></div><div class="nbCard" id="nbCard"></div><div class="nbTimer"><i id="nbBar"></i></div><div class="nbBtns"><button class="nbBtn yes" id="nbYes">✅ UGUALE</button><button class="nbBtn no" id="nbNo">❌ DIVERSO</button></div><div class="puzzleHint" id="nbMsg"></div>';
-        var card = el.querySelector('#nbCard'), bar = el.querySelector('#nbBar'), msg = el.querySelector('#nbMsg');
+        el.innerHTML = head('🔁 Uguale o Diverso', 'Ogni carta nuova ha un numero e un colore diverso. È UGUALE a ' + what + '?') +
+            '<div class="nbTrail" id="nbTrail"></div><div class="nbStage"><div class="nbCard" id="nbCard"><small id="nbNum"></small><span id="nbSym"></span></div></div><div class="nbAsk" id="nbAsk"></div><div class="nbTimer"><i id="nbBar"></i></div>' +
+            '<div class="nbBtns"><button class="nbBtn yes" id="nbYes">✅ UGUALE</button><button class="nbBtn no" id="nbNo">❌ DIVERSO</button></div><div class="puzzleHint" id="nbMsg"></div>';
+        var card = el.querySelector('#nbCard'), num = el.querySelector('#nbNum'), symEl = el.querySelector('#nbSym'), ask = el.querySelector('#nbAsk'), trail = el.querySelector('#nbTrail'), bar = el.querySelector('#nbBar'), msg = el.querySelector('#nbMsg');
         el.querySelector('#nbYes').onclick = function () { return answer(true); };
         el.querySelector('#nbNo').onclick = function () { return answer(false); };
         function show() {
@@ -137,35 +143,47 @@ var __read = (this && this.__read) || function (o, n) {
                 opts.onSuccess();
                 return;
             }
-            answered = false;
-            card.className = 'nbCard';
-            void card.offsetWidth;
-            card.className = 'nbCard flip';
-            card.textContent = cards[i];
-            var trail = el.querySelector('#nbTrail');
-            trail.innerHTML = Array.from({ length: Math.min(i, nb) }, function () { return '<span>🂠</span>'; }).join('');
-            if (i < nb) {
-                msg.textContent = 'Memorizza questa carta…';
-                bar.style.width = '0%';
-                later(s, function () { i++; show(); }, 1500);
-                return;
-            }
-            msg.textContent = '';
-            bar.style.transition = 'none';
-            bar.style.width = '100%';
-            void bar.offsetWidth;
-            bar.style.transition = 'width ' + ms + 'ms linear';
-            bar.style.width = '0%';
-            wait = later(s, function () { if (!answered) {
-                answered = true;
-                if (opts.onMistake('Troppo lento!') === false) {
-                    stop();
+            // la carta esce (si gira) e ne entra una nuova: il cambio si vede anche se il simbolo è lo stesso
+            card.className = 'nbCard out';
+            later(s, function () {
+                answered = false;
+                num.textContent = 'Carta ' + (i + 1);
+                symEl.textContent = cards[i];
+                card.style.background = NB_BG[i % NB_BG.length];
+                card.className = 'nbCard in';
+                if (NS.fx)
+                    NS.fx.play('tap');
+                var t = '';
+                for (var j = Math.max(0, i - nb); j < i; j++)
+                    t += '<span class="nbMini' + (j === i - nb ? ' cmp' : '') + '" style="background:' + NB_BG[j % NB_BG.length] + '">' + (j + 1) + '</span>';
+                trail.innerHTML = t;
+                if (i < nb) {
+                    ask.innerHTML = 'Memorizza la <b>carta ' + (i + 1) + '</b>…';
+                    msg.textContent = '';
+                    bar.style.transition = 'none';
+                    bar.style.width = '0%';
+                    later(s, function () { i++; show(); }, 1700);
                     return;
                 }
-                next();
-            } }, ms);
+                ask.innerHTML = 'Confronta la <b>carta ' + (i + 1) + '</b> con la <b class="nbCmp">carta ' + (i - nb + 1) + '</b>';
+                msg.textContent = '';
+                bar.style.transition = 'none';
+                bar.style.width = '100%';
+                void bar.offsetWidth;
+                bar.style.transition = 'width ' + ms + 'ms linear';
+                bar.style.width = '0%';
+                wait = later(s, function () { if (!answered) {
+                    answered = true;
+                    msg.textContent = 'Tempo scaduto: era ' + (cards[i] === cards[i - nb] ? 'UGUALE' : 'DIVERSO') + '.';
+                    if (opts.onMistake('Troppo lento!') === false) {
+                        stop();
+                        return;
+                    }
+                    next(900);
+                } }, ms);
+            }, 260);
         }
-        function next() { done++; opts.onProgress(done / target, 'Carte: ' + done + '/' + target); later(s, function () { i++; show(); }, 350); }
+        function next(pause) { done++; opts.onProgress(done / target, 'Carte: ' + done + '/' + target); later(s, function () { i++; show(); }, pause || 300); }
         function answer(same) {
             if (answered || i < nb || !live || live !== s)
                 return;
@@ -174,13 +192,13 @@ var __read = (this && this.__read) || function (o, n) {
             var ok = (cards[i] === cards[i - nb]) === same;
             card.className = 'nbCard ' + (ok ? 'good' : 'badc');
             if (!ok) {
-                msg.textContent = 'Era ' + (cards[i] === cards[i - nb] ? 'UGUALE' : 'DIVERSO') + ': ' + what + ' era ' + cards[i - nb];
+                msg.textContent = 'Era ' + (cards[i] === cards[i - nb] ? 'UGUALE' : 'DIVERSO') + ': la carta ' + (i - nb + 1) + ' era ' + cards[i - nb];
                 if (opts.onMistake('Risposta sbagliata.') === false) {
                     stop();
                     return;
                 }
             }
-            next();
+            next(ok ? 300 : 1200);
         }
         opts.onProgress(0, 'Carte: 0/' + target);
         show();
@@ -385,9 +403,13 @@ var __read = (this && this.__read) || function (o, n) {
         if (C && C.flow)
             NS.LEVEL_INFO[54] = C.flow.map(function (x, i) { return 'Griglia ' + x.n + '×' + x.n + ' · ' + x.pairs + ' colori da collegare · percorso ' + (i + 1) + '/15'; });
         if (NS.newGameProfile) {
-            NS.LEVEL_INFO[55] = L15.map(function (l) { var w = NS.newGameProfile(l, 'water'); return w.colors + ' colori · provette da ' + w.capacity + ' · ' + w.mixes + ' rimescolamenti'; });
-            NS.LEVEL_INFO[56] = L15.map(function (l) { var k = NS.newGameProfile(l, 'checkers'); return 'Avversario forte al ' + pct_1(k.botSkill) + ' · ' + (k.aiDepth ? 'calcola ' + k.aiDepth + ' ' + (k.aiDepth === 1 ? 'mossa' : 'mosse') + ' avanti' : 'gioca d’istinto') + ' · ' + k.captures + ' ' + (k.captures > 1 ? 'catture' : 'cattura') + ' da trovare'; });
-            NS.LEVEL_INFO[57] = L15.map(function (l) { var k = NS.newGameProfile(l, 'chess'); return 'Avversario forte al ' + pct_1(k.botSkill) + ' · ' + k.steps + ' ' + (k.steps > 1 ? 'passi' : 'passo') + ' per missione · ' + k.blockers + ' pezzi che bloccano'; });
+            NS.LEVEL_INFO[55] = L15.map(function (l) { var w = NS.newGameProfile(l, 'water'), m = NS.WATER_LEVELS ? NS.WATER_LEVELS.min[l - 1] : 0; return w.colors + ' colori · provette da ' + w.capacity + (m ? ' · si risolve in almeno ' + m + ' versamenti' : ' · ' + w.mixes + ' rimescolamenti'); });
+            // v9.3: descrizioni prese dai parametri VERI del computer (prima mostravano numeri di una versione vecchia)
+            var BL_1 = NS.BoardLevelsV82;
+            if (BL_1) {
+                NS.LEVEL_INFO[56] = L15.map(function (l) { var k = BL_1.checkers(l); return 'Vinci la partita · il computer sceglie la mossa migliore nel ' + pct_1(k.quality) + ' dei casi · guarda ' + k.depth + ' ' + (k.depth === 1 ? 'mossa' : 'mosse') + ' avanti'; });
+                NS.LEVEL_INFO[57] = L15.map(function (l) { var k = BL_1.chess(l); return (k.target ? 'Cattura ' + k.target + ' ' + (k.target === 1 ? 'pezzo' : 'pezzi') + ' del computer' : 'Dai SCACCO MATTO al re nero') + ' · il computer sceglie la mossa migliore nel ' + pct_1(k.quality) + ' dei casi · guarda ' + k.depth + ' ' + (k.depth === 1 ? 'mossa' : 'mosse') + ' avanti'; });
+            }
         }
     }
     catch (_e) { }

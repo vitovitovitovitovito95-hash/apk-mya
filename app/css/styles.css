@@ -478,3 +478,61 @@ body:after{background:radial-gradient(circle at 60% 40%,rgba(255,230,120,.45),rg
 .calcOp.pop{-webkit-animation:popIn .35s both;animation:popIn .35s both}.calcOp.end{color:#3a2a9a}
 .calcDots i{display:inline-block;width:12px;height:12px;border-radius:50%;background:#e6e1ff;margin:2px}.calcDots i.on{background:#ff9a3c}
 .stBtn.trick{text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff}
+/* ===== v9.3 ===== */
+.nbStage{height:178px;-webkit-perspective:600px;perspective:600px}
+.nbCard{position:relative}
+.nbCard small{position:absolute;top:6px;left:0;right:0;font-size:13px;line-height:16px;font-weight:900;color:#6b5fa6;letter-spacing:.5px}
+.nbCard span{display:block;line-height:160px}
+.nbCard.out{-webkit-transform:rotateY(90deg) scale(.85);transform:rotateY(90deg) scale(.85);opacity:.2;-webkit-transition:all .22s ease-in;transition:all .22s ease-in}
+.nbCard.in{-webkit-animation:nbIn .32s cubic-bezier(.2,.8,.3,1.25) both;animation:nbIn .32s cubic-bezier(.2,.8,.3,1.25) both}
+@-webkit-keyframes nbIn{0%{-webkit-transform:translateX(70px) rotate(8deg);opacity:0}100%{-webkit-transform:none;opacity:1}}
+@keyframes nbIn{0%{transform:translateX(70px) rotate(8deg);opacity:0}100%{transform:none;opacity:1}}
+.nbTrail{height:34px}
+.nbMini{display:inline-block;width:26px;height:32px;line-height:32px;margin:0 3px;border-radius:7px;border:2px solid #c9bcff;font-size:13px;font-weight:900;color:#6b5fa6;vertical-align:middle}
+.nbMini.cmp{border-color:#ff8a00;color:#ff8a00;-webkit-transform:scale(1.15);transform:scale(1.15);box-shadow:0 0 0 3px rgba(255,138,0,.25)}
+.nbAsk{text-align:center;font-weight:800;color:#3a2a9a;font-size:15px;min-height:22px}.nbAsk .nbCmp{color:#ff8a00}
+.cntBoxes{display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.cntBox{width:46%;min-width:140px;margin:6px 1%;border-radius:16px;padding:6px 2px;box-sizing:border-box}
+.cntBox>b{display:block;text-align:center;font-size:12px;letter-spacing:1px}
+.cntBox.b0{background:#fff3b8;border:3px solid #ffc21a}.cntBox.b0>b{color:#b88300}
+.cntBox.b1{background:#dcecff;border:3px solid #2f80ff}.cntBox.b1>b{color:#1f5fc9}
+.cntBox .countGrid{margin:4px auto;font-size:26px}.cntBox .countGrid span{width:40px;height:40px;line-height:40px}
+.countGrid.covered span,.cntBoxes.covered span{-webkit-animation:none;animation:none;opacity:.55}
+.sqGrid .bgCell{position:relative}.sqN{color:#fff;font-size:20px;font-weight:950;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.sqDots{text-align:center;height:16px;margin-top:4px}.sqDots i{display:inline-block;width:12px;height:12px;border-radius:50%;background:#ddd6ff;margin:0 3px}.sqDots i.on{background:#3ccf7a}
+.arStage{min-height:150px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;border-radius:18px;margin:6px 0;background:#f6f3ff}
+.arStage.pop{-webkit-animation:popIn .25s both;animation:popIn .25s both}.arStage.good{background:#dcfbe8}.arStage.badc{background:#ffe1e7}
+.arRow{text-align:center;white-space:nowrap}
+.ar{display:inline-block;width:40px;height:40px;line-height:40px;font-size:32px;font-weight:900;text-align:center}
+.ar.blue{color:#2f80ff}.ar.orange{color:#ff8a00}.ar.mid{font-size:40px}.ar.empty{visibility:hidden}
+.arBlueTxt{color:#2f80ff}.arOrTxt{color:#ff8a00}
+.arBtns{text-align:center;margin-top:8px}
+.arBtn{width:22%;margin:0 1%;padding:14px 0;border-radius:16px;font-size:28px;background:#5b46e0;color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.22)}
+.arBtn:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+.rtMain{text-align:center;padding:8px 0}.rtTurn{display:inline-block;font-size:30px;color:#ff8a00;vertical-align:middle;margin-left:14px}
+.rtShape{position:relative;display:inline-block;vertical-align:middle}
+.rtShape i{position:absolute;border-radius:4px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.mvBoard{text-align:center;margin:8px auto;max-width:420px}
+.mvBoard.shuffle{opacity:.3}
+.mvItem{width:23%;margin:1%;padding:10px 0;font-size:36px;border-radius:16px;background:#fff;border:3px solid #ddd6ff;box-shadow:0 4px 0 rgba(0,0,0,.1);-webkit-animation:popIn .25s both;animation:popIn .25s both}
+.mvItem.ok{background:#dcfbe8;border-color:#3ccf7a}.mvItem.bad{background:#ffe1e7;border-color:#ff4d6d}
+.cmpRow{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;margin:8px 0}
+.cmpSide{width:44%;min-height:150px;border-radius:20px;background:#fff;border:4px solid #ddd6ff;box-shadow:0 6px 0 rgba(0,0,0,.12);padding:6px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center}
+.cmpSide.pop{-webkit-animation:popIn .25s both;animation:popIn .25s both}.cmpSide.good{border-color:#3ccf7a;background:#dcfbe8}.cmpSide.badc{border-color:#ff4d6d;background:#ffe1e7}
+.cmpVs{width:8%;text-align:center;font-size:22px;color:#6b5fa6}
+.cmpDots{position:relative;display:inline-block;width:150px;height:120px}.cmpDots i{position:absolute;border-radius:50%;background:#5b46e0}
+.cmpTxt{font-size:30px;font-weight:950;color:#3a2a9a;white-space:nowrap}
+@media (max-width:420px){.cmpDots{-webkit-transform:scale(.85);transform:scale(.85)}.cmpTxt{font-size:24px}.mvItem{font-size:30px}}
+/* v9.3: iPhone/iPad con notch e barra in basso (ignorato dai WebView vecchi) */
+.top{padding-top:calc(14px + env(safe-area-inset-top));padding-left:calc(15px + env(safe-area-inset-left));padding-right:calc(15px + env(safe-area-inset-right))}
+#app{padding-bottom:calc(34px + env(safe-area-inset-bottom))}
+/* v9.3: Ombra Giusta, file lunghe sempre dentro lo schermo */
+.optShadow i{display:inline-block;white-space:nowrap;font-style:normal;margin:0 4px}
+.optShadow.sl1{font-size:26px;letter-spacing:2px}.optShadow.sl2{font-size:22px;letter-spacing:1px}.optShadow.sl3{font-size:20px;letter-spacing:0}
+.options.oneCol>.opt{width:100%!important}
+.shadowRow{font-size:28px;letter-spacing:2px}
+/* v9.3: le animazioni "pop" degli elementi larghi non fanno più scorrere la pagina di lato */
+#app{overflow-x:clip}
+@-webkit-keyframes popSoft{0%{opacity:.5;-webkit-transform:scale(.95)}100%{opacity:1;-webkit-transform:none}}
+@keyframes popSoft{0%{opacity:.5;transform:scale(.95)}100%{opacity:1;transform:none}}
+.options.oneCol>.opt,.arStage.pop{-webkit-animation-name:popSoft!important;animation-name:popSoft!important}

@@ -385,40 +385,183 @@ var __values = (this && this.__values) || function(o) {
                 }, ms);
             } }, { memoryItems: n, exposureMs: ms, questionTypes: types, qType: type, rank: [types, n, 5000 - ms] });
     }
-    /* ========== 31. Conta e Scegli ========== */
-    var K31 = [0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4], OPS31 = function (l) { return l <= 4 ? 0 : l <= 8 ? 1 : l <= 12 ? 2 : 3; };
-    NS.LEVEL_INFO[31] = Array.from({ length: 15 }, function (_, i) { var l = i + 1; return (3 + l) + ' mele da contare' + (K31[i] ? ' tra ' + K31[i] + ' ' + (K31[i] > 1 ? 'tipi' : 'tipo') + ' di altra frutta' : '') + (OPS31(l) ? ' · ' + OPS31(l) + ' ' + (OPS31(l) > 1 ? 'operazioni' : 'operazione') : ''); });
+    /* ========== 31. Conta e Scegli (v9.3): 15 tipi di domanda, 7 temi, oggetti quasi uguali, riquadri, conta a memoria ========== */
+    // Emoji solo fino a Unicode 8 (Android 6). t = da contare, s = quasi uguale (trappola), o = altri oggetti del tema.
+    var TH31 = [
+        { t: '🐟', s: '🐠', o: ['🐙', '🦀', '🐢', '🐬', '🐳'] }, { t: '🍎', s: '🍏', o: ['🍐', '🍊', '🍋', '🍓', '🍇'] },
+        { t: '🚗', s: '🚙', o: ['🚌', '🚲', '🚜', '🚑', '🚂'] }, { t: '⭐', s: '🌟', o: ['🌙', '☀️', '☁️', '⚡', '❄️'] },
+        { t: '⚽', s: '🏐', o: ['🏀', '🎾', '⚾', '🏈', '🎱'] }, { t: '🐶', s: '🐺', o: ['🐱', '🐭', '🐰', '🐻', '🐸'] },
+        { t: '🌷', s: '🌹', o: ['🌻', '🌼', '🍀', '🌵', '🍄'] }
+    ];
+    // [tipo, bersagli min, max, tipi di altri oggetti, ms per guardare (solo “a memoria”)]
+    var T31 = [['count', 4, 5, 0], ['count', 5, 7, 1], ['count', 6, 9, 3], ['sum2', 3, 5, 1], ['plus', 6, 9, 2], ['diff', 5, 9, 1], ['similar', 6, 9, 2], ['ops2', 7, 10, 2],
+        ['region', 6, 9, 2], ['sum2sim', 4, 7, 2], ['flash', 6, 9, 2, 3500], ['diffsim', 6, 10, 2], ['missing', 7, 11, 2], ['flashOps', 7, 10, 2, 3000], ['regionMix', 4, 7, 2]];
+    var INFO31 = { count: ['Conta gli oggetti', 'Conta solo un tipo (c’è un altro oggetto)', 'Conta solo un tipo tra 4 oggetti diversi'], sum2: 'Conta DUE tipi e somma', plus: 'Conta e poi aggiungi', diff: 'Quanti in PIÙ? (confronta due gruppi)',
+        similar: 'Attenzione agli oggetti quasi uguali (🐟 e 🐠)', ops2: 'Conta, aggiungi e togli', region: 'Conta solo dentro il riquadro giusto', sum2sim: 'Due tipi insieme + oggetti quasi uguali', flash: 'Guarda 3,5 secondi e conta A MEMORIA',
+        diffsim: 'Quanti in più, tra oggetti quasi uguali', missing: 'Quanti MANCANO per arrivare al numero?', flashOps: 'A memoria (3 s) e poi un’operazione', regionMix: 'Due riquadri, due oggetti diversi da sommare' };
+    NS.LEVEL_INFO[31] = T31.map(function (r, i) { var t = INFO31[r[0]]; return (Array.isArray(t) ? t[[0, 1, 2][i]] : t) + ' · ' + r[1] + '–' + r[2] + ' da contare'; });
     function g31(l) {
-        var target = '🍎', kinds = K31[l - 1], types = sh(['🍐', '🍊', '🍋', '🍓', '🍇', '🍑']).slice(0, kinds), count = 3 + l;
-        var dist = kinds ? Math.min(12, Math.ceil(count * 0.7)) : 0, items = [];
-        for (var i = 0; i < count; i++)
-            items.push(target);
-        for (var k = 0; k < dist; k++)
-            items.push(types[k % kinds]);
-        var ops = OPS31(l);
-        var n = count, text = kinds ? 'Conta SOLO le ' + target + '.' : 'Conta le ' + target + '.';
-        var steps = [];
-        if (ops >= 1) {
-            var a = rnd(2, 3 + Math.floor(l / 4));
-            n += a;
-            text += ' Poi aggiungine ' + a + '.';
-            steps.push(a);
+        var _a = __read(T31[l - 1], 5), kind = _a[0], lo = _a[1], hi = _a[2], nd = _a[3], flash = _a[4], th = pick(TH31), T = th.t, S = th.s, O = sh(th.o), two = O[0], n = rnd(lo, hi);
+        var cells = [], put = function (e, k, b) { for (var i = 0; i < k; i++)
+            cells.push({ e: e, b: b === undefined ? -1 : b }); };
+        var fill = function (k, list, b) { for (var i = 0; i < k; i++)
+            cells.push({ e: list[i % list.length], b: b === undefined ? -1 : b }); };
+        var spec = { terms: [[T, -1, 1]], add: 0, to: null }, prompt = 'Quanti ' + T + ' ci sono?', text = '', boxes = false;
+        switch (kind) {
+            case 'count':
+                put(T, n);
+                if (nd)
+                    fill(rnd(3, 2 + 2 * nd), O.slice(0, nd));
+                text = nd ? 'Conta SOLO i ' + T + '.' : '';
+                break;
+            case 'sum2': {
+                var m = rnd(lo, hi);
+                put(T, n);
+                put(two, m);
+                fill(rnd(2, 4), [O[1]]);
+                spec.terms = [[T, -1, 1], [two, -1, 1]];
+                prompt = 'Quanti ' + T + ' e ' + two + ' in tutto?';
+                text = 'Conta i due gruppi e sommali.';
+                break;
+            }
+            case 'plus': {
+                var a = rnd(2, 5);
+                put(T, n);
+                fill(rnd(3, 6), O.slice(0, nd));
+                spec.add = a;
+                text = 'Poi ne arrivano altri ' + a + '.';
+                prompt = 'Quanti ' + T + ' alla fine?';
+                break;
+            }
+            case 'diff': {
+                var m = rnd(Math.max(1, n - 5), n - 1);
+                put(T, n);
+                put(two, m);
+                fill(rnd(2, 3), [O[1]]);
+                spec.terms = [[T, -1, 1], [two, -1, -1]];
+                prompt = 'Quanti ' + T + ' in PIÙ rispetto ai ' + two + '?';
+                text = 'Conta i due gruppi e fai la differenza.';
+                break;
+            }
+            case 'similar':
+                put(T, n);
+                put(S, rnd(3, 6));
+                fill(rnd(2, 4), O.slice(0, nd));
+                text = 'Attenzione: ' + S + ' NON è ' + T + '!';
+                break;
+            case 'ops2': {
+                var a = rnd(2, 5), b = rnd(2, Math.min(5, n));
+                put(T, n);
+                put(S, rnd(2, 3));
+                fill(rnd(2, 4), O.slice(0, nd));
+                spec.add = a - b;
+                text = 'Poi ne aggiungi ' + a + ' e ne togli ' + b + '.';
+                prompt = 'Quanti ' + T + ' alla fine?';
+                break;
+            }
+            case 'region':
+                boxes = true;
+                put(T, n, 0);
+                put(T, rnd(3, 6), 1);
+                fill(rnd(2, 4), O.slice(0, nd), 0);
+                fill(rnd(2, 4), O.slice(0, nd), 1);
+                spec.terms = [[T, 0, 1]];
+                prompt = 'Quanti ' + T + ' nel riquadro GIALLO?';
+                text = 'Quelli nel riquadro blu non contano.';
+                break;
+            case 'sum2sim': {
+                var m = rnd(lo, hi);
+                put(T, n);
+                put(two, m);
+                put(S, rnd(3, 5));
+                fill(rnd(1, 3), [O[1]]);
+                spec.terms = [[T, -1, 1], [two, -1, 1]];
+                prompt = 'Quanti ' + T + ' e ' + two + ' in tutto?';
+                text = 'Non contare ' + S + '.';
+                break;
+            }
+            case 'flash':
+                put(T, n);
+                put(S, rnd(2, 3));
+                fill(rnd(3, 5), O.slice(0, nd));
+                prompt = 'Quanti ' + T + ' c’erano?';
+                text = 'Hai ' + (flash / 1000).toFixed(1).replace('.', ',') + ' secondi per guardare, poi si coprono!';
+                break;
+            case 'diffsim': {
+                var m = rnd(Math.max(2, n - 5), n - 1);
+                put(T, n);
+                put(S, m);
+                fill(rnd(2, 4), O.slice(0, nd));
+                spec.terms = [[T, -1, 1], [S, -1, -1]];
+                prompt = 'Quanti ' + T + ' in PIÙ rispetto ai ' + S + '?';
+                text = 'Sono quasi uguali: guarda bene!';
+                break;
+            }
+            case 'missing': {
+                var goal = pick([10, 12, 15, 20].filter(function (g) { return g > n + 1; }));
+                put(T, n);
+                put(S, rnd(2, 4));
+                fill(rnd(2, 4), O.slice(0, nd));
+                spec.to = goal;
+                prompt = 'Quanti ' + T + ' MANCANO per arrivare a ' + goal + '?';
+                text = 'Conta i ' + T + ', poi pensa: quanto manca a ' + goal + '?';
+                break;
+            }
+            case 'flashOps': {
+                var a = rnd(2, 6), b = rnd(1, 4);
+                put(T, n);
+                put(S, rnd(2, 3));
+                fill(rnd(3, 5), O.slice(0, nd));
+                spec.add = a - b;
+                prompt = 'Quanti ' + T + ' alla fine?';
+                text = 'Guarda ' + (flash / 1000).toFixed(1).replace('.', ',') + ' s. Poi: ne arrivano ' + a + ' e ne vanno via ' + b + '.';
+                break;
+            }
+            default: {
+                boxes = true;
+                var m = rnd(lo, hi);
+                put(T, n, 0);
+                put(two, rnd(2, 5), 0);
+                put(S, rnd(1, 3), 0);
+                put(two, m, 1);
+                put(T, rnd(2, 5), 1);
+                put(S, rnd(1, 2), 1);
+                spec.terms = [[T, 0, 1], [two, 1, 1]];
+                prompt = 'Quanti ' + T + ' nel GIALLO + quanti ' + two + ' nel BLU?';
+                text = 'Conta in ogni riquadro solo l’oggetto indicato.';
+            }
         }
-        if (ops >= 2) {
-            var b = rnd(2, 4);
-            n -= b;
-            text += ' Poi togline ' + b + '.';
-            steps.push(-b);
+        var cnt = function (e, b) { return cells.filter(function (c) { return c.e === e && (b < 0 || c.b === b); }).length; };
+        var sum = spec.terms.reduce(function (a, t) { return a + t[2] * cnt(t[0], t[1]); }, 0), ans = spec.to !== null ? spec.to - sum : sum + spec.add;
+        var span = function (c) { return '<span>' + c.e + '</span>'; }, id = 'c31_' + Math.random().toString(36).slice(2);
+        var visual;
+        if (boxes)
+            visual = '<div class="cntBoxes" id="' + id + '">' + [0, 1].map(function (b) { return '<div class="cntBox b' + b + '"><b>' + (b ? 'BLU' : 'GIALLO') + '</b><div class="countGrid">' + sh(cells.filter(function (c) { return c.b === b; })).map(span).join('') + '</div></div>'; }).join('') + '</div>';
+        else {
+            var cols = cells.length > 16 ? 6 : cells.length > 9 ? 5 : 4;
+            visual = '<div class="countGrid" id="' + id + '" style="max-width:' + (cols * 48) + 'px">' + sh(cells).map(span).join('') + '</div>';
         }
-        if (ops >= 3) {
-            var c = rnd(1, 5);
-            n += c;
-            text += ' Infine aggiungine ' + c + '.';
-            steps.push(c);
-        }
-        var cols = items.length > 16 ? 6 : items.length > 9 ? 5 : 4;
-        return q(31, l, { prompt: 'Quante mele ci sono alla fine?', sub: text, visual: '<div class="countGrid" style="max-width:' + (cols * 48) + 'px">' + sh(items).map(function (o) { return '<span>' + o + '</span>'; }).join('') + '</div>',
-            options: numOpts(n, nc(l), [count + dist, n + (steps[0] || 1), n - (steps[steps.length - 1] || 1), count]), answer: String(n), hint: 'Conta le mele toccandole con lo sguardo una alla volta, poi fai le operazioni in ordine.' }, { countedItems: count, distractorKinds: kinds, ops: ops, added: steps.filter(function (x) { return x > 0; }).reduce(function (a, b) { return a + b; }, 0), removed: -steps.filter(function (x) { return x < 0; }).reduce(function (a, b) { return a + b; }, 0), rank: [ops, kinds, count] });
+        var near = [ans + 1, ans - 1, cells.length, sum, cnt(T, -1), cnt(T, -1) + cnt(S, -1), spec.to !== null ? sum : ans + 2];
+        var o = q(31, l, { prompt: prompt, sub: text, visual: visual, options: numOpts(ans, nc(l), near.filter(function (x) { return x !== ans; })), answer: String(ans),
+            hint: boxes ? 'Prima guarda solo il riquadro giusto, poi conta.' : kind.indexOf('flash') === 0 ? 'Raggruppa a 2 a 2 mentre guardi: è più veloce.' : 'Tocca con lo sguardo un oggetto alla volta e conta sottovoce.' }, { countedItems: n, kind: kind, items: cells.length, exposureMs: flash || 0, rank: [l, n] });
+        o.meta.c31 = spec;
+        if (flash)
+            o.afterRender = function () {
+                var el = document.getElementById(id), opt = document.querySelector('.options');
+                if (!el)
+                    return;
+                if (opt) {
+                    opt.style.visibility = 'hidden';
+                    opt.style.pointerEvents = 'none';
+                }
+                setTimeout(function () { if (!document.getElementById(id))
+                    return; el.className += ' covered'; var sp = el.querySelectorAll('span'); for (var i = 0; i < sp.length; i++)
+                    sp[i].textContent = '❓'; if (opt) {
+                    opt.style.visibility = 'visible';
+                    opt.style.pointerEvents = 'auto';
+                } }, flash);
+            };
+        return o;
     }
     /* ========== 11. Blocchi Logici (blocchi di Dienes: colore, forma, grandezza; E / NON / OPPURE) ========== */
     var BC = [['rosso', '#ff3b4f'], ['blu', '#2f80ff'], ['giallo', '#ffc21a'], ['verde', '#1fb26b']];
@@ -489,6 +632,8 @@ var __values = (this && this.__values) || function(o) {
     /* ========== 32. Ombra Giusta ========== */
     var OUT = { '●': '○', '▲': '△', '■': '□', '◆': '◇', '★': '☆', '⬟': '⬡' }, SH6 = Object.keys(OUT);
     NS.LEVEL_INFO[32] = Array.from({ length: 15 }, function (_, i) { return (i + 2) + ' pezzi in fila · ' + (i >= 9 ? 'ombra al CONTRARIO (specchio)' : 'ombra nello stesso ordine') + ' · ' + CH[i] + ' risposte quasi uguali'; });
+    function shadowLabel(v) { var ch = Array.from(v), parts = []; for (var i = 0; i < ch.length; i += 4)
+        parts.push('<i>' + ch.slice(i, i + 4).join('') + '</i>'); return '<span class="optShadow sl' + (ch.length <= 5 ? 1 : ch.length <= 8 ? 2 : 3) + '">' + parts.join('') + '</span>'; }
     function g32(l) {
         var len = l + 1, mirror = l >= 10, items = Array.from({ length: len }, function () { return pick(SH6); }), target = (mirror ? items.slice().reverse() : items).map(function (s) { return OUT[s]; });
         var answer = target.join('');
@@ -513,8 +658,11 @@ var __values = (this && this.__values) || function(o) {
         var opts = [answer];
         pool.forEach(function (p) { if (opts.indexOf(p) < 0 && opts.length < nc(l))
             opts.push(p); });
-        return q(32, l, { prompt: mirror ? 'Qual è l’ombra allo SPECCHIO?' : 'Qual è l’ombra corretta?', sub: mirror ? 'Allo specchio l’ordine si inverte: l’ultimo pezzo diventa il primo.' : 'Stessi pezzi, stesso ordine.', visual: '<div class="bigVisual">' + items.join(' ') + '</div>',
-            options: sh(opts).map(function (v) { return ({ label: '<span class="optShadow">' + v + '</span>', value: v }); }), answer: answer, answerLabel: answer, hint: 'Confronta un pezzo alla volta, da sinistra a destra.' }, { pieces: len, mirror: mirror ? 1 : 0, rank: [len] });
+        return q(32, l, { prompt: mirror ? 'Qual è l’ombra allo SPECCHIO?' : 'Qual è l’ombra corretta?', sub: mirror ? 'Allo specchio l’ordine si inverte: l’ultimo pezzo diventa il primo.' : 'Stessi pezzi, stesso ordine.', visual: '<div class="bigVisual shadowRow">' + items.join(' ') + '</div>',
+            // v9.3: file lunghe divise in gruppi da 4 e caratteri più piccoli, così restano dentro lo schermo
+            options: sh(opts).map(function (v) { return ({ label: shadowLabel(v), value: v }); }), answer: answer, answerLabel: shadowLabel(answer), hint: 'Confronta un pezzo alla volta, da sinistra a destra.',
+            afterRender: len >= 7 ? function () { var o = document.querySelector('.options'); if (o)
+                o.className += ' oneCol'; } : null }, { pieces: len, mirror: mirror ? 1 : 0, rank: [len] });
     }
     /* ========== 40. Somme di Oggetti ========== */
     var TH = ['🍪', '🧁', '⚽', '🎈', '🌟', '🍬', '🐟', '🧸', '🍓', '🌼'];

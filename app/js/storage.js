@@ -72,8 +72,8 @@ var __read = (this && this.__read) || function (o, n) {
         out.totals.correct = Number(v1.totalCorrect || 0);
         out.totals.wrong = Number(v1.totalWrong || 0);
         try {
-            for (var _d = __values(NS.GAMES), _e = _d.next(); !_e.done; _e = _d.next()) {
-                var g = _e.value;
+            for (var _d = __values(NS.GAMES), _f = _d.next(); !_f.done; _f = _d.next()) {
+                var g = _f.value;
                 var old = (_c = v1.games) === null || _c === void 0 ? void 0 : _c[g.id];
                 if (old)
                     out.games[g.id] = __assign(__assign({}, out.games[g.id]), old);
@@ -82,20 +82,20 @@ var __read = (this && this.__read) || function (o, n) {
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_e && !_e.done && (_a = _d.return)) _a.call(_d);
+                if (_f && !_f.done && (_a = _d.return)) _a.call(_d);
             }
             finally { if (e_1) throw e_1.error; }
         }
         try {
-            for (var _f = __values(Object.entries(v1.words || {})), _g = _f.next(); !_g.done; _g = _f.next()) {
-                var _h = __read(_g.value, 2), word = _h[0], old = _h[1];
+            for (var _g = __values(Object.entries(v1.words || {})), _h = _g.next(); !_h.done; _h = _g.next()) {
+                var _j = __read(_h.value, 2), word = _j[0], old = _j[1];
                 out.english.words[word] = { correct: Number(old.right || 0), wrong: Number(old.wrong || 0), box: 1, due: Date.now(), lastSeen: Number(old.last || 0) };
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
-                if (_g && !_g.done && (_b = _f.return)) _b.call(_f);
+                if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
             }
             finally { if (e_2) throw e_2.error; }
         }
@@ -172,7 +172,29 @@ var __read = (this && this.__read) || function (o, n) {
         }
         return NS.defaultState();
     };
-    NS.saveState = function (state) { state.updated = new Date().toISOString(); state.schema = NS.SCHEMA_VERSION; NS.ensureDaily(state); localStorage.setItem(KEY_V8, JSON.stringify(normalize(state))); };
+    // v9.3: il salvataggio non deve mai bloccare l'app (iPhone in navigazione privata,
+    // pagina ospitata in un riquadro protetto, memoria piena...).
+    NS.saveState = function (state) {
+        state.updated = new Date().toISOString();
+        state.schema = NS.SCHEMA_VERSION;
+        NS.ensureDaily(state);
+        try {
+            localStorage.setItem(KEY_V8, JSON.stringify(normalize(state)));
+        }
+        catch (err) {
+            try {
+                console.warn('Storage save failed', err);
+            }
+            catch (_e) { }
+        }
+        if (typeof NS.afterSave === 'function') {
+            try {
+                NS.afterSave(state);
+            }
+            catch (_e) { }
+        }
+    };
+    NS.normalizeState = function (raw) { return NS.ensureDaily(normalize(raw)); };
     function checksum(json) { return Array.from(json).reduce(function (a, c) { return (a + c.charCodeAt(0)) % 65535; }, 0).toString(16); }
     NS.exportBackup = function (state) {
         var payload = { app: 'LogicLandKids', schema: NS.SCHEMA_VERSION, exportedAt: new Date().toISOString(), state: normalize(state) };

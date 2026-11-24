@@ -11,7 +11,7 @@ function assert(x,msg){if(!x)throw new Error(msg);}
 const s=NS.defaultState();
 assert(s.schema===8,'schema 8 expected');
 assert(s.profile.age===6,'default age must be 6');
-assert(Object.keys(s.games).length===28,'all 28 age-6 games initialized');
+assert(Object.keys(s.games).length===33,'all 33 age-6 games initialized');
 assert(s.games[51].level===1&&s.games[52].level===1,'arcade games start at level 1');
 s.games[1].level=15;s.games[51].level=7;s.economy.stars=42;s.english.words.cat={correct:7,wrong:2,box:4,due:123,lastSeen:456};
 const code=NS.exportBackup(s),restored=NS.importBackup(code);
@@ -29,4 +29,4 @@ const migrated=NS.importBackup(legacyCode);
 assert(migrated.profile.age===6,'legacy age clamped to 6');
 assert(migrated.games[1].level===15,'legacy level clamped to 15');
 assert(migrated.games[49]===undefined,'non-age6 games removed from active catalog');
-console.log('OK: schema 8 roundtrip, LLK5 compatibility, 28-game initialization and age-6 normalization.');
+console.log('OK: schema 8 roundtrip, LLK5 compatibility, 33-game initialization and age-6 normalization.');

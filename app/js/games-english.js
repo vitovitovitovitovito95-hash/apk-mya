@@ -35,6 +35,33 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     var playingAudio = null;
     var playbackSerial = 0;
     var BASE_AUDIO = 'audio/';
+    // v9.3: UN SOLO lettore audio riutilizzato. Su iPhone/iPad (Safari) un lettore
+    // "sbloccato" dal primo tocco può poi suonare anche le parole lette in automatico
+    // (ascolto, frasi in sequenza); uno nuovo per ogni parola verrebbe bloccato.
+    var player = null;
+    function getPlayer() { if (!player && typeof Audio !== 'undefined') {
+        player = new Audio();
+        player.preload = 'auto';
+    } return player; }
+    var SILENT = 'data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+    function unlockAudio() {
+        document.removeEventListener('touchend', unlockAudio, true);
+        document.removeEventListener('click', unlockAudio, true);
+        try {
+            var a = getPlayer();
+            if (!a || playingAudio)
+                return;
+            a.src = SILENT;
+            var r = a.play();
+            if (r && r.catch)
+                r.catch(function () { });
+        }
+        catch (_e) { }
+    }
+    if (typeof document !== 'undefined' && document.addEventListener) {
+        document.addEventListener('touchend', unlockAudio, true);
+        document.addEventListener('click', unlockAudio, true);
+    }
     function ttsFallback(text, lang) {
         try {
             if ((lang || 'en-GB').indexOf('en') === 0 && window.LLKAndroid && typeof window.LLKAndroid.speak === 'function') {
@@ -61,9 +88,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         playbackSerial++;
         if (playingAudio) {
             try {
+                playingAudio.onended = null;
+                playingAudio.onerror = null;
                 playingAudio.pause();
-                playingAudio.removeAttribute('src');
-                playingAudio.load();
             }
             catch (_ignore) { }
             playingAudio = null;
@@ -112,9 +139,13 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
                 playingAudio = null;
                 return;
             }
-            var audio = new Audio();
+            var audio = getPlayer();
+            if (!audio) {
+                if (!ttsFallback(text, lang) && NS.toast)
+                    NS.toast('Audio non disponibile su questo dispositivo.');
+                return;
+            }
             playingAudio = audio;
-            audio.preload = 'auto';
             audio.onended = function () { if (serial === playbackSerial) {
                 i++;
                 playNext();
@@ -126,7 +157,22 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
                 if (!ttsFallback(text, lang) && NS.toast)
                     NS.toast('Audio non disponibile su questo dispositivo.');
             };
-            audio.src = files[i];
+            // versione web: l'audio arriva da pacchetti per lingua (NS.audioSource); nell'APK resta il file .mp3
+            var src = files[i];
+            if (typeof NS.audioSource === 'function') {
+                var packed = NS.audioSource(src);
+                if (packed === null) {
+                    playingAudio = null;
+                    NS.audioReady(src).then(function (ok) { if (serial !== playbackSerial)
+                        return; if (ok)
+                        playNext();
+                    else if (!ttsFallback(text, lang) && NS.toast)
+                        NS.toast('Audio non disponibile su questo dispositivo.'); });
+                    return;
+                }
+                src = packed;
+            }
+            audio.src = src;
             try {
                 audio.playbackRate = slow ? 0.72 : 1;
                 if ('preservesPitch' in audio)
@@ -158,8 +204,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     NS.speak = NS.speakLine;
     NS.speakSlow = function () { if (NS.lastSpoken)
         NS.speakLine(NS.lastSpoken[0], NS.lastSpoken[1], true); };
+    // testo sicuro dentro onclick="...('testo')": prima escape per JavaScript, poi per HTML
+    NS.jsArg = function (text) { return NS.escapeHtml(String(text).replace(/\\/g, '\\\\').replace(/'/g, "\\'")); };
     function soundBtn(text, lang, label) {
-        return "<button class=\"speak\" aria-label=\"".concat(label || 'Ascolta', "\" onclick=\"LogicLand.speakLine('").concat(NS.escapeHtml(text), "','").concat(lang || 'en-GB', "')\">\uD83D\uDD0A ").concat(label || 'Audio', "</button>");
+        return "<button class=\"speak\" aria-label=\"".concat(label || 'Ascolta', "\" onclick=\"LogicLand.speakLine('").concat(NS.jsArg(text), "','").concat(lang || 'en-GB', "')\">\uD83D\uDD0A ").concat(label || 'Audio', "</button>");
     }
     function qPicture(level, state) {
         var w = NS.selectEnglishWord(state, level), reverse = level >= 9 && NS.rnd(0, 2) === 0, others = distractWords(w, Math.min(5, NS.levelProfile(level).choices));

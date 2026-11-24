@@ -10,6 +10,17 @@
   let playingAudio=null;
   let playbackSerial=0;
   const BASE_AUDIO='audio/';
+  // v9.3: UN SOLO lettore audio riutilizzato. Su iPhone/iPad (Safari) un lettore
+  // "sbloccato" dal primo tocco può poi suonare anche le parole lette in automatico
+  // (ascolto, frasi in sequenza); uno nuovo per ogni parola verrebbe bloccato.
+  let player=null;
+  function getPlayer(){if(!player&&typeof Audio!=='undefined'){player=new Audio();player.preload='auto';}return player;}
+  const SILENT='data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==';
+  function unlockAudio(){
+    document.removeEventListener('touchend',unlockAudio,true);document.removeEventListener('click',unlockAudio,true);
+    try{const a=getPlayer();if(!a||playingAudio)return;a.src=SILENT;const r=a.play();if(r&&r.catch)r.catch(function(){});}catch(_e){}
+  }
+  if(typeof document!=='undefined'&&document.addEventListener){document.addEventListener('touchend',unlockAudio,true);document.addEventListener('click',unlockAudio,true);}
 
   function ttsFallback(text,lang){
     try{
@@ -31,7 +42,7 @@
   NS.stopEnglishAudio=function(){
     playbackSerial++;
     if(playingAudio){
-      try{playingAudio.pause();playingAudio.removeAttribute('src');playingAudio.load();}catch(_ignore){}
+      try{playingAudio.onended=null;playingAudio.onerror=null;playingAudio.pause();}catch(_ignore){}
       playingAudio=null;
     }
   };
@@ -68,16 +79,23 @@
     function playNext(){
       if(serial!==playbackSerial)return;
       if(i>=files.length){playingAudio=null;return;}
-      const audio=new Audio();
+      const audio=getPlayer();
+      if(!audio){if(!ttsFallback(text,lang)&&NS.toast)NS.toast('Audio non disponibile su questo dispositivo.');return;}
       playingAudio=audio;
-      audio.preload='auto';
       audio.onended=function(){if(serial===playbackSerial){i++;playNext();}};
       audio.onerror=function(){
         if(serial!==playbackSerial)return;
         playingAudio=null;
         if(!ttsFallback(text,lang)&&NS.toast)NS.toast('Audio non disponibile su questo dispositivo.');
       };
-      audio.src=files[i];
+      // versione web: l'audio arriva da pacchetti per lingua (NS.audioSource); nell'APK resta il file .mp3
+      let src=files[i];
+      if(typeof NS.audioSource==='function'){
+        const packed=NS.audioSource(src);
+        if(packed===null){playingAudio=null;NS.audioReady(src).then(function(ok){if(serial!==playbackSerial)return;if(ok)playNext();else if(!ttsFallback(text,lang)&&NS.toast)NS.toast('Audio non disponibile su questo dispositivo.');});return;}
+        src=packed;
+      }
+      audio.src=src;
       try{audio.playbackRate=slow?0.72:1;if('preservesPitch' in audio)audio.preservesPitch=true;}catch(_r){}
       try{
         const result=audio.play();
@@ -99,8 +117,10 @@
   NS.speak=NS.speakLine;
   NS.speakSlow=function(){if(NS.lastSpoken)NS.speakLine(NS.lastSpoken[0],NS.lastSpoken[1],true);};
 
+  // testo sicuro dentro onclick="...('testo')": prima escape per JavaScript, poi per HTML
+  NS.jsArg=function(text){return NS.escapeHtml(String(text).replace(/\\/g,'\\\\').replace(/'/g,"\\'"));};
   function soundBtn(text,lang,label){
-    return `<button class="speak" aria-label="${label||'Ascolta'}" onclick="LogicLand.speakLine('${NS.escapeHtml(text)}','${lang||'en-GB'}')">🔊 ${label||'Audio'}</button>`;
+    return `<button class="speak" aria-label="${label||'Ascolta'}" onclick="LogicLand.speakLine('${NS.jsArg(text)}','${lang||'en-GB'}')">🔊 ${label||'Audio'}</button>`;
   }
 
   function qPicture(level,state){

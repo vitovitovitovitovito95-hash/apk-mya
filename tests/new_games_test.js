@@ -23,6 +23,6 @@ for(const key of keys){let last=-1;
    renders++;
  }
 }
-check(N.GAMES.length===28,'Expected 28 actual games');
+check(N.GAMES.length===33,'Expected 33 actual games');
 check(N.MAX_LEVEL===15&&N.STARTING_LIVES===3,'Progression contract failed');
 console.log(`OK: ${renders} interactive game renders, all 15 levels, progressive parameters.`);

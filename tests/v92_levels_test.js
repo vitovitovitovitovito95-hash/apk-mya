@@ -9,7 +9,7 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 global.window=global;global.LogicLand={};global.document={querySelector:()=>null,getElementById:()=>null};
 global.btoa=s=>Buffer.from(s,'binary').toString('base64');global.atob=s=>Buffer.from(s,'base64').toString('binary');
 const dir=path.join(__dirname,'../app/js');
-for(const f of ['polyfills.js','core.js','data.js','data-es.js','storage.js','audio-index.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-arcade.js','games-new.js','games-v82-puzzles.js','games-v82-board.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js','games-v92-levels.js','games-v92-lang.js','games-v92-brain.js','fx.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','data-es.js','storage.js','audio-index.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-arcade.js','games-new.js','games-v82-puzzles.js','games-v82-board.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js','games-v92-levels.js','games-v92-lang.js','games-v92-brain.js','games-v93-brain.js','fx.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 const N=global.LogicLand,state=N.defaultState();
 function check(ok,msg){if(!ok)throw new Error(msg);}
 const CH=[3,3,3,4,4,4,4,5,5,5,5,6,6,6,6];
@@ -87,12 +87,33 @@ function verify14(q,l){
   else check(shown.includes(q.answer),'14 L'+l+': answer was not shown');
   if(T.qType===4){const first=optVals(q).reduce((a,b)=>shown.indexOf(a)<shown.indexOf(b)?a:b);check(first===q.answer,'14 L'+l+': first item wrong');}
 }
+// 31 (v9.3): rilegge gli oggetti dal disegno (anche nei due riquadri) e i numeri dal testo; ricalcola la risposta.
 function verify31(q,l){
-  const cells=[...q.visual.matchAll(/<span>([^<]*)<\/span>/g)].map(m=>m[1]);
-  let n=cells.filter(c=>c==='🍎').length;check(n===3+l,'31 L'+l+': apple count');
-  for(const m of q.sub.matchAll(/(aggiungine|togline) (\d+)/g))n+=m[1]==='togline'?-Number(m[2]):Number(m[2]);
-  check(String(n)===q.answer,'31 L'+l+': wrong total '+n+' vs '+q.answer);
-  if(l>=3)check(cells.length>3+l,'31 L'+l+': needs distractor fruit');
+  const spec=q.meta.c31,parse=h=>[...h.matchAll(/<span>([^<]*)<\/span>/g)].map(m=>m[1]),cells=[];
+  if(q.visual.indexOf('cntBox')>=0)q.visual.split('<div class="cntBox b').slice(1).forEach(p=>{const b=Number(p[0]);parse(p).forEach(e=>cells.push({e,b}));});
+  else parse(q.visual).forEach(e=>cells.push({e,b:-1}));
+  const cnt=(e,b)=>cells.filter(c=>c.e===e&&(b<0||c.b===b)).length;
+  let add=0;const t=q.sub;let m;
+  if((m=/arrivano altri (\d+)/.exec(t)))add+=Number(m[1]);
+  if((m=/aggiungi (\d+) e ne togli (\d+)/.exec(t)))add+=Number(m[1])-Number(m[2]);
+  if((m=/ne arrivano (\d+) e ne vanno via (\d+)/.exec(t)))add+=Number(m[1])-Number(m[2]);
+  check(add===spec.add,'31 L'+l+': text and operation disagree');
+  for(const term of spec.terms)check(q.prompt.indexOf(term[0])>=0,'31 L'+l+': prompt does not name '+term[0]);
+  const sum=spec.terms.reduce((a,x)=>a+x[2]*cnt(x[0],x[1]),0);
+  const goal=/arrivare a (\d+)/.exec(q.prompt),ans=goal?Number(goal[1])-sum:sum+add;
+  check(String(ans)===q.answer&&ans>=0,'31 L'+l+': wrong answer '+ans+' vs '+q.answer);
+  check(cnt(spec.terms[0][0],spec.terms[0][1])===q.meta.age6Metrics.countedItems,'31 L'+l+': target count');
+  if(l>=2)check(cells.length>q.meta.age6Metrics.countedItems,'31 L'+l+': needs other objects');
+}
+// 76: ogni opzione viene confrontata con la figura: UNA sola è una rotazione (lo specchio non vale).
+function verify76(q,l){
+  const V=N.V93Brain,parseKey=k=>k.split(';').map(x=>x.split(',').map(Number));
+  const base=parseKey(q.meta.rotBase),rot=V.rots(base).map(V.keyOf);
+  const good=optVals(q).filter(v=>rot.indexOf(V.keyOf(parseKey(v)))>=0);
+  check(good.length===1&&good[0]===q.answer,'76 L'+l+': '+good.length+' rotated copies among options');
+  check(V.keyOf(parseKey(q.answer))!==V.keyOf(base),'76 L'+l+': answer is not rotated');
+  if(q.meta.age6Metrics.trap>=1){const mir=V.rots(V.mirror(base)).map(V.keyOf);check(optVals(q).some(v=>mir.indexOf(v)>=0),'76 L'+l+': mirror trap missing');}
+  check(q.meta.age6Metrics.cells===base.length,'76 L'+l+': cells');
 }
 // 11: legge blocchi (colore/forma/taglia dallo stile) e condizioni (testo dei gettoni) e valuta.
 const HEXC={'#ff3b4f':'rosso','#2f80ff':'blu','#ffc21a':'giallo','#1fb26b':'verde'};
@@ -188,7 +209,7 @@ function verifyLang(id,q,l){
 }
 
 /* ---------- giro su tutti i giochi e livelli ---------- */
-const verifiers={1:verify1,5:verify5,7:verify7,8:verify8,11:verify11,14:verify14,31:verify31,32:verify32,33:verify33,41:verify41,42:verify42,73:verify73};
+const verifiers={1:verify1,5:verify5,7:verify7,8:verify8,11:verify11,14:verify14,31:verify31,32:verify32,33:verify33,41:verify41,42:verify42,73:verify73,76:verify76};
 let total=0;const perGame={};
 for(const g of N.GAMES){
   if(g.arcade)continue;
@@ -223,11 +244,15 @@ const B=N.V92Brain;
 const rank70=r=>[r[1],r[0],-r[2]];
 const SET71={easy:0,animals:1,dots:2,fruit:3},rank71=r=>[r[0],r[2],SET71[r[1]],r[3],-r[4]];
 const RULE72={word:0,ink:1,sw4:2,sw3:3,rand:4,randShuf:5,randTrick:6},rank72=r=>[RULE72[r[1]],r[0],r[2],-r[3],-r[4]];
-for(const [name,T,rk] of [['70 Lampi di Luce',B.T70,rank70],['71 Uguale o Diverso',B.T71,rank71],['72 Colori Furbi',B.T72,rank72]]){
+const B3=N.V93Brain,rank74=r=>[r[4],r[1],r[0],-r[2]];
+const MODE75={c:0,sw:1,swX:2},rank75=r=>[MODE75[r[3]],r[1],r[0],r[2],r[4],-r[5]];
+const SET77={easy:0,animals:1,fruit:3},rank77=r=>[r[0],SET77[r[1]],-r[2]];
+const TYPE78={dots:0,dotsSize:1,expr1:2,expr2:3,mix:4,expr3:5},rank78=r=>[TYPE78[r[0]],r[1],-r[2],r[3],-r[4]];
+for(const [name,T,rk] of [['70 Griglia Lampo',B.T70,rank70],['71 Uguale o Diverso',B.T71,rank71],['72 Colori Furbi',B.T72,rank72],['74 Sequenza Luminosa',B3.T74,rank74],['75 Frecce in Fila',B3.T75,rank75],['77 Mai Visto',B3.T77,rank77],['78 Più o Meno?',B3.T78,rank78]]){
   check(T.length===15,name+' table');
   for(let i=1;i<15;i++)check(lexCmp(rk(T[i]),rk(T[i-1]))>0,name+': level '+(i+1)+' not harder than '+i);
 }
-for(const id of [70,71,72,51,52,53,54,55,56,57])check(N.LEVEL_INFO[id]&&new Set(N.LEVEL_INFO[id]).size===15,'LEVEL_INFO '+id);
+for(const id of [70,71,72,74,75,77,78,51,52,53,54,55,56,57])check(N.LEVEL_INFO[id]&&new Set(N.LEVEL_INFO[id]).size===15,'LEVEL_INFO '+id);
 // Spagnolo: tutte le parole e tutte le frasi hanno l'audio.
 check(N.WORDS_ES.length===N.WORDS.length,'every English word must have a Spanish translation');
 for(const x of N.WORDS_ES){check(audioHas('es',x.es),'audio es missing: '+x.es);check(audioHas('es',N.esBare(x)),'audio es (bare) missing: '+N.esBare(x));}
@@ -237,7 +262,13 @@ for(const s of N.SENTENCES_ES){const w=N.WORDS_ES.find(y=>y.en===s.a);check(w,'s
 check(N.contentLevel(1)===1&&N.contentLevel(15)===15,'no hidden level boost in v9.2');
 check(N.questionsFor(1)===5&&N.questionsFor(15)===10,'questions per level');
 for(let l=2;l<=15;l++)check(N.secondsFor(l)<=N.secondsFor(l-1),'seconds per question must not grow');
-check(N.GAMES.length===28&&!N.GAMES.some(g=>g.id===21||g.id===35),'28 games, figure games merged');
+check(N.GAMES.length===33&&!N.GAMES.some(g=>g.id===21||g.id===35),'33 games, figure games merged');
 check(typeof N.fx.confetti==='function','fx module missing');
-check(N.APP_VERSION==='9.2.0','version');
-console.log('PASS v9.2: '+total+' questions verified with independent solvers across '+Object.keys(perGame).length+' question games x 15 levels; strict level gaps; 3 brain games; Spanish audio complete');
+check(N.APP_VERSION==='9.3.0','version');
+// v9.3: griglia che cresce ogni 2 livelli fino a 8×8; N-indietro con 2 carte dal L5 e 3 carte dal L10.
+check(B.T70.map(r=>r[0]).join()==='3,3,4,4,5,5,6,6,7,7,8,8,8,8,8','grid sizes');
+check(B.T71.map(r=>r[0]).join()==='1,1,1,1,2,2,2,2,2,3,3,3,3,3,3','n-back steps');
+// Più o Meno?: i due lati non sono mai uguali e le espressioni valgono quanto dichiarato.
+for(let i=0;i<3000;i++){const v=N.rnd(3,30),k=N.rnd(0,2),e=B3.expr(v,k,30).replace('×','*').replace('−','-');check(Function('return '+e)()===v,'expr '+e+' != '+v);}
+for(const nDots of [2,6,11,15,20])for(const sz of [0,1,-1]){const h=B3.dotsHtml(nDots,sz);check((h.match(/<i /g)||[]).length===nDots,'dots drawn '+nDots);}
+console.log('PASS v9.2: '+total+' questions verified with independent solvers across '+Object.keys(perGame).length+' question games x 15 levels; strict level gaps; 7 interactive brain games; Spanish audio complete');

@@ -1,3 +1,12 @@
+# LogicLand Kids — Stato v9.3
+
+- v9.3: 33 giochi. Nuovi 74–78 in `src/js/games-v93-brain.js`; Conta e Scegli (31) rifatto in `games-v92-levels.js`;
+  Uguale o Diverso con cambio carta visibile e 2/3 indietro; Griglia Lampo fino a 8×8.
+- iPhone/iPad: pagina web su claude.ai (`tools/build_web.py` → `dist/web`, audio in `audio/{en,es,it}.json`,
+  progressi nel db della pagina con `web/cloud-save.js`). L'APK non usa questi file.
+- Analisi completa eseguita (tutti i giochi e livelli, 5 dimensioni di schermo, giochi per la mente giocati da bot).
+- APK 9.3 (versionCode 90300) firmati con le stesse chiavi v9 → aggiornano la 9.2. Installazione fisica: da verificare.
+
 # LogicLand Kids — Stato v9.2
 
 - v9.2: 28 giochi. Livelli in tabelle a 15 righe (`src/js/games-v92-levels.js`), lingue EN/ES

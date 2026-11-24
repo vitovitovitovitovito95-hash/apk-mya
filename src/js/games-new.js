@@ -70,11 +70,16 @@
     render();return active;
   }
 
+  // v9.3: un puzzle scelto per ogni livello, risolto al computer (ricerca completa delle mosse):
+  // la soluzione più corta cresce di 1 versamento a ogni livello (4 → 18).
+  var WATER_SEED=[23758,23759,7922,47518,39600,23763,7926,15846,150470,39605,293014,182149,269259,1290811,284967624];
+  var WATER_MIN=[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+  NS.WATER_LEVELS={seed:WATER_SEED,min:WATER_MIN};
   function water(opts){
     var el=root(opts);if(!el)return;
     var cfg=profile(opts.level,'water'),cap=cfg.capacity,num=cfg.colors;
     var tubes=Array.from({length:num+2},function(_,i){return i<num?Array(cap).fill(i):[];});
-    var rng=(function(){var x=9871+opts.level*313;return function(n){x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%n;};})();
+    var rng=(function(){var x=WATER_SEED[opts.level-1];return function(n){x^=x<<13;x^=x>>>17;x^=x<<5;return (x>>>0)%n;};})();
     // Reverse-move generation, with a recorded reverse witness: therefore every puzzle is solvable.
     var witness=[];
     for(var t=0;t<cfg.mixes;t++){
@@ -85,7 +90,7 @@
       if(!available.length)break;
       var p=available[rng(available.length)],color=tubes[p[0]].pop();tubes[p[1]].push(color);witness.unshift([p[1],p[0]]);
     }
-    var selected=-1,moves=0,limit=cfg.mixes*3+10;
+    var selected=-1,moves=0,minMoves=WATER_MIN[opts.level-1],limit=Math.ceil(minMoves*(3-0.1*opts.level))+6;
     function done(){return tubes.every(function(a){return !a.length||(a.length===cap&&a.every(function(c){return c===a[0];}));});}
     function tap(i){if(selected<0){if(tubes[i].length){selected=i;render();}return;}
       if(i===selected){selected=-1;render();return;}
@@ -98,7 +103,7 @@
       render();
     }
     function render(){var h='<div class="waterRack">';tubes.forEach(function(a,i){h+='<button class="waterTube '+(i===selected?'activeTube':'')+'" data-tube="'+i+'" aria-label="Provetta '+(i+1)+'">';for(var s=cap-1;s>=0;s--)h+='<span class="waterLayer" style="background:'+(a[s]!==undefined?COLOR[a[s]]:'transparent')+'"></span>';h+='</button>';});
-      h+='</div><div class="puzzleCount">Versamenti: '+moves+' / '+limit+' • '+num+' colori</div>';
+      h+='</div><div class="puzzleCount">Versamenti: '+moves+' / '+limit+' • soluzione minima: '+minMoves+' • '+num+' colori</div>';
       title(el,'🧪 Water Sort Puzzle','Separa i colori: ogni provetta piena deve contenere un solo colore.',h);
       var b=el.querySelectorAll('[data-tube]');for(var k=0;k<b.length;k++)b[k].onclick=function(){tap(+this.getAttribute('data-tube'));};
     }

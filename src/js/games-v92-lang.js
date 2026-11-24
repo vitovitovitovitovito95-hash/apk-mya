@@ -22,7 +22,7 @@
     return o;
   }
   function audioBtns(text,voice,hideText){
-    const t=NS.escapeHtml(text).replace(/'/g,'&#39;');
+    const t=NS.jsArg?NS.jsArg(text):NS.escapeHtml(text);
     return '<div class="speakRow"><button class="speak big" onclick="LogicLand.speakLine(\''+t+'\',\''+voice+'\')">🔊 '+(hideText?'Ascolta':'Ascolta')+'</button><button class="speak slow" onclick="LogicLand.speakSlow()">🐢 Lento</button></div>';
   }
   // distrattori: stessa categoria a livelli alti (più difficile), parole “vicine” nel vocabolario

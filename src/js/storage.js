@@ -77,7 +77,12 @@
     return NS.defaultState();
   };
 
-  NS.saveState=function(state){state.updated=new Date().toISOString();state.schema=NS.SCHEMA_VERSION;NS.ensureDaily(state);localStorage.setItem(KEY_V8,JSON.stringify(normalize(state)));};
+  // v9.3: il salvataggio non deve mai bloccare l'app (iPhone in navigazione privata,
+  // pagina ospitata in un riquadro protetto, memoria piena...).
+  NS.saveState=function(state){state.updated=new Date().toISOString();state.schema=NS.SCHEMA_VERSION;NS.ensureDaily(state);
+    try{localStorage.setItem(KEY_V8,JSON.stringify(normalize(state)));}catch(err){try{console.warn('Storage save failed',err);}catch(_e){}}
+    if(typeof NS.afterSave==='function'){try{NS.afterSave(state);}catch(_e){}}};
+  NS.normalizeState=function(raw){return NS.ensureDaily(normalize(raw));};
 
   function checksum(json){return Array.from(json).reduce((a,c)=>(a+c.charCodeAt(0))%65535,0).toString(16);}
 

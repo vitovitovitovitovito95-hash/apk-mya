@@ -120,6 +120,10 @@ var __values = (this && this.__values) || function(o) {
         var w = (window.innerWidth || 400) - 40, h = (window.innerHeight || 700) * .69;
         return Math.max(184, Math.floor(Math.min(w, h, 424) / 8) * 8);
     }
+    // parametri reali del computer per livello (usati dal gioco e dalle descrizioni dei livelli)
+    function checkersLevel(lv) { return { depth: lv <= 2 ? 1 : lv <= 7 ? 2 : 3, quality: Math.min(.99, .45 + lv * .037) }; }
+    function chessLevel(lv) { return { target: lv <= 10 ? Math.ceil(lv * .8) : 0, depth: lv <= 3 ? 1 : 2, quality: Math.min(.99, .4 + lv * .04) }; }
+    NS.BoardLevelsV82 = { checkers: checkersLevel, chess: chessLevel };
     function checkers(opts) {
         var el = start(opts);
         if (!el)
@@ -127,8 +131,7 @@ var __values = (this && this.__values) || function(o) {
         var lv = opts.level, n = 8, rows = 3;
         // All 24 pieces from level 1; successive levels improve the opponent,
         // not by deleting pieces or falsifying the board state.
-        var depth = lv <= 2 ? 1 : lv <= 7 ? 2 : 3;
-        var botQuality = Math.min(.99, .45 + lv * .037);
+        var P = checkersLevel(lv), depth = P.depth, botQuality = P.quality;
         var turns = 0, selected = null, actions = [], board, whiteCount = 0, redo = 0, botBusy = false;
         var symbols = { w: '⛀', W: '⛁', b: '⛂', B: '⛃' };
         function newBoard() {
@@ -399,8 +402,7 @@ var __values = (this && this.__values) || function(o) {
         var level = opts.level, selected = null, board, turn = 0, actions = [], captured = 0, botBusy = false;
         // Full normal starting army: 16 + 16 pieces, from level one.
         // Capture targets and computer skill both progress through the 15 levels.
-        var target = level <= 10 ? Math.ceil(level * .8) : 0;
-        var aiDepth = level <= 3 ? 1 : 2, quality = Math.min(.99, .4 + level * .04);
+        var P = chessLevel(level), target = P.target, aiDepth = P.depth, quality = P.quality;
         function setup() {
             if (current && current.timer)
                 clearTimeout(current.timer);
