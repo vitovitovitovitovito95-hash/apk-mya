@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Tema chiaro senza barra del titolo. Su Android 8–14 colora barra di stato e di navigazione
+      come lo sfondo dell'app; su Android 15+ (edge-to-edge) i margini li gestisce MainActivity.
+    -->
+    <style name="Theme.LogicLand" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/llk_bg_top</item>
+        <item name="android:statusBarColor">@color/llk_bg_top</item>
+        <item name="android:navigationBarColor">@color/llk_bg_bottom</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorPrimary">@color/llk_primary</item>
+        <item name="android:colorAccent">@color/llk_primary</item>
+    </style>
+</resources>

@@ -1,0 +1,6 @@
+dist/
+*.jks
+*.keystore
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,32 @@
+'use strict';
+const fs=require('fs'),vm=require('vm'),path=require('path');
+global.window=global;global.LogicLand={};
+global.btoa=s=>Buffer.from(s,'binary').toString('base64');
+global.atob=s=>Buffer.from(s,'base64').toString('binary');
+const mem=new Map();global.localStorage={getItem:k=>mem.has(k)?mem.get(k):null,setItem:(k,v)=>mem.set(k,String(v)),removeItem:k=>mem.delete(k)};
+const root=path.resolve(__dirname,'..','app','js');
+for(const f of ['polyfills.js','core.js','data.js','storage.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
+const NS=global.LogicLand;
+function assert(x,msg){if(!x)throw new Error(msg);}
+const s=NS.defaultState();
+assert(s.schema===8,'schema 8 expected');
+assert(s.profile.age===6,'default age must be 6');
+assert(Object.keys(s.games).length===21,'all 21 age-6 games initialized');
+assert(s.games[51].level===1&&s.games[52].level===1,'arcade games start at level 1');
+s.games[1].level=15;s.games[51].level=7;s.economy.stars=42;s.english.words.cat={correct:7,wrong:2,box:4,due:123,lastSeen:456};
+const code=NS.exportBackup(s),restored=NS.importBackup(code);
+assert(code.startsWith('LLK8.'),'LLK8 export prefix');
+assert(restored.profile.age===6,'age roundtrip');
+assert(restored.games[1].level===15,'level 15 roundtrip');
+assert(restored.games[51].level===7,'arcade progress roundtrip');
+assert(restored.economy.stars===42,'economy roundtrip');
+assert(restored.english.words.cat.correct===7,'English stats roundtrip');
+// Legacy LLK5 data is accepted; age is clamped to 6 and only current games survive.
+const legacy=NS.defaultState();legacy.schema=5;legacy.profile.age=8;legacy.games[1].level=99;legacy.games[49]={level:12,wins:2,best:3,correct:5,wrong:1};
+const payload={app:'LogicLandKids',schema:5,exportedAt:new Date().toISOString(),state:legacy};
+const json=JSON.stringify(payload),check=Array.from(json).reduce((a,c)=>(a+c.charCodeAt(0))%65535,0).toString(16),legacyCode=`LLK5.${check}.${NS.safeB64Encode(json)}`;
+const migrated=NS.importBackup(legacyCode);
+assert(migrated.profile.age===6,'legacy age clamped to 6');
+assert(migrated.games[1].level===15,'legacy level clamped to 15');
+assert(migrated.games[49]===undefined,'non-age6 games removed from active catalog');
+console.log('OK: schema 8 roundtrip, LLK5 compatibility, 21-game initialization and age-6 normalization.');

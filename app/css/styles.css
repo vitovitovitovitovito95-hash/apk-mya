@@ -1,0 +1,207 @@
+:root{
+  --bg:#fff8ec;--ink:#24324b;--muted:#78869e;--card:#fff;--primary:#6c63ff;--primary2:#8b7cff;
+  --good:#39b96f;--bad:#ef6d73;--gold:#ffbd32;--sky:#58b8ff;--pink:#ff82b8;--mint:#66d7c7;
+  --shadow:0 10px 28px rgba(55,59,105,.13);--radius:24px
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#24324b;background:linear-gradient(180deg,#edf9ff 0,#fff7e9 34%,#fffaf4 100%);overscroll-behavior:none}
+button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9fd8ff;outline-offset:2px}
+#app{min-height:100vh;padding-bottom:34px}.wrap{max-width:980px;margin:auto;padding:0 14px}.top{position:sticky;top:0;z-index:20;padding:14px 15px 10px;background:linear-gradient(180deg,rgba(237,249,255,.98),rgba(237,249,255,.88),rgba(237,249,255,0));backdrop-filter:blur(8px)}
+.toprow{display:flex;align-items:center;gap:10px;max-width:980px;margin:auto}.brand{font-weight:950;font-size:22px;letter-spacing:-.5px;flex:1}.brand small{display:block;font-weight:750;font-size:11px;color:#71809b;letter-spacing:.35px}.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffdf80,#ff9fc6);box-shadow:0 10px 28px rgba(55,59,105,.13);font-size:24px}.pill{background:#fff;border-radius:999px;padding:8px 11px;box-shadow:0 10px 28px rgba(55,59,105,.13);font-weight:850;font-size:13px;white-space:nowrap}
+.hero{margin:6px 0 16px;background:linear-gradient(135deg,#6c63ff,#8f7cff 55%,#58b7ff);border-radius:28px;padding:22px;color:#fff;box-shadow:0 16px 35px rgba(93,94,220,.28);position:relative;overflow:hidden}.hero:after{content:"✦";position:absolute;right:18px;top:2px;font-size:86px;opacity:.14}.hero h1{font-size:29px;margin:0 0 7px;line-height:1.05}.hero p{margin:0;opacity:.94;font-weight:650;font-size:14px;max-width:580px}.daily{display:flex;align-items:center;gap:10px;margin-top:15px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2);padding:10px 12px;border-radius:16px;font-size:13px;font-weight:760}.daily.done{background:rgba(50,190,113,.23)}
+.section-title{display:flex;align-items:end;justify-content:space-between;margin:20px 3px 10px}.section-title h2{font-size:20px;margin:0}.section-title span{font-size:12px;color:#77849b;font-weight:760}.grid{display:flex;flex-wrap:wrap;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{position:relative;background:#fff;border-radius:23px;padding:15px;box-shadow:0 10px 28px rgba(55,59,105,.13);min-height:140px;display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(120,130,170,.08);text-align:left;color:inherit}.card:active{transform:scale(.985)}.card .icon{font-size:35px;line-height:1;margin-bottom:10px}.card h3{font-size:15px;margin:0 0 5px;line-height:1.12}.card p{font-size:11px;line-height:1.3;color:#7d899f;margin:0;flex:1}.tag{margin-top:9px;display:flex;justify-content:space-between;align-items:center;font-weight:850;font-size:11px;gap:8px}.lvl{background:#f1efff;color:#665fdd;padding:5px 8px;border-radius:999px}.eng{background:#eafbf7;color:#1b8e78}.stars{color:#e89b00;white-space:nowrap}.bubble{position:absolute;width:74px;height:74px;border-radius:50%;right:-28px;top:-28px;opacity:.12}
+.nav{display:flex;gap:8px;margin:16px 0}.nav button,.back,.secondary,.primary,.danger{border-radius:15px;padding:11px 14px;font-weight:850}.secondary{background:#eef0f8;color:#4c5870}.primary{background:linear-gradient(135deg,#6c63ff,#8a7cff);color:#fff;box-shadow:0 7px 16px rgba(108,99,255,.22)}.danger{background:#fff0f0;color:#ac3941}.gameHead{display:flex;align-items:center;gap:10px;margin:6px 0 12px}.back{background:#fff;box-shadow:0 10px 28px rgba(55,59,105,.13);padding:10px 13px}.gameTitle{flex:1}.gameTitle h2{font-size:19px;margin:0}.gameTitle div{font-size:11px;color:#7c879c;font-weight:760;margin-top:2px}.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#f1efff;color:#655dcf;font-size:11px;font-weight:850}.progress{height:10px;background:#e9ebf2;border-radius:99px;overflow:hidden;margin:8px 0 16px}.progress i{display:block;height:100%;background:linear-gradient(90deg,#66d7c7,#6c63ff);border-radius:99px;transition:.3s}
+.question{background:#fff;border-radius:28px;box-shadow:0 10px 28px rgba(55,59,105,.13);padding:20px 16px;text-align:center;min-height:215px;display:flex;flex-direction:column;justify-content:center;position:relative}.qicon{font-size:42px}.question h3{font-size:23px;margin:9px 0 7px;line-height:1.15}.question p{margin:0;color:#7d899f;font-weight:680;font-size:13px}.bigVisual{font-size:35px;letter-spacing:7px;margin:12px 0;line-height:1.4;overflow-wrap:anywhere}.options{display:flex;flex-wrap:wrap;display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px}.opt{min-height:62px;border-radius:19px;background:#fff;box-shadow:0 10px 28px rgba(55,59,105,.13);border:2px solid transparent;font-weight:900;color:#33405a;padding:10px;font-size:16px}.opt:active{transform:scale(.98)}.opt.correct{background:#e7f8ee;border-color:#58c987;color:#167748}.opt.wrong{background:#fff0f0;border-color:#f68a8b;color:#a33a3a}.feedback{margin:14px 0 0;padding:13px 14px;border-radius:18px;font-weight:830;text-align:center;animation:pop .18s ease}.feedback.good{background:#e7f8ee;color:#167748}.feedback.bad{background:#fff0f0;color:#a33a3a}.hint{font-size:12px;font-weight:720;opacity:.88;margin-top:4px}.nextBtn{width:100%;margin-top:11px;padding:14px;border-radius:18px;background:#25324a;color:#fff;font-weight:900;font-size:16px}.levelWin{text-align:center;padding:24px 12px}.levelWin .trophy{font-size:72px}.levelWin h2{font-size:27px;margin:6px}.levelWin p{color:#768298;font-weight:680}.reward{display:flex;justify-content:center;gap:12px;margin:16px}.reward span{background:#fff;border-radius:999px;padding:9px 13px;box-shadow:0 10px 28px rgba(55,59,105,.13);font-weight:900}
+.sudoku{display:flex;flex-wrap:wrap;width:223px;display:grid;grid-template-columns:repeat(4,52px);gap:5px;justify-content:center;margin:13px auto}.cell{width:52px;height:52px;border-radius:12px;background:#f3f2ff;display:grid;place-items:center;font-weight:900;font-size:22px}.cell.target{background:#fff4bf;border:2px dashed #e5a800}.maze{display:flex;flex-wrap:wrap;display:grid;gap:3px;justify-content:center;margin:13px auto}.maze i{width:30px;height:30px;border-radius:7px;background:#eef0f6;display:grid;place-items:center;font-style:normal;font-size:17px}.maze .wall{background:#526178}.maze .s{background:#dff7e9}.maze .e{background:#fff0bc}.robotgrid{display:flex;flex-wrap:wrap;display:grid;grid-template-columns:repeat(4,42px);gap:4px;justify-content:center;margin:12px auto}.robotgrid i{width:42px;height:42px;border-radius:10px;background:#eef0f6;display:grid;place-items:center;font-style:normal}.matrix{display:flex;flex-wrap:wrap;width:152px;display:grid;grid-template-columns:repeat(2,72px);gap:8px;justify-content:center;margin:12px}.matrix i{height:72px;border-radius:17px;background:#f4f3ff;display:grid;place-items:center;font-style:normal;font-size:34px}.letters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px}.letter{min-width:44px;height:48px;border-radius:13px;background:#eef0ff;font-size:20px;font-weight:900}.wordline{min-height:46px;background:#fff5cc;border-radius:15px;padding:10px;margin:8px auto;max-width:300px;font-weight:900;font-size:20px;letter-spacing:3px}.speak{font-size:34px;width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#58b7ff,#6c63ff);color:#fff;margin:12px auto;box-shadow:0 9px 20px rgba(76,113,230,.25)}
+.parentCard{background:#fff;border-radius:24px;padding:17px;box-shadow:0 10px 28px rgba(55,59,105,.13);margin:12px 0}.parentCard h3{margin:0 0 10px}.statrow{display:flex;justify-content:space-between;border-bottom:1px solid #eef0f4;padding:9px 0;font-weight:730;font-size:13px}.bar{height:8px;background:#eef0f4;border-radius:99px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:#6c63ff}.codebox{width:100%;min-height:88px;border:2px solid #e5e7ef;border-radius:14px;padding:10px;resize:vertical;color:#34405a;background:#fafbff;font-size:12px}.footerBtns{display:flex;display:grid;grid-template-columns:1fr 1fr;gap:9px}.tiny{font-size:11px;color:#8792a5;line-height:1.4}.setting{display:flex;display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #eef0f4}.setting label{font-weight:760;font-size:13px}.setting input,.setting select{border:1px solid #dfe3ee;border-radius:12px;padding:8px;background:#fff;color:#33405a;max-width:160px}.worldProgress{display:flex;flex-wrap:wrap;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.worldMini{background:#f8f9ff;border-radius:16px;padding:11px}.worldMini b{display:block;font-size:13px}.worldMini small{color:#7c899e;font-weight:700}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#25324a;color:#fff;padding:11px 15px;border-radius:999px;font-weight:760;font-size:13px;z-index:99;box-shadow:0 10px 28px rgba(55,59,105,.13);animation:pop .2s ease;max-width:90vw;text-align:center}
+@keyframes pop{from{transform:translateX(-50%) scale(.94);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}.card{min-height:154px}.wrap{padding:0 22px}.question{padding:28px}.options{max-width:700px;margin:16px auto 0;width:100%}.worldProgress{grid-template-columns:repeat(4,1fr)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* v3: age paths + richer visual logic */
+.ageTabs{display:flex;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:8px 0 13px}.ageTab{position:relative;border-radius:18px;padding:9px 4px;background:#fff;box-shadow:0 10px 28px rgba(55,59,105,.13);color:#536078;text-align:center;border:2px solid transparent}.ageTab b{display:block;font-size:20px;color:#33405a}.ageTab span{display:block;font-size:10px;font-weight:850}.ageTab small{position:absolute;top:-7px;right:-4px;background:#ffbd32;color:#6c4a00;border-radius:999px;padding:2px 5px;font-size:7px;font-weight:950}.ageTab.active{background:linear-gradient(135deg,#6c63ff,#8b7cff);color:#fff;border-color:#5f57e5;transform:translateY(-2px)}.ageTab.active b{color:#fff}.ageTab.recommended:not(.active){border-color:#ffd36a}.ageHero{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,#ffffff,#f7f6ff);border-radius:24px;padding:15px;margin:10px 0 13px;box-shadow:0 10px 28px rgba(55,59,105,.13)}.ageHeroIcon{font-size:43px;width:58px;height:58px;display:grid;place-items:center;background:#fff4ce;border-radius:18px;flex:none}.ageHero h2{margin:0 0 4px;font-size:19px}.ageHero p{margin:0 0 5px;color:#78859a;font-size:12px;font-weight:690;line-height:1.35}.ageHero small{font-size:10px;color:#7d899f;font-weight:830}.ageBadge{background:#fff3cd;color:#8b6500;padding:5px 7px;border-radius:999px;white-space:nowrap}.pieceStrip{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:15px 0;font-size:31px}.pieceStrip span{min-width:48px;min-height:48px;border-radius:14px;background:#f4f3ff;display:inline-flex;align-items:center;justify-content:center;position:relative;padding:5px}.pieceStrip span small{position:absolute;top:2px;left:5px;font-size:8px;color:#8b94a8;font-weight:900}.matrix3{display:flex;flex-wrap:wrap;width:198px;display:grid;grid-template-columns:repeat(3,62px);gap:6px;justify-content:center;margin:13px auto}.matrix3 i{height:62px;border-radius:15px;background:#f4f3ff;display:grid;place-items:center;font-style:normal;font-size:29px}.matrix3.compact i{font-size:19px}.symmetry{font-size:44px;margin:16px auto;letter-spacing:9px}.symmetry b{color:#a0a8ba;font-weight:500}.blockGroups{display:flex;flex-direction:column;display:grid;gap:8px;margin:13px auto;justify-content:center}.blockGroups div{background:#f7f8fc;border-radius:14px;padding:8px;max-width:330px;overflow-wrap:anywhere}.sentenceVisual{font-size:25px!important;letter-spacing:1px!important}.pyramidVisual{font-size:28px;letter-spacing:5px}.ageProgress{display:flex;flex-direction:column;display:grid;gap:6px;margin-top:12px}.ageProgress>div{display:flex;justify-content:space-between;gap:10px;background:#f8f9ff;border-radius:13px;padding:9px 10px;font-size:11px}.ageProgress b{font-size:12px}.ageProgress span{color:#78869a;font-weight:720;text-align:right}
+@media(max-width:390px){.ageTabs{gap:4px}.ageTab{padding:8px 2px}.ageTab b{font-size:17px}.pieceStrip{gap:5px}.pieceStrip span{min-width:42px;min-height:42px;font-size:26px}.matrix3{grid-template-columns:repeat(3,56px)}.matrix3 i{height:56px}.tag{flex-wrap:wrap}}
+@media(min-width:700px){.ageTabs{max-width:650px}.ageHero{padding:20px}.ageHero h2{font-size:22px}.matrix3{grid-template-columns:repeat(3,72px)}.matrix3 i{height:72px}}
+
+
+/* Shared layouts retained from the expanded visual-game catalog */
+.compareGroups{display:flex;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px auto;max-width:620px}
+.compareGroups>div{background:#fff;border:2px solid rgba(108,99,255,.16);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-height:110px}
+.compareGroups b{font-size:1.1rem}.compareGroups span{font-size:1.7rem;line-height:1.45;word-break:break-word}.compareGroups small{opacity:.7}
+.countVisual{max-width:680px;margin-inline:auto;line-height:1.5;letter-spacing:3px}
+.fractionVisual{letter-spacing:2px}
+.coordWrap{display:flex;justify-content:center;margin:14px auto}
+.gameTitle small{font-weight:700;opacity:.72}
+@media(max-width:520px){.compareGroups{grid-template-columns:1fr}.compareGroups span{font-size:1.45rem}.countVisual{font-size:1.7rem}}
+
+/* v6: focus 6 anni, 3 vite e giochi arcade */
+.ageTabs{grid-template-columns:1fr;max-width:220px}
+.gameStatus{display:flex;flex-direction:column;align-items:flex-end;gap:5px}.lives{font-size:18px;letter-spacing:2px;white-space:nowrap}.lifeRule{margin:12px auto 0;padding:10px 12px;border-radius:15px;background:#fff4cf;color:#7d5d00;font-size:12px;font-weight:820;max-width:560px}.failLevel{border:2px solid #ffd36a}.nextLevelButton{background:linear-gradient(135deg,#39b96f,#60d892)}
+.arcadeMount{margin:12px 0;background:#fff;border-radius:24px;box-shadow:0 10px 28px rgba(55,59,105,.13);padding:14px;overflow:hidden}.arcadeInfo{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 auto 10px;max-width:440px;font-size:12px;color:#627089}.arcadeInfo b{color:#2d3952;font-size:13px}.arcadeProgressText{text-align:center;font-size:12px;font-weight:850;color:#6c63ff;margin:8px 0 14px}.arcadeControls{display:flex;display:grid;grid-template-columns:repeat(5,1fr);gap:7px;max-width:440px;margin:12px auto 0}.arcadeControls button{min-height:48px;border-radius:14px;background:#eef0ff;font-size:19px;font-weight:900;color:#33405a;box-shadow:0 4px 10px rgba(60,70,110,.08)}.arcadeControls button:active{transform:scale(.96);background:#dedbff}
+.tetrisBoard{display:flex;flex-wrap:wrap;display:grid;grid-template-columns:repeat(10,1fr);gap:2px;width:min(76vw,320px);aspect-ratio:10/16;margin:auto;background:#25324a;border:7px solid #25324a;border-radius:16px;overflow:hidden}.tcell{display:block;background:#34415b;border-radius:2px}.tcell.filled{box-shadow:inset 0 0 0 2px rgba(255,255,255,.18);background:#7f75ff}.tcell.f2{background:#ffd75e}.tcell.f3{background:#e876c3}.tcell.f4{background:#5ac4ff}.tcell.f5{background:#ff9a62}.tcell.f6{background:#58d7a7}.tcell.f7{background:#ef6d73}.tcell.f8{background:#8c96aa}
+.dodgeField{position:relative;width:min(88vw,320px);height:min(116vw,420px);max-height:420px;margin:auto;background:linear-gradient(180deg,#dff7ff,#fdf8df);border:6px solid #25324a;border-radius:20px;overflow:hidden;touch-action:none}.blobPlayer{position:absolute;width:34px;height:34px;border-radius:45% 55% 50% 46%;display:grid;place-items:center;font-size:32px;line-height:1;color:#7a4dff;text-shadow:0 2px 0 #fff;transition:filter .12s}.blobPlayer.hit{filter:brightness(1.8) saturate(.3);animation:blink .14s steps(2) 5}.dodgeObstacle{position:absolute;background:linear-gradient(90deg,#ef6d73,#ff9b72);border:3px solid #b84f56;border-radius:10px}.dodgeControls{grid-template-columns:1fr 1fr;max-width:320px}.dodgeControls button{font-size:15px}.arcadeIntro{min-height:auto;padding:15px}.arcadeIntro .qicon{font-size:34px}.arcadeIntro h3{font-size:20px}
+@keyframes blink{50%{opacity:.2}}
+@media(max-width:390px){.gameStatus{gap:2px}.lives{font-size:16px}.arcadeMount{padding:9px}.arcadeControls{gap:5px}.arcadeControls button{min-height:44px;font-size:17px}}
+
+
+/* Android 6.0.1 / legacy WebView fallbacks. Modern WebView uses the grid rules above. */
+.grid>.card{width:calc(50% - 6px)}
+.options>.opt{width:calc(50% - 6px)}
+.footerBtns>*{flex:1}
+.worldProgress>.worldMini{width:calc(50% - 5px)}
+.ageTabs>.ageTab{flex:1}
+.arcadeControls>button{flex:1}
+.tetrisBoard{width:320px;max-width:76vw;height:512px;max-height:76.8vw}
+.tetrisBoard>.tcell{width:10%;height:6.25%}
+.dodgeField{width:320px;max-width:88vw;height:420px}
+@media(min-width:700px){.grid>.card{width:calc(25% - 9px)}.options>.opt{width:calc(50% - 6px)}.worldProgress>.worldMini{width:calc(25% - 8px)}}
+
+/* v7 tablet / Android 6 refinements */
+.wrap{max-width:980px;margin:0 auto}
+.card{min-height:172px;padding:16px}
+.card .icon{font-size:42px;width:62px;height:62px;display:flex;align-items:center;justify-content:center;background:#f4f7ff;border-radius:18px;box-shadow:inset 0 0 0 1px rgba(90,104,140,.08);margin-bottom:12px}
+.card h3{font-size:17px;line-height:1.18}
+.card p{font-size:12px;line-height:1.35}
+.ageBadge{background:#fff5da;color:#9b7400;padding:5px 8px;border-radius:999px;font-weight:800}
+.speak{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;background:#edf2ff;color:#30458a;border-radius:14px;padding:10px 14px;font-weight:800;margin:10px auto 0;box-shadow:0 4px 14px rgba(48,69,138,.14)}
+.wordline{font-size:28px;font-weight:900;letter-spacing:2px;margin:10px 0 14px}
+.letters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.letter{min-width:48px;height:48px;border-radius:14px;border:none;background:#fff;box-shadow:0 10px 28px rgba(55,59,105,.13);font-size:20px;font-weight:900}
+.arcadeMount{padding:4px 0 0}
+.tetrisBoard{display:flex!important;flex-wrap:wrap!important;gap:0!important;padding:4px;box-sizing:border-box;background:#25324a;border:6px solid #25324a;border-radius:18px;overflow:hidden}
+.tcell{display:block;box-sizing:border-box;flex:0 0 10%;width:10%;height:6.25%;border:1px solid rgba(255,255,255,.06);background:#34415b;border-radius:0!important;font-style:normal!important}
+.tcell.filled{box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+.arcadeControls{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:360px;margin:12px auto 0}
+.arcadeControls button{min-height:46px;border:none;border-radius:14px;background:#fff;box-shadow:0 8px 20px rgba(55,59,105,.13);font-size:18px;font-weight:800}
+.arcadeInfo{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:360px;margin:0 auto 10px;font-size:13px;font-weight:800;color:#42506a}
+.arcadeProgressText{text-align:center;margin-top:10px;font-weight:800;color:#42506a}
+.pieceStrip{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+.pieceStrip span{min-width:48px;min-height:48px;padding:8px 10px;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(55,59,105,.13);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px}
+.pieceStrip small{font-size:10px;color:#78839a;margin-bottom:4px}
+.bigVisual{font-size:32px;letter-spacing:5px}
+.matrix,.matrix3,.matrix3.compact{display:grid;gap:8px;justify-content:center;margin:10px auto}
+.matrix{grid-template-columns:repeat(2,54px)}
+.matrix3{grid-template-columns:repeat(3,54px)}
+.matrix i,.matrix3 i{display:flex;align-items:center;justify-content:center;min-width:54px;min-height:54px;background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(55,59,105,.13);font-style:normal;font-size:24px}
+body.tablet .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+body.landscape.tablet .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+body.landscape .hero,body.landscape .ageHero,body.landscape .parentCard{padding-left:22px;padding-right:22px}
+body.landscape .gameHead{align-items:flex-start}
+body.landscape .question{min-height:160px}
+body.landscape .tetrisBoard{max-width:58vw}
+body.landscape .dodgeField{max-width:52vw}
+@media (max-width:520px){
+  .card{min-height:160px;padding:14px}
+  .card .icon{width:56px;height:56px;font-size:38px}
+  .card h3{font-size:15px}
+  .card p{font-size:11px}
+}
+
+/* LogicLand Kids v8 - high-legibility responsive illustrated game selector */
+.newHome{max-width:1080px;margin:0 auto}
+.newHero{background:linear-gradient(110deg,#2e75e8,#5c66d9 60%,#8a5eff);color:white}
+.newHero h1{font-size:clamp(24px,3.6vw,37px);line-height:1.18}
+.newHero p{color:#f2f5ff;font-size:14px}
+.homeHeading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 2px 12px}
+.homeHeading h2{font-size:21px;margin:0;color:#263353}
+.homeHeading span{font-size:12px;color:#7b859e;font-weight:800}
+.categoryTabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 13px;-webkit-overflow-scrolling:touch}
+.categoryTab{border:1px solid #cfd7f2;background:#fff;color:#4a5678;padding:10px 15px;white-space:nowrap;border-radius:15px;font-size:13px;font-weight:850;box-shadow:0 4px 10px #313c5a14;min-height:41px}
+.categoryTab.active{background:#484edb;border-color:#484edb;color:white;box-shadow:0 8px 18px #484edb33}
+.grid.gameGallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.gameTile{padding:0;min-height:255px;border:1px solid #e0e6f2;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;text-align:left;position:relative;background:#fff;box-shadow:0 9px 22px rgba(33,49,90,.1)}
+.gameArtwork{display:block;width:100%;height:124px;object-fit:cover;background:#ecf2ff;flex-shrink:0}
+.gameTileCopy{padding:12px 12px 13px;display:flex;flex:1;flex-direction:column;min-width:0}
+.gameTile h3{font-size:16px;color:#24324e;line-height:1.2;min-height:0;margin:0 0 5px;white-space:normal;overflow-wrap:normal;word-break:normal}
+.gameTile p{font-size:11px;line-height:1.35;color:#687a94;margin:0 0 10px;max-height:44px;overflow:hidden;flex:1}
+.gameTileProgress{display:flex;gap:5px;justify-content:space-between;font-size:11px;font-weight:900;color:#3e4ead}
+.miniTrack{height:6px;border-radius:9px;background:#e9eafc;overflow:hidden;margin-top:7px}.miniTrack i{display:block;height:100%;background:linear-gradient(90deg,#42cbd0,#5869ff);border-radius:9px}
+@media (min-width:650px){.grid.gameGallery{grid-template-columns:repeat(3,minmax(0,1fr))}.gameArtwork{height:150px}.gameTile{min-height:280px}.gameTile h3{font-size:18px}.gameTile p{font-size:12px}}
+@media (min-width:900px) and (orientation:landscape){.grid.gameGallery{grid-template-columns:repeat(4,minmax(0,1fr))}.gameTile{min-height:270px}.gameArtwork{height:140px}}
+.puzzleHeading{text-align:center;margin:16px auto 12px;max-width:560px}.puzzleHeading strong{font-size:23px;color:#243455}.puzzleHeading p{font-size:13px;color:#667694;line-height:1.4}
+.puzzleHint{font-size:13px;min-height:25px;text-align:center;color:#7759b6;font-weight:800;margin:12px 0}
+.puzzleSmall{font-size:13px;color:#5d7089;text-align:center;max-width:560px;margin:12px auto;line-height:1.45}
+.puzzleCount{font-size:13px;color:#4b5a79;text-align:center;margin-top:11px;font-weight:900}
+.unblockBoard{position:relative;width:min(88vw,350px);height:min(88vw,350px);max-height:350px;margin:16px auto;background:repeating-linear-gradient(0deg,#6a3d1f,#6a3d1f 1px,#4e2e19 1px,#4e2e19 16.66%);border:7px solid #b87124;border-radius:15px;box-sizing:border-box;box-shadow:inset 0 0 0 4px #472b1d,0 8px 22px #34211544}
+.woodBlock{position:absolute;box-sizing:border-box;border-radius:9px;border:3px solid #9e5421;background:linear-gradient(110deg,#ffa252,#dc682e 50%,#f2a35b);box-shadow:inset 2px 3px #ffffff58,inset -2px -4px #66301255;color:#ffecb4;font-size:32px;font-weight:900;touch-action:manipulation}
+.woodBlock.redWood{background:linear-gradient(120deg,#f65e5a,#dc3440);border-color:#a82d32;color:white}
+.woodBlock.selectedWood{outline:3px solid #f9d65b;z-index:2}
+.exitArrow{position:absolute;right:-24px;top:34%;font-size:28px;color:#e94848;font-weight:900}
+.puzzleButtons{display:flex;justify-content:center;gap:9px;margin:13px auto}.puzzleButtons button{border:0;background:#4565cc;color:white;border-radius:13px;font-size:20px;width:59px;height:49px;box-shadow:0 4px 12px #4360be35}
+.dotsBoard{display:grid;width:min(88vw,350px);aspect-ratio:1;margin:13px auto;background:#10213b;border:4px solid #0d1e35;border-radius:13px;overflow:hidden}
+.dotCell{padding:0;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;position:relative;background:#12223b;border:1px solid #43516a;touch-action:manipulation}
+.dotEnd{display:block;width:60%;height:60%;border-radius:50%;box-shadow:0 1px 7px #0008}.dotPath{background:#49b9e9;width:72%;height:72%;border-radius:8px;box-shadow:0 2px 7px #0006}
+.waterRack{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:flex-end;max-width:550px;margin:20px auto}
+.waterTube{display:flex;flex-direction:column;justify-content:flex-end;width:47px;height:156px;box-sizing:border-box;border:4px solid #8cbacc;border-top:7px solid #cceff4;border-radius:7px 7px 20px 20px;padding:0 2px 4px;background:#e8fbffad;overflow:hidden;box-shadow:0 8px 15px #334f7b20}
+.waterTube.activeTube{outline:4px solid #ffce52;transform:translateY(-8px)}
+.waterLayer{display:block;width:100%;height:24%;flex:0 0 24%;border-radius:4px}
+.chessBoard{display:grid;grid-template-columns:repeat(8,1fr);width:min(91vw,392px);aspect-ratio:1;margin:12px auto;border:5px solid #6a4934;border-radius:9px;overflow:hidden;box-shadow:0 7px 22px #35211835}
+.chessSquare{padding:0;display:flex;align-items:center;justify-content:center;border:0;font-size:clamp(17px,5vw,30px);color:#1b253e;text-shadow:0 1px #ffffffb8;min-width:0;min-height:0}
+.chessSquare.lightSq{background:#f2ddba}.chessSquare.darkSq{background:#c18d64}.chessSquare.targetSq{background:#fce960;box-shadow:inset 0 0 0 3px #e9a32c}
+@media (max-width:420px){.puzzleButtons button{width:49px}.waterTube{width:40px;height:140px}.gameTile h3{font-size:14px}.gameArtwork{height:108px}}
+
+.sudokuPlay,.matrixPlay{display:grid;gap:4px;justify-content:center;margin:14px auto}
+.sudokuTile,.matrixTile{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border:2px solid #d4dcf2;border-radius:9px;background:white;color:#293955;font-weight:900;font-style:normal;min-width:0;min-height:0}
+.sudokuTarget{background:#ffe88a;border:3px solid #dfb83e;color:#59491c}
+.matrixTile{font-size:clamp(18px,4vw,29px)}
+/* True Android 6 fallback: no CSS Grid support is assumed on the Asus WebView. */
+.grid.gameGallery{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.grid.gameGallery>.gameTile{box-sizing:border-box;width:calc(50% - 8px);-webkit-flex:0 0 calc(50% - 8px);flex:0 0 calc(50% - 8px);min-width:0}
+@media (min-width:650px){.grid.gameGallery>.gameTile{width:calc(33.333% - 9px);-webkit-flex:0 0 calc(33.333% - 9px);flex:0 0 calc(33.333% - 9px)}}
+@media (min-width:900px) and (orientation:landscape){.grid.gameGallery>.gameTile{width:calc(25% - 10px);-webkit-flex:0 0 calc(25% - 10px);flex:0 0 calc(25% - 10px)}}
+@supports (display:grid){.grid.gameGallery{display:grid}.grid.gameGallery>.gameTile{width:auto;-webkit-flex:none;flex:none}}
+
+/* Screen rotation and legacy WebView: flexible puzzle boards */
+.dotsBoard,.chessBoard,.sudokuPlay,.matrixPlay{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.chessSquare{width:12.5%;height:12.5%;-webkit-flex:0 0 12.5%;flex:0 0 12.5%;box-sizing:border-box}
+.dotCell{box-sizing:border-box;-webkit-flex-shrink:0;flex-shrink:0}
+.sudokuTile,.matrixTile{box-sizing:border-box;flex-shrink:0}
+@supports (display:grid){.dotsBoard,.chessBoard,.sudokuPlay,.matrixPlay{display:grid}.dotCell,.chessSquare,.sudokuTile,.matrixTile{width:auto!important;height:auto!important}}
+
+/* v8.2: real, touchscreen-friendly sliding and board games. ES5 WebView-compatible. */
+.v82Unblock{max-width:390px;max-height:390px;touch-action:pan-y;overflow:visible;background:#54331c;border-color:#c48e48;}
+.v82Unblock:after{content:'';position:absolute;right:-8px;top:33.333%;height:16.666%;width:10px;background:#60cc74;z-index:1}
+.unblockGrid{position:absolute;inset:0;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;pointer-events:none}
+.unblockGrid>span{box-sizing:border-box;width:16.66667%;height:16.66667%;border:1px solid rgba(255,237,190,.12)}
+.v82Unblock .woodBlock{z-index:2;border-width:2px;font-size:22px;touch-action:manipulation}
+.v82Unblock .redWood{background:linear-gradient(110deg,#ff5356,#de3341)}
+.v82MoveButtons{margin:15px auto 7px}
+.v82Utility{display:-webkit-flex;display:flex;gap:8px;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;max-width:440px;margin:12px auto}
+.v82Utility button{padding:12px 10px;border:none;background:#e9f0ff;border-radius:14px;font-size:14px;font-weight:800;color:#28476d;min-height:46px}
+.v82FlowWrap{max-width:410px;margin:auto}
+.v82Flow{max-width:410px;max-height:410px;touch-action:none;user-select:none;-webkit-user-select:none}
+.v82Flow .dotCell{touch-action:none;outline:none;position:relative}
+.v82Flow .flowInner{position:absolute;inset:0;pointer-events:none}
+.v82Flow .flowCore{position:absolute;left:30%;top:30%;width:40%;height:40%;border-radius:50%}
+.v82Flow .flowEnd{position:absolute;left:16%;top:16%;width:68%;height:68%;border-radius:50%;border:3px solid rgba(255,255,255,.8);box-sizing:border-box;box-shadow:0 0 8px rgba(255,255,255,.22)}
+.v82Flow .flowArm{position:absolute;z-index:0}
+.v82Flow .flowL{left:0;top:36%;width:52%;height:28%}
+.v82Flow .flowR{left:48%;top:36%;width:52%;height:28%}
+.v82Flow .flowU{top:0;left:36%;width:28%;height:52%}
+.v82Flow .flowD{top:48%;left:36%;width:28%;height:52%}
+.v82Flow .flowUsed{background:#213453}
+.v82Board .chessSquare{position:relative;font-size:29px;touch-action:manipulation;box-sizing:border-box}
+.v82Selected{box-shadow:inset 0 0 0 4px #ffd54a!important}
+.v82Legal{box-shadow:inset 0 0 0 3px #5fe6a7}
+.v82LegalDot{width:24%;height:24%;border-radius:50%;background:#179f6f;display:block;opacity:.75}
+.v82Checker{display:-webkit-flex;display:flex;align-items:center;justify-content:center;width:70%;height:70%;font-size:16px;border-radius:50%;box-shadow:0 4px 0 rgba(0,0,0,.16),inset 0 4px 3px rgba(255,255,255,.38);border:3px solid rgba(30,24,22,.3);box-sizing:border-box}
+.v82White{background:linear-gradient(#fffcdb,#f9ce78);color:#b57817}
+.v82Black{background:linear-gradient(#424a60,#0c172c);color:#f9d567}
+.v82ChessPiece{font-size:clamp(22px,6vw,38px);font-family:Arial,'DejaVu Sans',sans-serif;line-height:1.2;filter:drop-shadow(1px 1px 1px rgba(0,0,0,.3))}
+.v82ChessWhite{color:#fff5cf;-webkit-text-stroke:1px #655343;text-shadow:1px 2px 1px #44382e}
+.v82ChessBlack{color:#273049;text-shadow:1px 2px 1px #bda47e}
+@media (orientation:landscape){.v82Board{max-width:min(68vh,470px)}.v82Flow,.v82Unblock{max-width:min(68vh,470px);max-height:min(68vh,470px)}}
+/* Explicit board geometry for Android 6 WebView (no aspect-ratio and no CSS Grid required). */
+.v82Flow{height:350px;max-height:88vw;max-width:88vw}
+.v82Board{height:392px;max-height:91vw;max-width:91vw}
+@media (min-width:700px){.v82Flow{height:390px;max-height:390px}.v82Board{height:410px;max-height:410px}}
+@media (orientation:landscape) and (max-height:600px){.v82Flow{height:65vh;max-height:65vh;width:65vh}.v82Board{height:65vh;max-height:65vh;width:65vh}}
+.puzzleLifeMini{text-align:center;padding:10px 12px;background:#fff4da;border-radius:12px;color:#8d6c22;font-weight:800;font-size:13px;margin:12px auto 5px;max-width:430px}
+/* v8.4 - square checkerboard cells, stable at every screen size/orientation.
+   JS provides exact physical pixels and the fallback works on Android 6 WebView. */
+.v82Board{display:-webkit-flex!important;display:flex!important;-webkit-flex-wrap:wrap!important;flex-wrap:wrap!important;box-sizing:border-box!important;border:0!important;outline:5px solid #6a4934;align-content:flex-start!important;justify-content:flex-start!important;padding:0!important;max-width:none!important;max-height:none!important;aspect-ratio:auto!important}
+.v82Board .chessSquare{box-sizing:border-box!important;min-width:0;min-height:0;max-width:none!important;max-height:none!important;padding:0!important;margin:0!important;aspect-ratio:auto!important;-webkit-flex-shrink:0!important;flex-shrink:0!important}
+.v82Unblock{touch-action:none!important;user-select:none;-webkit-user-select:none}
+.v82Unblock .woodBlock{touch-action:none!important;user-select:none;-webkit-user-select:none;cursor:grab}
+.v82Unblock .woodBlock.draggingWood{z-index:10;cursor:grabbing;box-shadow:0 8px 18px rgba(24,10,5,.35),inset 2px 3px rgba(255,255,255,.3)}
+.v82Unblock .unblockGrid{pointer-events:none}

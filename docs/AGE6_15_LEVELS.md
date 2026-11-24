@@ -1,0 +1,1 @@
+La definizione aggiornata dei 21 giochi e della progressione dei livelli è in `PROGRESSIONE_V8.md`. I documenti precedenti descrivevano soltanto 14 giochi e non sono più applicabili a questa versione.
