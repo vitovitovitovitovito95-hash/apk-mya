@@ -13,7 +13,7 @@
 
   function beep(ok=true){
     if(!state.settings.sound)return;
-    try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=ok?660:190;g.gain.value=.035;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.09);}catch(_e){}
+    if(NS.fx)NS.fx.play(ok?'good':'bad',true);
   }
 
   function topbar(){return `<div class="top"><div class="toprow"><div class="avatar">${NS.escapeHtml(state.profile.avatar||'🦊')}</div><div class="brand">LogicLand <small>GIOCA • PENSA • IMPARA</small></div><div class="pill">⭐ ${state.economy.stars}</div><div class="pill">🪙 ${state.economy.coins}</div></div></div>`;}
@@ -26,9 +26,9 @@
 
   const iconMap={1:'math',5:'sudoku',7:'odd',8:'matrix',9:'matrix',11:'puzzle',14:'memory',16:'english',21:'puzzle',31:'count',32:'odd',33:'memory',34:'english',35:'matrix',51:'tetris',52:'dodge',53:'unblock',54:'dots',55:'water',56:'checkers',57:'chess'};
   function cardImage(g){return `<img class="gameArtwork" src="img/${iconMap[g.id]||'puzzle'}.webp" alt="" loading="lazy">`;}
-  function gameCard(g){
-    const s=gameState(g.id),pct=Math.floor((Math.max(1,s.level)-1)/NS.MAX_LEVEL*100);
-    return `<button class="card gameTile" onclick="LogicLand.startGame(${g.id})">${cardImage(g)}<div class="gameTileCopy"><h3>${NS.escapeHtml(g.name)}</h3><p>${NS.escapeHtml(g.desc)}</p><div class="gameTileProgress"><span>Livello ${s.level} / ${NS.MAX_LEVEL}</span><span>⭐ ${Math.min(3,s.best||0)}</span></div><div class="miniTrack"><i style="width:${pct}%"></i></div></div></button>`;
+  function gameCard(g,index){
+    const s=gameState(g.id),pct=Math.floor((Math.max(1,s.level)-1)/NS.MAX_LEVEL*100),delay=Math.min(14,index||0)*45;
+    return `<button class="card gameTile" style="-webkit-animation-delay:${delay}ms;animation-delay:${delay}ms" onclick="LogicLand.startGame(${g.id})">${cardImage(g)}<div class="gameTileCopy"><h3>${NS.escapeHtml(g.name)}</h3><p>${NS.escapeHtml(g.desc)}</p><div class="gameTileProgress"><span>Livello ${s.level} / ${NS.MAX_LEVEL}</span><span>⭐ ${Math.min(3,s.best||0)}</span></div><div class="miniTrack"><i style="width:${pct}%"></i></div></div></button>`;
   }
   function selectCategory(category){selectedCategory=category;renderHome();}
   function renderHome(ageOverride){
@@ -81,14 +81,14 @@
 
   function registerMistake(message){
     const gs=gameState(current.id);
-    lives--;state.totals.wrong++;gs.wrong++;state.economy.streak=0;gs.lastPlayed=new Date().toISOString();save();updateLivesUI();
+    lives--;state.totals.wrong++;gs.wrong++;state.economy.streak=0;gs.lastPlayed=new Date().toISOString();save();updateLivesUI();if(NS.fx){NS.fx.heartLost();NS.fx.vibrate(60);}
     if(lives<=0){setTimeout(()=>failLevel(message||'Hai esaurito le vite.'),180);return false;}
     toast(`${message||'Errore'} Ti restano ${lives} ${lives===1?'vita':'vite'} ❤️`);return true;
   }
 
   function answer(source){
     if(locked)return;const value=source?.dataset?.value??source,ok=String(value)===String(question.answer);locked=true;
-    document.querySelectorAll('.opt').forEach(b=>{if(String(b.dataset.value)===String(question.answer))b.classList.add('correct');});if(source&&source.classList&&!ok)source.classList.add('wrong');
+    document.querySelectorAll('.opt').forEach(b=>{if(String(b.dataset.value)===String(question.answer))b.classList.add('correct');});if(source&&source.classList&&!ok){source.classList.add('wrong');if(NS.fx)NS.fx.shake(source);}if(ok&&source&&source.classList&&NS.fx)NS.fx.burst(source);
     const gs=gameState(current.id);
     if(ok){score++;state.totals.correct++;gs.correct++;state.economy.streak++;state.economy.coins+=2+(gs.level>7?1:0);state.economy.xp+=10;if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,true);beep(true);gs.lastPlayed=new Date().toISOString();save();}
     else{
@@ -113,6 +113,7 @@
     const gs=gameState(current.id),old=gs.level,perfect=lives===NS.STARTING_LIVES,earned=perfect?3:2;
     gs.best=Math.max(gs.best||0,earned);gs.wins=(gs.wins||0)+1;state.economy.stars+=earned;state.economy.coins+=5*earned;state.economy.xp+=Math.max(20,score*5);state.totals.sessions++;state.daily.gamesCompleted++;
     if(gs.level<NS.MAX_LEVEL)gs.level++;save();
+    if(NS.fx){if(state.settings.sound)NS.fx.play('win');setTimeout(()=>NS.fx.confetti(perfect?64:40),120);}
     const maxed=old>=NS.MAX_LEVEL;
     const mastery=maxed?'Hai completato anche il livello massimo! 🏅':`Hai sbloccato il livello ${gs.level}!`;
     const nextLabel=maxed?'↺ Rigioca livello 15':`Livello successivo ${gs.level} →`;
@@ -171,4 +172,6 @@
   window.addEventListener('resize',applyTabletLayout);
   window.addEventListener('orientationchange',applyTabletLayout);
   renderHome();
+  // PWA (iPhone/iPad e browser): salva l'app per l'uso offline. Nell'APK (file://) non si attiva.
+  try{if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js');}catch(_e){}
 })(window.LogicLand);

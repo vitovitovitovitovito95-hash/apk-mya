@@ -1,0 +1,26 @@
+name: Test LogicLand Kids
+
+on:
+  push:
+    paths: ['src/**','app/**','tests/**','tools/**','android/**','.github/workflows/tests.yml']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Transpile ES5 and check it is committed
+        run: |
+          npm install --no-save typescript@5.9.3
+          node tools/transpile_legacy.js
+          python3 tools/build_pwa.py
+          git diff --stat --exit-code app/js app/sw.js
+      - name: Run tests
+        run: for t in tests/*.js; do echo "== $t"; node "$t"; done

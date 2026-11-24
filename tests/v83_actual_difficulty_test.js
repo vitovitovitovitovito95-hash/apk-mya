@@ -4,7 +4,7 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 global.window=global;global.LogicLand={};global.document={querySelector:()=>null,getElementById:()=>null};
 global.btoa=s=>Buffer.from(s,'binary').toString('base64');global.atob=s=>Buffer.from(s,'base64').toString('binary');
 const dir=path.join(__dirname,'../app/js');
-for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-new.js','games-v82-puzzles.js','games-v82-board.js','games-v83-challenges.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-new.js','games-v82-puzzles.js','games-v82-board.js','games-v83-challenges.js','games-v9-levels.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 const N=global.LogicLand, state=N.defaultState();
 function check(ok,msg){if(!ok)throw new Error(msg);}
 const metrics={

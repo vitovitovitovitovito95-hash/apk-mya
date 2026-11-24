@@ -1,7 +1,7 @@
 /* Build the browser JavaScript for Android 6 / legacy WebView. */
 const fs=require('fs'),path=require('path');
 let ts;
-try{ts=require('typescript');}catch(e){
+try{ts=require(process.env.TS_PATH||'typescript');}catch(e){
   try{ts=require('/opt/nvm/versions/node/v22.16.0/lib/node_modules/typescript');}
   catch(_e){console.error('TypeScript non trovato. Installa con: npm install -g typescript');process.exit(2);}
 }

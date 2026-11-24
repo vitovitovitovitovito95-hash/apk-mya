@@ -11,3 +11,9 @@ Regole permanenti: 21 giochi, 15 livelli per gioco, tre vite, pulsante livello s
 - Non tornare agli Scacchi con pezzi mancanti: schieramento completo da L1.
 - Unlock Me: interazione esclusivamente trascinamento diretto del blocco; niente frecce. Conservare i 15 livelli solvibili.
 - Preservare per i due APK firma e package della 8.3, schema di salvataggio 8, 3 vite e tutti gli MP3 offline.
+
+## Vincoli v9.0
+- `games-v9-levels.js` è caricato dopo `games-v83-challenges.js` e sostituisce 7 generatori: modificare lì.
+- `fx.js` prima di `app.js`. Non usare CSS custom properties (`var(--`) né `gap` su flex per Android 6.
+- Dopo modifiche a `app/` rigenerare `app/sw.js` con `python3 tools/build_pwa.py`.
+- Firmare con le chiavi v9 (fuori dal repo); package v9s24/v9asus, versionCode > 90000.

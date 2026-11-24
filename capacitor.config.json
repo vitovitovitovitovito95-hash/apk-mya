@@ -1,0 +1,6 @@
+{
+  "appId": "com.logicland.kids",
+  "appName": "LogicLand Kids",
+  "webDir": "app",
+  "ios": { "contentInset": "never", "backgroundColor": "#fff8ec" }
+}

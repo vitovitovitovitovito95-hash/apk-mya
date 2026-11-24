@@ -75,19 +75,8 @@ var __read = (this && this.__read) || function (o, n) {
         if (ok === void 0) { ok = true; }
         if (!state.settings.sound)
             return;
-        try {
-            var C = window.AudioContext || window.webkitAudioContext;
-            if (!C)
-                return;
-            var c = new C(), o = c.createOscillator(), g = c.createGain();
-            o.frequency.value = ok ? 660 : 190;
-            g.gain.value = .035;
-            o.connect(g);
-            g.connect(c.destination);
-            o.start();
-            o.stop(c.currentTime + .09);
-        }
-        catch (_e) { }
+        if (NS.fx)
+            NS.fx.play(ok ? 'good' : 'bad', true);
     }
     function topbar() { return "<div class=\"top\"><div class=\"toprow\"><div class=\"avatar\">".concat(NS.escapeHtml(state.profile.avatar || '🦊'), "</div><div class=\"brand\">LogicLand <small>GIOCA \u2022 PENSA \u2022 IMPARA</small></div><div class=\"pill\">\u2B50 ").concat(state.economy.stars, "</div><div class=\"pill\">\uD83E\uDE99 ").concat(state.economy.coins, "</div></div></div>"); }
     function dailyMissionHtml() {
@@ -104,9 +93,9 @@ var __read = (this && this.__read) || function (o, n) {
     }
     var iconMap = { 1: 'math', 5: 'sudoku', 7: 'odd', 8: 'matrix', 9: 'matrix', 11: 'puzzle', 14: 'memory', 16: 'english', 21: 'puzzle', 31: 'count', 32: 'odd', 33: 'memory', 34: 'english', 35: 'matrix', 51: 'tetris', 52: 'dodge', 53: 'unblock', 54: 'dots', 55: 'water', 56: 'checkers', 57: 'chess' };
     function cardImage(g) { return "<img class=\"gameArtwork\" src=\"img/".concat(iconMap[g.id] || 'puzzle', ".webp\" alt=\"\" loading=\"lazy\">"); }
-    function gameCard(g) {
-        var s = gameState(g.id), pct = Math.floor((Math.max(1, s.level) - 1) / NS.MAX_LEVEL * 100);
-        return "<button class=\"card gameTile\" onclick=\"LogicLand.startGame(".concat(g.id, ")\">").concat(cardImage(g), "<div class=\"gameTileCopy\"><h3>").concat(NS.escapeHtml(g.name), "</h3><p>").concat(NS.escapeHtml(g.desc), "</p><div class=\"gameTileProgress\"><span>Livello ").concat(s.level, " / ").concat(NS.MAX_LEVEL, "</span><span>\u2B50 ").concat(Math.min(3, s.best || 0), "</span></div><div class=\"miniTrack\"><i style=\"width:").concat(pct, "%\"></i></div></div></button>");
+    function gameCard(g, index) {
+        var s = gameState(g.id), pct = Math.floor((Math.max(1, s.level) - 1) / NS.MAX_LEVEL * 100), delay = Math.min(14, index || 0) * 45;
+        return "<button class=\"card gameTile\" style=\"-webkit-animation-delay:".concat(delay, "ms;animation-delay:").concat(delay, "ms\" onclick=\"LogicLand.startGame(").concat(g.id, ")\">").concat(cardImage(g), "<div class=\"gameTileCopy\"><h3>").concat(NS.escapeHtml(g.name), "</h3><p>").concat(NS.escapeHtml(g.desc), "</p><div class=\"gameTileProgress\"><span>Livello ").concat(s.level, " / ").concat(NS.MAX_LEVEL, "</span><span>\u2B50 ").concat(Math.min(3, s.best || 0), "</span></div><div class=\"miniTrack\"><i style=\"width:").concat(pct, "%\"></i></div></div></button>");
     }
     function selectCategory(category) { selectedCategory = category; renderHome(); }
     function renderHome(ageOverride) {
@@ -177,6 +166,10 @@ var __read = (this && this.__read) || function (o, n) {
         gs.lastPlayed = new Date().toISOString();
         save();
         updateLivesUI();
+        if (NS.fx) {
+            NS.fx.heartLost();
+            NS.fx.vibrate(60);
+        }
         if (lives <= 0) {
             setTimeout(function () { return failLevel(message || 'Hai esaurito le vite.'); }, 180);
             return false;
@@ -192,8 +185,13 @@ var __read = (this && this.__read) || function (o, n) {
         locked = true;
         document.querySelectorAll('.opt').forEach(function (b) { if (String(b.dataset.value) === String(question.answer))
             b.classList.add('correct'); });
-        if (source && source.classList && !ok)
+        if (source && source.classList && !ok) {
             source.classList.add('wrong');
+            if (NS.fx)
+                NS.fx.shake(source);
+        }
+        if (ok && source && source.classList && NS.fx)
+            NS.fx.burst(source);
         var gs = gameState(current.id);
         if (ok) {
             score++;
@@ -245,6 +243,11 @@ var __read = (this && this.__read) || function (o, n) {
         if (gs.level < NS.MAX_LEVEL)
             gs.level++;
         save();
+        if (NS.fx) {
+            if (state.settings.sound)
+                NS.fx.play('win');
+            setTimeout(function () { return NS.fx.confetti(perfect ? 64 : 40); }, 120);
+        }
         var maxed = old >= NS.MAX_LEVEL;
         var mastery = maxed ? 'Hai completato anche il livello massimo! 🏅' : "Hai sbloccato il livello ".concat(gs.level, "!");
         var nextLabel = maxed ? '↺ Rigioca livello 15' : "Livello successivo ".concat(gs.level, " \u2192");
@@ -347,4 +350,10 @@ var __read = (this && this.__read) || function (o, n) {
     window.addEventListener('resize', applyTabletLayout);
     window.addEventListener('orientationchange', applyTabletLayout);
     renderHome();
+    // PWA (iPhone/iPad e browser): salva l'app per l'uso offline. Nell'APK (file://) non si attiva.
+    try {
+        if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol))
+            navigator.serviceWorker.register('sw.js');
+    }
+    catch (_e) { }
 })(window.LogicLand);

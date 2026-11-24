@@ -12,10 +12,10 @@ ROOT=Path(__file__).resolve().parents[1]
 TPL=ROOT/'android'/'working-v5.0.1.apk'
 ASSETS=ROOT/'app'
 OUT=ROOT/'dist'
-PACKAGE='com.logicland.kids.v8s24'
+PACKAGE='com.logicland.kids.v9s24'
 ACTIVITY='com.logicland.kids.MainActivity'
-VERSION='8.4.0'
-VERSION_CODE=80400
+VERSION='9.0.0'
+VERSION_CODE=90000
 
 
 def axml_patch(data):
@@ -144,16 +144,16 @@ def build():
         for path in sorted(ASSETS.rglob('*')):
             if path.is_file():
                 addfile(z,'assets/'+path.relative_to(ASSETS).as_posix(),path.read_bytes())
-    ks=OUT/'LogicLandKids-v8-debug.p12'
+    ks=Path(os.environ.get('LLK_S24_KEYSTORE',OUT/'LogicLandKids-v9-s24.p12'))
     pw=os.environ.get('LLK_PASSWORD','android')
     if not ks.exists():
-        subprocess.run(['keytool','-genkeypair','-storetype','PKCS12','-keystore',str(ks),'-storepass',pw,'-keypass',pw,'-alias','logicland-v8','-keyalg','RSA','-keysize','2048','-validity','10000','-dname','CN=LogicLand Kids S24 v7 Native Debug,O=Local Build,C=IT'],check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        subprocess.run(['keytool','-genkeypair','-storetype','PKCS12','-keystore',str(ks),'-storepass',pw,'-keypass',pw,'-alias','logicland-v8','-keyalg','RSA','-keysize','2048','-validity','10000','-dname','CN=LogicLand Kids v9 S24,O=Local Build,C=IT'],check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     jarsigned=OUT/'tmp-v1.apk'
     shutil.copyfile(unsigned,jarsigned)
     subprocess.run(['jarsigner','-keystore',str(ks),'-storepass',pw,'-keypass',pw,'-sigalg','SHA256withRSA','-digestalg','SHA-256',str(jarsigned),'logicland-v8'],check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     aligned=OUT/'tmp-v1-aligned.apk'
     zipalign_v1(jarsigned,aligned)
-    signed=OUT/'LogicLandKids-v8.4-Samsung-S24Ultra.apk'
+    signed=OUT/'LogicLandKids-v9.0-Samsung-S24Ultra.apk'
     sign_v2(aligned,signed,ks,pw)
     verify2=verify_v2(signed)
     v1=subprocess.run(['jarsigner','-verify',str(signed)],capture_output=True,text=True)

@@ -1,3 +1,14 @@
+# LogicLand Kids — Stato v9.0
+
+- Base v8.4. 21 giochi, 15 livelli, 3 vite, backup schema 8, MP3 offline invariati.
+- Nuovi generatori v9 (`src/js/games-v9-levels.js`) per Numero Mancante, Intruso, Coppie Gemelle,
+  Conta e Scegli, Blocchi Logici, Domino, Memoria Visiva. Test: `tests/v9_levels_test.js`.
+- Grafica/animazioni v9: fondo di `app/css/styles.css` + `src/js/fx.js` (suoni, coriandoli, scintille).
+- PWA per iOS: `app/manifest.webmanifest`, `app/sw.js` (generato), `app/icons/`, workflow Pages manuale.
+- APK v9.0 (versionCode 90000) con NUOVE chiavi e package `com.logicland.kids.v9s24` / `.v9asus`:
+  si installano accanto alla v8; i progressi si trasferiscono con il codice di backup.
+- Installazione fisica su S24 / Asus: da verificare.
+
 # LogicLand Kids — Stato v8.4
 
 Versione 8.4 basata rigorosamente sulla 8.3.

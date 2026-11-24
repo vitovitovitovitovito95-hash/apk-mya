@@ -1,3 +1,25 @@
+# LogicLand Kids 9.0
+
+Giochi di logica, numeri e inglese per bambini (21 giochi × 15 livelli), offline e senza pubblicità.
+Novità della 9.0 in `CHANGELOG_V90.md`: livelli più impegnativi in 7 giochi, nuova grafica animata,
+versione iPhone/iPad (PWA, vedi `docs/IOS.md`).
+
+## Build rapida
+```bash
+npm install --no-save typescript@5.9.3      # solo la prima volta
+node tools/transpile_legacy.js              # src/js → app/js (ES5 per Android 6)
+python3 tools/build_pwa.py                  # aggiorna app/sw.js (cache offline PWA)
+for t in tests/*.js; do node "$t"; done     # test
+export LLK_KEYSTORE=/percorso/LogicLandKids-v9-asus.jks
+export LLK_S24_KEYSTORE=/percorso/LogicLandKids-v9-s24.p12
+python3 android/build_apk.py                # tablet Asus Android 6.0.1 → dist/
+python3 android/build_s24_v5native.py       # Samsung S24 Ultra → dist/
+```
+APK pronti: `releases/v9.0/`. Le chiavi di firma **non** sono nel repository: usare sempre le stesse
+per gli aggiornamenti, altrimenti Android rifiuta l'installazione sopra la versione precedente.
+
+---
+
 # Aggiornamento v8.3: solo livelli e difficoltà
 
 Le altre funzioni restano quelle di v8.2. Dettagli in `docs/DIFFICOLTA_EFFETTIVA_V83.md`.

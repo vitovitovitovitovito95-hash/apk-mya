@@ -1,7 +1,7 @@
 'use strict';
 window.LogicLand = window.LogicLand || {};
 (function(NS){
-  NS.APP_VERSION = '8.4.0';
+  NS.APP_VERSION = '9.0.0';
   NS.SCHEMA_VERSION = 8;
   NS.MIN_AGE = 6;
   NS.MAX_AGE = 6;

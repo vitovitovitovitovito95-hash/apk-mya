@@ -3,9 +3,9 @@ from pathlib import Path
 import sys,zipfile,hashlib,subprocess,importlib.util
 ROOT=Path(__file__).resolve().parents[1]
 ANDROID=ROOT/'android'
-APK_S24=ROOT/'dist'/'LogicLandKids-v8-Samsung-S24Ultra.apk'
-APK_TAB=ROOT/'dist'/'LogicLandKids-v8-Asus-Android6.0.1.apk'
-S24=ROOT/'dist'/'LogicLandKids-v8-Samsung-S24Ultra.apk'
+APK_S24=ROOT/'dist'/'LogicLandKids-v9.0-Samsung-S24Ultra.apk'
+APK_TAB=ROOT/'dist'/'LogicLandKids-v9.0-Asus-Android6.0.1.apk'
+S24=APK_S24
 # Build script may produce a generic filename for the tablet before publishing.
 if not APK_TAB.exists():APK_TAB=ROOT/'dist'/'LogicLandKids-v7-Asus-Android6-debug.apk'
 expected={}

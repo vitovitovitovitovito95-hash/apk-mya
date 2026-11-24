@@ -1,0 +1,16 @@
+{
+  "name": "LogicLand Kids",
+  "short_name": "LogicLand",
+  "description": "Giochi di logica, numeri e inglese per bambini. Offline, senza pubblicità.",
+  "lang": "it",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff8ec",
+  "theme_color": "#6c63ff",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

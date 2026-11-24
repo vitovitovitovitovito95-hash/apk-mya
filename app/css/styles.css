@@ -205,3 +205,130 @@ body.landscape .dodgeField{max-width:52vw}
 .v82Unblock .woodBlock{touch-action:none!important;user-select:none;-webkit-user-select:none;cursor:grab}
 .v82Unblock .woodBlock.draggingWood{z-index:10;cursor:grabbing;box-shadow:0 8px 18px rgba(24,10,5,.35),inset 2px 3px rgba(255,255,255,.3)}
 .v82Unblock .unblockGrid{pointer-events:none}
+/* ===================== v9.0 — grafica e animazioni ===================== */
+/* Sfondo vivo: bolle colorate che fluttuano lentamente (solo transform → leggero anche su Android 6). */
+body:before,body:after{content:"";position:fixed;z-index:-1;pointer-events:none;border-radius:50%;opacity:.55;-webkit-filter:blur(2px);filter:blur(2px)}
+body:before{width:340px;height:340px;left:-120px;top:120px;background:radial-gradient(circle at 35% 35%,#c9f1ff,rgba(201,241,255,0) 70%);-webkit-animation:floatA 16s ease-in-out infinite alternate;animation:floatA 16s ease-in-out infinite alternate}
+body:after{width:380px;height:380px;right:-150px;bottom:-60px;background:radial-gradient(circle at 60% 40%,#ffe0f0,rgba(255,224,240,0) 70%);-webkit-animation:floatB 19s ease-in-out infinite alternate;animation:floatB 19s ease-in-out infinite alternate}
+@-webkit-keyframes floatA{to{-webkit-transform:translate(60px,140px) scale(1.15)}}
+@keyframes floatA{to{transform:translate(60px,140px) scale(1.15)}}
+@-webkit-keyframes floatB{to{-webkit-transform:translate(-80px,-160px) scale(.9)}}
+@keyframes floatB{to{transform:translate(-80px,-160px) scale(.9)}}
+
+/* Entrate animate */
+@-webkit-keyframes fadeUp{from{opacity:0;-webkit-transform:translateY(18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@-webkit-keyframes popIn{0%{opacity:0;-webkit-transform:scale(.6)}70%{opacity:1;-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.08)}100%{transform:scale(1)}}
+.gameTile{-webkit-animation:fadeUp .45s cubic-bezier(.2,.8,.3,1.2) both;animation:fadeUp .45s cubic-bezier(.2,.8,.3,1.2) both;-webkit-transition:-webkit-transform .18s,box-shadow .18s;transition:transform .18s,box-shadow .18s}
+.gameTile:active{-webkit-transform:scale(.96) rotate(-.6deg);transform:scale(.96) rotate(-.6deg);box-shadow:0 4px 12px rgba(33,49,90,.12)}
+.gameTile .gameArtwork{-webkit-transition:-webkit-transform .35s;transition:transform .35s}
+.gameTile:hover .gameArtwork{-webkit-transform:scale(1.06);transform:scale(1.06)}
+.newHero{-webkit-animation:fadeUp .5s ease both;animation:fadeUp .5s ease both;background:linear-gradient(120deg,#6c63ff,#8f7cff,#58b7ff,#6c63ff);background-size:300% 300%;-webkit-animation:fadeUp .5s ease both,heroShift 12s ease-in-out infinite;animation:fadeUp .5s ease both,heroShift 12s ease-in-out infinite}
+@-webkit-keyframes heroShift{50%{background-position:100% 50%}}
+@keyframes heroShift{50%{background-position:100% 50%}}
+.hero:after{-webkit-animation:twinkle 3.2s ease-in-out infinite;animation:twinkle 3.2s ease-in-out infinite}
+@-webkit-keyframes twinkle{50%{opacity:.32;-webkit-transform:rotate(18deg) scale(1.15)}}
+@keyframes twinkle{50%{opacity:.32;transform:rotate(18deg) scale(1.15)}}
+.avatar{-webkit-animation:bob 3s ease-in-out infinite;animation:bob 3s ease-in-out infinite}
+@-webkit-keyframes bob{50%{-webkit-transform:translateY(-3px) rotate(-6deg)}}
+@keyframes bob{50%{transform:translateY(-3px) rotate(-6deg)}}
+.categoryTab{-webkit-transition:-webkit-transform .15s,background .2s;transition:transform .15s,background .2s}
+.categoryTab:active{-webkit-transform:scale(.92);transform:scale(.92)}
+
+/* Schermata di gioco */
+.question{-webkit-animation:fadeUp .38s cubic-bezier(.2,.8,.3,1.15) both;animation:fadeUp .38s cubic-bezier(.2,.8,.3,1.15) both;border:1px solid rgba(108,99,255,.08);background:linear-gradient(180deg,#fff,#fbfaff)}
+.qicon{display:inline-block;-webkit-animation:popIn .5s .1s both,bob 2.6s 1s ease-in-out infinite;animation:popIn .5s .1s both,bob 2.6s 1s ease-in-out infinite}
+.opt{-webkit-animation:popIn .35s both;animation:popIn .35s both;-webkit-transition:-webkit-transform .12s,background .2s,border-color .2s;transition:transform .12s,background .2s,border-color .2s;border-bottom:4px solid #e6e8f3}
+.opt:nth-child(1){-webkit-animation-delay:.12s;animation-delay:.12s}.opt:nth-child(2){-webkit-animation-delay:.18s;animation-delay:.18s}.opt:nth-child(3){-webkit-animation-delay:.24s;animation-delay:.24s}.opt:nth-child(4){-webkit-animation-delay:.30s;animation-delay:.30s}.opt:nth-child(5){-webkit-animation-delay:.36s;animation-delay:.36s}.opt:nth-child(6){-webkit-animation-delay:.42s;animation-delay:.42s}
+.opt:active{-webkit-transform:translateY(2px) scale(.97);transform:translateY(2px) scale(.97);border-bottom-width:2px}
+.opt.correct{-webkit-animation:correctPop .5s both;animation:correctPop .5s both;box-shadow:0 0 0 4px rgba(88,201,135,.25),0 10px 24px rgba(57,185,111,.25);border-bottom-color:#3fae6d}
+@-webkit-keyframes correctPop{0%{-webkit-transform:scale(1)}40%{-webkit-transform:scale(1.12)}100%{-webkit-transform:scale(1)}}
+@keyframes correctPop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.fxShake{-webkit-animation:shake .42s both!important;animation:shake .42s both!important}
+@-webkit-keyframes shake{10%,90%{-webkit-transform:translateX(-2px)}20%,80%{-webkit-transform:translateX(4px)}30%,50%,70%{-webkit-transform:translateX(-7px)}40%,60%{-webkit-transform:translateX(7px)}}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
+.feedback{-webkit-animation:fadeUp .3s both;animation:fadeUp .3s both}
+.nextBtn{background:linear-gradient(135deg,#25324a,#3d4f78);box-shadow:0 8px 18px rgba(37,50,74,.25);-webkit-animation:fadeUp .35s .15s both;animation:fadeUp .35s .15s both;-webkit-transition:-webkit-transform .12s;transition:transform .12s}
+.nextBtn:active{-webkit-transform:scale(.97);transform:scale(.97)}
+.nextLevelButton{background:linear-gradient(135deg,#39b96f,#2fa3a0);-webkit-animation:fadeUp .35s .3s both,pulse 1.8s 1s ease-in-out infinite;animation:fadeUp .35s .3s both,pulse 1.8s 1s ease-in-out infinite}
+@-webkit-keyframes pulse{50%{-webkit-transform:scale(1.035);box-shadow:0 10px 26px rgba(57,185,111,.45)}}
+@keyframes pulse{50%{transform:scale(1.035);box-shadow:0 10px 26px rgba(57,185,111,.45)}}
+
+/* Barra di avanzamento con riflesso animato */
+.progress i{position:relative;overflow:hidden;-webkit-transition:width .5s cubic-bezier(.3,.9,.3,1.2);transition:width .5s cubic-bezier(.3,.9,.3,1.2)}
+.progress i:after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:40%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55),rgba(255,255,255,0));-webkit-animation:shine 2.2s ease-in-out infinite;animation:shine 2.2s ease-in-out infinite}
+@-webkit-keyframes shine{to{left:110%}}
+@keyframes shine{to{left:110%}}
+
+/* Vite: il cuore perso “trema” */
+.lives{display:inline-block}
+.heartHit{-webkit-animation:heartHit .6s both;animation:heartHit .6s both}
+@-webkit-keyframes heartHit{0%{-webkit-transform:scale(1)}25%{-webkit-transform:scale(1.35) rotate(-8deg)}50%{-webkit-transform:scale(.9) rotate(6deg)}100%{-webkit-transform:scale(1)}}
+@keyframes heartHit{0%{transform:scale(1)}25%{transform:scale(1.35) rotate(-8deg)}50%{transform:scale(.9) rotate(6deg)}100%{transform:scale(1)}}
+
+/* Vittoria / sconfitta */
+.levelWin .trophy{display:inline-block;-webkit-animation:trophy 1s cubic-bezier(.2,.9,.3,1.4) both,bob 2.4s 1s ease-in-out infinite;animation:trophy 1s cubic-bezier(.2,.9,.3,1.4) both,bob 2.4s 1s ease-in-out infinite}
+@-webkit-keyframes trophy{0%{opacity:0;-webkit-transform:scale(.2) rotate(-30deg)}60%{opacity:1;-webkit-transform:scale(1.25) rotate(8deg)}100%{-webkit-transform:scale(1)}}
+@keyframes trophy{0%{opacity:0;transform:scale(.2) rotate(-30deg)}60%{opacity:1;transform:scale(1.25) rotate(8deg)}100%{transform:scale(1)}}
+.reward span{-webkit-animation:popIn .45s both;animation:popIn .45s both}
+.reward span:nth-child(1){-webkit-animation-delay:.45s;animation-delay:.45s}.reward span:nth-child(2){-webkit-animation-delay:.6s;animation-delay:.6s}
+.failLevel .trophy{-webkit-animation:fadeUp .5s both,wobble 2.4s 1s ease-in-out infinite;animation:fadeUp .5s both,wobble 2.4s 1s ease-in-out infinite}
+@-webkit-keyframes wobble{25%{-webkit-transform:rotate(-8deg)}75%{-webkit-transform:rotate(8deg)}}
+@keyframes wobble{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+
+/* Coriandoli e scintille */
+.confettiLayer{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:200;overflow:hidden}
+.confettiLayer i{position:absolute;top:-20px;display:block;-webkit-animation-name:fallR;animation-name:fallR;-webkit-animation-timing-function:cubic-bezier(.25,.6,.5,1);animation-timing-function:cubic-bezier(.25,.6,.5,1);-webkit-animation-fill-mode:both;animation-fill-mode:both}
+.confettiLayer i.l{-webkit-animation-name:fallL;animation-name:fallL}
+@-webkit-keyframes fallR{0%{-webkit-transform:translate(0,0) rotate(0)}100%{-webkit-transform:translate(80px,110vh) rotate(720deg);opacity:.9}}
+@keyframes fallR{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(80px,110vh) rotate(720deg);opacity:.9}}
+@-webkit-keyframes fallL{0%{-webkit-transform:translate(0,0) rotate(0)}100%{-webkit-transform:translate(-80px,110vh) rotate(-640deg);opacity:.9}}
+@keyframes fallL{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(-80px,110vh) rotate(-640deg);opacity:.9}}
+.sparkLayer{position:fixed;width:0;height:0;pointer-events:none;z-index:150}
+.spark{position:absolute;left:-8px;top:-10px;font-style:normal;font-size:18px;color:#ffbd32;text-shadow:0 1px 2px rgba(0,0,0,.15);-webkit-animation-duration:.8s;animation-duration:.8s;-webkit-animation-timing-function:ease-out;animation-timing-function:ease-out;-webkit-animation-fill-mode:both;animation-fill-mode:both}
+.spark.s1{color:#4cd685}.spark.s3{color:#4aa8ff}.spark.s5{color:#ff5d73}.spark.s7{color:#8f7bff}
+.spark.s0{-webkit-transform:rotate(0deg);transform:rotate(0deg)}
+.spark.s0{-webkit-animation-name:sp0;animation-name:sp0}.spark.s1{-webkit-animation-name:sp1;animation-name:sp1}.spark.s2{-webkit-animation-name:sp2;animation-name:sp2}.spark.s3{-webkit-animation-name:sp3;animation-name:sp3}.spark.s4{-webkit-animation-name:sp4;animation-name:sp4}.spark.s5{-webkit-animation-name:sp5;animation-name:sp5}.spark.s6{-webkit-animation-name:sp6;animation-name:sp6}.spark.s7{-webkit-animation-name:sp7;animation-name:sp7}
+@keyframes sp0{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(0,-62px) scale(1.2)}}
+@keyframes sp1{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(44px,-44px) scale(1.2)}}
+@keyframes sp2{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(62px,0) scale(1.2)}}
+@keyframes sp3{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(44px,44px) scale(1.2)}}
+@keyframes sp4{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(0,62px) scale(1.2)}}
+@keyframes sp5{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(-44px,44px) scale(1.2)}}
+@keyframes sp6{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(-62px,0) scale(1.2)}}
+@keyframes sp7{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:translate(-44px,-44px) scale(1.2)}}
+@-webkit-keyframes sp0{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(0,-62px) scale(1.2)}}
+@-webkit-keyframes sp1{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(44px,-44px) scale(1.2)}}
+@-webkit-keyframes sp2{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(62px,0) scale(1.2)}}
+@-webkit-keyframes sp3{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(44px,44px) scale(1.2)}}
+@-webkit-keyframes sp4{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(0,62px) scale(1.2)}}
+@-webkit-keyframes sp5{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(-44px,44px) scale(1.2)}}
+@-webkit-keyframes sp6{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(-62px,0) scale(1.2)}}
+@-webkit-keyframes sp7{0%{opacity:1;-webkit-transform:scale(.4)}100%{opacity:0;-webkit-transform:translate(-44px,-44px) scale(1.2)}}
+
+/* Nuovi elementi dei livelli v9 */
+.seqHole{display:inline-block;min-width:1.3em;padding:0 .2em;border-radius:10px;background:#ffe9a8;color:#9a6a00;-webkit-animation:pulse 1.4s ease-in-out infinite;animation:pulse 1.4s ease-in-out infinite}
+.seqVisual{font-size:28px;letter-spacing:2px}
+.v9Strip span{-webkit-animation:popIn .3s both;animation:popIn .3s both}
+.v9Strip span:nth-child(2n){-webkit-animation-delay:.05s;animation-delay:.05s}.v9Strip span:nth-child(3n){-webkit-animation-delay:.1s;animation-delay:.1s}
+.countGrid{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;margin:12px auto;font-size:30px}
+.countGrid span{width:48px;height:48px;line-height:48px;text-align:center;-webkit-animation:popIn .35s both;animation:popIn .35s both}
+.countGrid span:nth-child(3n){-webkit-transform:rotate(-8deg);transform:rotate(-8deg)}
+.countGrid span:nth-child(4n+1){-webkit-transform:translateY(5px);transform:translateY(5px)}
+.memoryBoard{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;margin:12px auto;max-width:560px}
+.memoryBoard span{position:relative;width:54px;height:54px;line-height:54px;font-size:32px;text-align:center;border-radius:14px;background:#f4f3ff;margin:3px;-webkit-animation:popIn .3s both;animation:popIn .3s both}
+.memoryBoard.grid{max-width:380px}
+.memoryBoard span small{position:absolute;top:-6px;left:5px;font-size:9px;color:#8b94a8;font-weight:900;line-height:20px}
+.memoryBoard span.hidden{background:#e8e6ff;-webkit-animation:flip .4s both;animation:flip .4s both}
+@-webkit-keyframes flip{0%{-webkit-transform:rotateY(90deg)}100%{-webkit-transform:rotateY(0)}}
+@keyframes flip{0%{transform:rotateY(90deg)}100%{transform:rotateY(0)}}
+.memoryTimer{height:6px;border-radius:9px;background:#eef0f8;overflow:hidden;max-width:260px;margin:4px auto 0}
+.memoryTimer i{display:block;height:100%;background:linear-gradient(90deg,#ffbd32,#ff5d73);-webkit-animation:timer linear both;animation:timer linear both}
+@-webkit-keyframes timer{from{width:100%}to{width:0}}
+@keyframes timer{from{width:100%}to{width:0}}
+@media(prefers-reduced-motion:reduce){body:before,body:after{display:none}}
+/* v9: opzioni a due colonne piene (prima, con CSS Grid, ogni pulsante occupava metà della cella). */
+.options{display:-webkit-flex!important;display:flex!important;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:space-between;justify-content:space-between;gap:0}
+.options>.opt{width:calc(50% - 6px);width:-webkit-calc(50% - 6px);margin-bottom:11px}
+.optEmoji{font-size:34px;line-height:1}
