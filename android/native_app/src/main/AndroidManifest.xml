@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  LogicLand Kids: guscio Android.
+  minSdk, targetSdk, versionCode e versionName vengono iniettati da android/build_apk.py
+  (versionName letto da app/js/core.js → NS.APP_VERSION).
+
+  Nessun permesso dichiarato: niente INTERNET, niente memoria esterna, niente posizione.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.logicland.kids">
+
+    <!-- Android 11+: serve per trovare il motore di sintesi vocale del telefono (voce inglese). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LogicLand">
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -1,0 +1,20 @@
+LogicLand Kids v8.1 – English audio fixes
+
+PASS tests/audio_offline_test.js: verified 383 required word/translation/full-sentence pronunciations, 465 MP3 files bundled, 16 simulated audio button taps, both English games across 15 levels.
+PASS tests/android6_compat_test.js: ES5 syntax, SDK 23 compatibility, polyfills and CSS.
+PASS tests/new_games_test.js: 75 game renders with progressive levels.
+PASS tests/progression_test.js: 21 games, 15 levels, 3 lives.
+PASS tests/smoke_test.js: 10,500 questions, 14 learning games and 7 interactive games.
+PASS tests/storage_test.js: schema 8 remains unchanged, LLK5 migration.
+PASS tests/ui_contract_test.js: navigation, lives, retry and next level.
+
+APK Samsung: JAR/v1 and APK Signature v2 verified; signing certificate unchanged from v8.0; v8.1 versionCode 80100; asset digest equals Asus.
+APK Asus Android 6.0.1: JAR/v1 verified; signing certificate unchanged from v8.0; v8.1 versionCode 80100; 465 MP3 uncompressed in APK.
+
+Physical speaker test on user devices: PENDING. APK structure verification is not a physical playback test.
+
+Versione 8.4
+- Tutti i test .js superati (incluso v84_board_drag_test.js).
+- Browser Chromium: 64 caselle identiche in portrait/landscape; 24 pedine Dama, 32 pezzi Scacchi; Unlock senza frecce, trascinamento con mouse e TouchEvent simulati superato.
+- Verificato diff APK v8.3->v8.4: solo core.js, games-v82-board.js, games-v82-puzzles.js, styles.css cambiati tra gli asset; 465 file audio identici.
+- Build Samsung con APK Signature Scheme v1+v2 valido, build Asus firmata v1.

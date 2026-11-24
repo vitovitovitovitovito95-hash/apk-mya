@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Allineati a app/css/styles.css -->
+    <color name="llk_bg_top">#FFEDF9FF</color>
+    <color name="llk_bg_bottom">#FFFFFAF4</color>
+    <color name="llk_primary">#FF6C63FF</color>
+</resources>
