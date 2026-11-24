@@ -1,7 +1,12 @@
-# English audio v8.1
+# Audio offline (v9.2)
 
-The application ships with 465 offline MP3 pronunciations, covering 178 English/Italian vocabulary pairs plus common phrase tokens. Total packaged MP3 data is approximately 3.3 MiB.
+Tutte le parole e le frasi dei giochi di lingua hanno un MP3 nell'app: inglese (voce en-GB), spagnolo (es-ES)
+e le frasi italiane di aiuto (it-IT). Totale circa 785 file, 5,1 MiB, in `app/audio/{en,it,es}/`.
+L'indice `app/js/audio-index.js` usa chiavi `lingua|testo` (es. `en|apple`, `es|el gato`, `es|el gato duerme.`).
 
-Tap the speaker icon to listen. Local MP3 speech is used first; native Android TextToSpeech and browser speechSynthesis are fallback paths. This avoids relying on a TTS engine/voice pack being installed. For dynamically assembled sentences, a token-by-token audio playlist is used if no whole-sentence audio is available.
-
-The voice is the offline espeak synthetic voice (not natural speech). Rebuild with `python tools/build_audio_assets.py` after changing vocabulary; the script requires `espeak` and `ffmpeg` on the build machine, not on the device.
+- Voce: **SVOX Pico** (`pico2wave`, pacchetto `libttspico-utils`), più naturale della vecchia espeak.
+  Post-elaborazione con ffmpeg: taglio silenzi, volume +50%, MP3 mono 16 kHz 40 kbit/s.
+- Rigenerare dopo modifiche al vocabolario: `python3 tools/build_audio_v92.py` (serve solo sulla macchina di build).
+- Nell'app: le modalità di ascolto partono da sole dopo 0,45 s; 🔊 riascolta, 🐢 Lento riproduce al 72% della velocità.
+  Dopo ogni risposta la parola giusta viene pronunciata.
+- Ordine di ricerca: MP3 della frase intera → MP3 parola per parola → TTS nativo Android (solo inglese) → messaggio.

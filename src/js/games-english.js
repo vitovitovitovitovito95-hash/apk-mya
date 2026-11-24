@@ -37,14 +37,15 @@
   };
 
   function audioFiles(text,lang){
-    const keyLang=(lang||'en-GB').indexOf('it')===0?'it':'en';
+    const l=(lang||'en-GB').toLowerCase(),keyLang=l.indexOf('it')===0?'it':l.indexOf('es')===0?'es':'en';
     const index=NS.AUDIO_INDEX||{};
     const norm=String(text||'').trim().toLowerCase();
     const direct=index[keyLang+'|'+norm];
     if(direct)return [BASE_AUDIO+direct];
     // Sentences composed dynamically, and lists of words at high levels:
     // concatenate the prerecorded word pronunciation files.
-    const parts=norm.match(/[a-zà-ÿ]+(?:['’][a-zà-ÿ]+)?/g)||[];
+    if(keyLang==='en'||keyLang==='es'){const dot=index[keyLang+'|'+norm+'.'];if(dot)return [BASE_AUDIO+dot];}
+    const parts=norm.match(/[a-zà-ÿñ]+(?:['’][a-zà-ÿ]+)?/g)||[];
     const files=[];
     for(let i=0;i<parts.length;i++){
       const f=index[keyLang+'|'+parts[i]];
@@ -53,8 +54,9 @@
     return files;
   }
 
-  NS.speakLine=function(text,lang){
+  NS.speakLine=function(text,lang,slow){
     if(!text)return false;
+    NS.lastSpoken=[text,lang];
     NS.stopEnglishAudio();
     const serial=playbackSerial;
     const files=audioFiles(text,lang);
@@ -76,6 +78,7 @@
         if(!ttsFallback(text,lang)&&NS.toast)NS.toast('Audio non disponibile su questo dispositivo.');
       };
       audio.src=files[i];
+      try{audio.playbackRate=slow?0.72:1;if('preservesPitch' in audio)audio.preservesPitch=true;}catch(_r){}
       try{
         const result=audio.play();
         if(result&&typeof result.catch==='function'){
@@ -94,6 +97,7 @@
     return true;
   };
   NS.speak=NS.speakLine;
+  NS.speakSlow=function(){if(NS.lastSpoken)NS.speakLine(NS.lastSpoken[0],NS.lastSpoken[1],true);};
 
   function soundBtn(text,lang,label){
     return `<button class="speak" aria-label="${label||'Ascolta'}" onclick="LogicLand.speakLine('${NS.escapeHtml(text)}','${lang||'en-GB'}')">🔊 ${label||'Audio'}</button>`;

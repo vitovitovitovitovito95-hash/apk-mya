@@ -78,7 +78,7 @@ var __read = (this && this.__read) || function (o, n) {
         if (NS.fx)
             NS.fx.play(ok ? 'good' : 'bad', true);
     }
-    function topbar() { return "<div class=\"top\"><div class=\"toprow\"><div class=\"avatar\">".concat(NS.escapeHtml(state.profile.avatar || '🦊'), "</div><div class=\"brand\">LogicLand <b class=\"vTag\">v9</b><small>GIOCA \u2022 PENSA \u2022 IMPARA</small></div><div class=\"pill\">\u2B50 ").concat(state.economy.stars, "</div><div class=\"pill\">\uD83E\uDE99 ").concat(state.economy.coins, "</div></div></div>"); }
+    function topbar() { return "<div class=\"top\"><div class=\"toprow\"><div class=\"avatar\">".concat(NS.escapeHtml(state.profile.avatar || '🦊'), "</div><div class=\"brand\">LogicLand <b class=\"vTag\">v9.2</b><small>GIOCA \u2022 PENSA \u2022 IMPARA</small></div><div class=\"pill\">\u2B50 ").concat(state.economy.stars, "</div><div class=\"pill\">\uD83E\uDE99 ").concat(state.economy.coins, "</div></div></div>"); }
     function dailyMissionHtml() {
         NS.ensureDaily(state);
         var d = state.daily, games = Math.min(3, d.gamesCompleted), eng = Math.min(5, d.englishCorrect), done = games >= 3 && eng >= 5;
@@ -91,12 +91,17 @@ var __read = (this && this.__read) || function (o, n) {
         }
         return "<div class=\"daily ".concat(done ? 'done' : '', "\">").concat(done ? '✅' : '🎯', " Missione di oggi: giochi ").concat(games, "/3 \u2022 parole inglesi ").concat(eng, "/5").concat(done ? ' • completata!' : '', "</div>");
     }
-    var iconMap = { 40: 'count', 41: 'math', 42: 'sudoku', 1: 'math', 5: 'sudoku', 7: 'odd', 8: 'matrix', 9: 'matrix', 11: 'puzzle', 14: 'memory', 16: 'english', 21: 'puzzle', 31: 'count', 32: 'odd', 33: 'memory', 34: 'english', 35: 'matrix', 51: 'tetris', 52: 'dodge', 53: 'unblock', 54: 'dots', 55: 'water', 56: 'checkers', 57: 'chess' };
-    function cardImage(g) { return "<img class=\"gameArtwork\" src=\"img/".concat(iconMap[g.id] || 'puzzle', ".webp\" alt=\"\" loading=\"lazy\">"); }
+    var iconMap = { 1: 'math', 5: 'sudoku', 7: 'odd', 8: 'matrix', 9: 'matrix', 11: 'puzzle', 14: 'memory', 16: 'english', 21: 'puzzle', 31: 'count', 32: 'odd', 33: 'memory', 34: 'english', 35: 'matrix', 51: 'tetris', 52: 'dodge', 53: 'unblock', 54: 'dots', 55: 'water', 56: 'checkers', 57: 'chess' };
+    function cardImage(g) { return iconMap[g.id] && !g.v9 ? "<img class=\"gameArtwork\" src=\"img/".concat(iconMap[g.id], ".webp\" alt=\"\" loading=\"lazy\">") : "<div class=\"gameArtwork emojiArt art-".concat(g.world, "\"><span>").concat(g.icon, "</span></div>"); }
+    // v9.2: i giochi più complessi si sbloccano con le stelle accumulate
+    var UNLOCK = { 32: 5, 70: 5, 71: 5, 61: 5, 5: 12, 11: 12, 41: 12, 53: 12, 54: 12, 72: 12, 73: 12, 9: 20, 42: 20, 56: 20, 57: 30 };
+    function needStars(g) { return state.settings.unlockAll ? 0 : Math.max(0, (UNLOCK[g.id] || 0) - state.economy.stars); }
+    function lockedInfo(id) { var g = NS.GAMES.find(function (x) { return x.id === Number(id); }); toast("\uD83D\uDD12 ".concat(g.name, ": servono ancora ").concat(needStars(g), " \u2B50 (ne servono ").concat(UNLOCK[g.id], " in tutto). Completa altri livelli!")); }
     function gameCard(g, index) {
         var s = gameState(g.id), pct = Math.floor((Math.max(1, s.level) - 1) / NS.MAX_LEVEL * 100), delay = Math.min(14, index || 0) * 45;
-        var worldIcon = { math: '🔢', logic: '🧠', visual: '👁️', english: '🇬🇧', arcade: '🎮' }[g.world] || '⭐';
-        return "<button class=\"card gameTile world-".concat(g.world).concat(g.v9 ? ' isNew' : '', "\" style=\"-webkit-animation-delay:").concat(delay, "ms;animation-delay:").concat(delay, "ms\" onclick=\"LogicLand.startGame(").concat(g.id, ")\">").concat(cardImage(g), "<span class=\"worldChip\">").concat(worldIcon, "</span>").concat(g.v9 ? '<span class="newChip">NUOVO</span>' : '', "<div class=\"gameTileCopy\"><h3>").concat(NS.escapeHtml(g.name), "</h3><p>").concat(NS.escapeHtml(g.desc), "</p><div class=\"gameTileProgress\"><span>Livello ").concat(s.level, " / ").concat(NS.MAX_LEVEL, "</span><span>\u2B50 ").concat(Math.min(3, s.best || 0), "</span></div><div class=\"miniTrack\"><i style=\"width:").concat(pct, "%\"></i></div></div></button>");
+        var worldIcon = { math: '🔢', logic: '🧠', visual: '👁️', english: '🇬🇧', arcade: '🎮', brain: '⚡', spanish: '🇪🇸' }[g.world] || '⭐';
+        var lockN = needStars(g);
+        return "<button class=\"card gameTile world-".concat(g.world).concat(g.v9 ? ' isNew' : '').concat(lockN ? ' locked' : '', "\" style=\"-webkit-animation-delay:").concat(delay, "ms;animation-delay:").concat(delay, "ms\" onclick=\"LogicLand.").concat(lockN ? 'lockedInfo' : 'startGame', "(").concat(g.id, ")\">").concat(cardImage(g)).concat(lockN ? "<span class=\"lockBadge\">\uD83D\uDD12 ".concat(UNLOCK[g.id], " \u2B50</span>") : '', "<span class=\"worldChip\">").concat(worldIcon, "</span>").concat(g.v9 ? '<span class="newChip">NUOVO</span>' : '', "<div class=\"gameTileCopy\"><h3>").concat(NS.escapeHtml(g.name), "</h3><p>").concat(NS.escapeHtml(g.desc), "</p><div class=\"gameTileProgress\"><span>Livello ").concat(s.level, " / ").concat(NS.MAX_LEVEL, "</span><span>\u2B50 ").concat(Math.min(3, s.best || 0), "</span></div><div class=\"miniTrack\"><i style=\"width:").concat(pct, "%\"></i></div></div></button>");
     }
     function selectCategory(category) { selectedCategory = category; renderHome(); }
     function renderHome(ageOverride) {
@@ -109,10 +114,10 @@ var __read = (this && this.__read) || function (o, n) {
         NS.ensureDaily(state);
         save();
         var name = NS.escapeHtml(state.profile.name || 'Esploratrice'), games = NS.GAMES;
-        var categories = [['Tutti', 'Tutti'], ['Logica', 'logic'], ['Figure', 'visual'], ['Numeri', 'math'], ['Inglese', 'english'], ['Abilità', 'arcade']];
+        var categories = [['Tutti', 'Tutti'], ['Logica', 'logic'], ['Numeri', 'math'], ['Cervello', 'brain'], ['Figure', 'visual'], ['Inglese', 'english'], ['Spagnolo', 'spanish'], ['Abilità', 'arcade']];
         var visible = selectedCategory === 'Tutti' ? games : games.filter(function (g) { return g.world === selectedCategory; });
         var tabs = categories.map(function (c) { return "<button class=\"categoryTab ".concat(selectedCategory === c[1] ? 'active' : '', "\" onclick=\"LogicLand.selectCategory('").concat(c[1], "')\">").concat(c[0], "</button>"); }).join('');
-        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap newHome\"><section class=\"hero newHero\"><div class=\"v9Ribbon\">\u2728 NUOVA VERSIONE 9 \u00B7 pi\u00F9 logica, pi\u00F9 sfida</div><h1>Ciao, ".concat(name, "! \uD83C\uDF08</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>").concat(dailyMissionHtml(), "</section><div class=\"homeHeading\"><h2>\uD83C\uDFB2 Scegli il tuo gioco</h2><span>").concat(games.length, " giochi \u00B7 15 livelli \u00B7 \u23F1\uFE0F a tempo</span></div><div class=\"categoryTabs\">").concat(tabs, "</div><div class=\"grid gameGallery\">").concat(visible.map(gameCard).join(''), "</div><div class=\"nav\"><button class=\"secondary\" style=\"flex:1\" onclick=\"LogicLand.renderParents()\">\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67 Zona genitori</button><button class=\"secondary\" onclick=\"LogicLand.about()\">\u2139\uFE0F</button></div></div>");
+        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap newHome\"><section class=\"hero newHero\"><div class=\"v9Ribbon\">\u2728 NOVIT\u00C0 9.2 \u00B7 livelli veri, spagnolo e giochi per la mente</div><h1>Ciao, ".concat(name, "! \uD83C\uDF08</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>").concat(dailyMissionHtml(), "</section><div class=\"homeHeading\"><h2>\uD83C\uDFB2 Scegli il tuo gioco</h2><span>").concat(games.length, " giochi \u00B7 15 livelli \u00B7 \u23F1\uFE0F a tempo</span></div><div class=\"categoryTabs\">").concat(tabs, "</div><div class=\"grid gameGallery\">").concat(visible.map(gameCard).join(''), "</div><div class=\"nav\"><button class=\"secondary\" style=\"flex:1\" onclick=\"LogicLand.renderParents()\">\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67 Zona genitori</button><button class=\"secondary\" onclick=\"LogicLand.about()\">\u2139\uFE0F</button></div></div>");
     }
     function selectAge(age) { selectedAge = NS.clamp(Number(age), NS.MIN_AGE, NS.MAX_AGE); renderHome(selectedAge); }
     function lifeHtml() {
@@ -126,10 +131,10 @@ var __read = (this && this.__read) || function (o, n) {
     function gameShell(body, progressOverride) {
         if (progressOverride === void 0) { progressOverride = null; }
         var st = gameState(current.id), pct = progressOverride === null ? Math.min(100, round / NS.questionsFor(st.level) * 100) : NS.clamp(progressOverride, 0, 100);
-        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap\"><div class=\"gameHead\"><button class=\"back\" onclick=\"LogicLand.renderHome(".concat(selectedAge, ")\">\u2190</button><div class=\"gameTitle\"><h2>").concat(current.icon, " ").concat(NS.escapeHtml(current.name), "</h2><div>Livello ").concat(st.level, "/").concat(NS.MAX_LEVEL, " \u2022 ").concat(NS.escapeHtml(current.group), "<br><small>").concat(NS.difficultyLabel(st.level), "</small></div></div><div class=\"gameStatus\">").concat(lifeHtml(), "<span class=\"badge\">").concat(current.arcade ? 'L' + st.level : score + '/' + NS.questionsFor(st.level) + ' ✓', "</span></div></div><div class=\"progress\"><i id=\"levelProgress\" style=\"width:").concat(pct, "%\"></i></div>").concat(body, "</div>");
+        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap\"><div class=\"gameHead\"><button class=\"back\" onclick=\"LogicLand.renderHome(".concat(selectedAge, ")\">\u2190</button><div class=\"gameTitle\"><h2>").concat(current.icon, " ").concat(NS.escapeHtml(current.name), "</h2><div>Livello ").concat(st.level, "/").concat(NS.MAX_LEVEL, " \u2022 ").concat(NS.escapeHtml(current.group), "<br><small>").concat(NS.LEVEL_INFO && NS.LEVEL_INFO[current.id] ? NS.escapeHtml(NS.LEVEL_INFO[current.id][st.level - 1]) : NS.difficultyLabel(st.level), "</small></div></div><div class=\"gameStatus\">").concat(lifeHtml(), "<span class=\"badge\">").concat(current.arcade ? 'L' + st.level : score + '/' + NS.questionsFor(st.level) + ' ✓', "</span></div></div><div class=\"progress\"><i id=\"levelProgress\" style=\"width:").concat(pct, "%\"></i></div>").concat(body, "</div>");
     }
     function makeQuestion(id, level) { var fn = NS.MathGames[id] || NS.VisualGames[id] || NS.EnglishGames[id]; if (!fn)
-        throw new Error("Generatore mancante per gioco ".concat(id)); return fn(current && current.v9 ? level : NS.contentLevel(level), state); }
+        throw new Error("Generatore mancante per gioco ".concat(id)); return fn(level, state); }
     // v9: conto alla rovescia per ogni domanda (più breve a ogni livello). Allo scadere si perde una vita.
     var timerId = null, timerEnd = 0, timerTotal = 0;
     function stopTimer() { if (timerId) {
@@ -139,7 +144,7 @@ var __read = (this && this.__read) || function (o, n) {
     function startTimer(extraMs) {
         stopTimer();
         var level = gameState(current.id).level;
-        timerTotal = NS.secondsFor(level) * ({ 1: 2, 5: 2, 9: 2, 40: 2, 41: 2.5, 42: 2.5 }[current.id] || 1) * 1000;
+        timerTotal = NS.secondsFor(level) * ({ 1: 2, 5: 2, 9: 2, 11: 2, 31: 1.5, 34: 1.5, 61: 1.5, 40: 2, 41: 2.5, 42: 2.5, 73: 1.5 }[current.id] || 1) * 1000;
         timerEnd = Date.now() + timerTotal + (extraMs || 0);
         var tick = function () {
             var bar = document.getElementById('qTimerBar'), label = document.getElementById('qTimerLabel');
@@ -179,6 +184,9 @@ var __read = (this && this.__read) || function (o, n) {
         if (x.afterRender)
             setTimeout(x.afterRender, 50);
         startTimer((x.meta && x.meta.age6Metrics && x.meta.age6Metrics.exposureMs) || 0);
+        if (x.autoSpeak && state.settings.sound !== false)
+            setTimeout(function () { if (question === x)
+                NS.speakLine(x.autoSpeak[0], x.autoSpeak[1]); }, 450);
     }
     function startGame(id) {
         var _a, _b;
@@ -188,15 +196,28 @@ var __read = (this && this.__read) || function (o, n) {
         current = NS.GAMES.find(function (g) { return g.id === Number(id); });
         if (!current)
             return;
+        if (needStars(current)) {
+            var id2 = current.id;
+            current = null;
+            return lockedInfo(id2);
+        }
         selectedAge = current.age;
         round = 0;
         score = 0;
         lives = NS.STARTING_LIVES;
-        locked = false;
-        if (current.arcade)
-            return startArcadeLevel();
-        nextQuestion();
+        locked = true;
+        showLevelIntro();
     }
+    // v9.2: schermata di inizio livello: che cosa cambia in questo livello.
+    function showLevelIntro() {
+        var gs = gameState(current.id), lv = gs.level, info = NS.LEVEL_INFO && NS.LEVEL_INFO[current.id] ? NS.LEVEL_INFO[current.id][lv - 1] : '', prev = lv > 1 && NS.LEVEL_INFO && NS.LEVEL_INFO[current.id] ? NS.LEVEL_INFO[current.id][lv - 2] : '';
+        var isQ = !current.arcade, secs = isQ ? Math.round(NS.secondsFor(lv) * ({ 1: 2, 5: 2, 9: 2, 11: 2, 31: 1.5, 34: 1.5, 61: 1.5, 40: 2, 41: 2.5, 42: 2.5, 73: 1.5 }[current.id] || 1)) : 0;
+        var stars = Array.from({ length: 15 }, function (_, i) { return "<i class=\"".concat(i < lv - 1 ? 'done' : i === lv - 1 ? 'now' : '', "\"></i>"); }).join('');
+        gameShell("<div class=\"question levelIntro\"><div class=\"lvBadge\">".concat(lv, "</div><h3>Livello ").concat(lv, " di ").concat(NS.MAX_LEVEL, "</h3><div class=\"lvPath\">").concat(stars, "</div>").concat(info ? "<div class=\"lvNew\"><b>".concat(lv > 1 ? '🆕 Cosa cambia:' : '🎯 Obiettivo:', "</b> ").concat(NS.escapeHtml(info), "</div>") : '').concat(prev && prev !== info ? "<div class=\"lvPrev\">Prima: ".concat(NS.escapeHtml(prev), "</div>") : '', "<div class=\"lvStats\">").concat(isQ ? "<span>\u2753 ".concat(NS.questionsFor(lv), " domande</span><span>\u23F1\uFE0F ").concat(secs, "s a domanda</span>") : '<span>🎮 sfida interattiva</span>', "<span>\u2764\uFE0F 3 vite</span></div><button class=\"nextBtn\" onclick=\"LogicLand.beginLevel()\">\u25B6 Inizia</button></div>"), 0);
+    }
+    function beginLevel() { if (!current)
+        return; locked = false; if (current.arcade)
+        return startArcadeLevel(); nextQuestion(); }
     function nextQuestion() {
         if (round >= NS.questionsFor(gameState(current.id).level))
             return finishLevel();
@@ -252,6 +273,8 @@ var __read = (this && this.__read) || function (o, n) {
             if (current.eng && question.word)
                 NS.recordEnglishResult(state, question.word, true);
             beep(true);
+            if (question.sayAfter)
+                setTimeout(function () { return NS.speakLine(question.sayAfter[0], question.sayAfter[1]); }, 350);
             gs.lastPlayed = new Date().toISOString();
             save();
         }
@@ -259,6 +282,8 @@ var __read = (this && this.__read) || function (o, n) {
             if (current.eng && question.word)
                 NS.recordEnglishResult(state, question.word, false);
             beep(false);
+            if (question.sayAfter)
+                setTimeout(function () { return NS.speakLine(question.sayAfter[0], question.sayAfter[1]); }, 450);
             var keepGoing = registerMistake('Risposta sbagliata.');
             if (!keepGoing)
                 return;
@@ -331,10 +356,10 @@ var __read = (this && this.__read) || function (o, n) {
             var _b = __read(_a, 2), label = _b[0], key = _b[1];
             var x = worldStats(key);
             return "<div class=\"worldMini\"><b>".concat(label, "</b><small>").concat(x.acc, "% corrette \u2022 liv. ").concat(x.avg, "</small></div>");
-        }).join(''), "</div><div class=\"ageProgress\">").concat(Array.from({ length: NS.MAX_AGE - NS.MIN_AGE + 1 }, function (_, i) { return i + NS.MIN_AGE; }).map(function (age) { var x = ageStats(age); return "<div><b>".concat(age, " anni</b><span>liv. medio ").concat(x.avg, "/").concat(NS.MAX_LEVEL, " \u2022 completati ").concat(x.mastered, "/").concat(x.total, "</span></div>"); }).join(''), "</div></div>\n      <div class=\"parentCard\"><h3>\u2699\uFE0F Impostazioni</h3><div class=\"setting\"><label>Suoni</label><input type=\"checkbox\" id=\"soundSetting\" ").concat(state.settings.sound ? 'checked' : '', "></div><div class=\"setting\"><label>Mostra suggerimenti</label><input type=\"checkbox\" id=\"hintSetting\" ").concat(state.settings.hints ? 'checked' : '', "></div><div class=\"setting\"><label>Rotazione / adattamento tablet</label><span class=\"tiny\">Attiva automaticamente layout portrait / landscape</span></div><button class=\"secondary\" style=\"width:100%;margin-top:10px\" onclick=\"LogicLand.speakLine('apple','en-GB')\">\uD83D\uDD0A Prova pronuncia inglese: APPLE</button><button class=\"primary\" style=\"width:100%;margin-top:10px\" onclick=\"LogicLand.saveSettings()\">Salva impostazioni</button></div>\n      <div class=\"parentCard\"><h3>\uD83D\uDCBE Backup per cambio telefono</h3><p class=\"tiny\">Il codice include profilo, tutti i ").concat(NS.GAMES.length, " giochi, livelli, stelle, monete, statistiche e progresso dell\u2019inglese. I vecchi backup LLK2/LLK3/LLK4/LLK5 restano importabili.</p><textarea id=\"backup\" class=\"codebox\" placeholder=\"Qui comparir\u00E0 il codice di backup\"></textarea><div class=\"footerBtns\" style=\"margin-top:9px\"><button class=\"primary\" onclick=\"LogicLand.makeBackup()\">Crea / copia</button><button class=\"secondary\" onclick=\"LogicLand.restoreBackup()\">Ripristina</button></div></div>\n      <div class=\"parentCard\"><h3>\uD83E\uDDE9 Contenuti</h3><p class=\"tiny\"><b>").concat(NS.GAMES.length, " giochi</b> \u2022 <b>").concat(NS.MAX_LEVEL, " livelli per gioco</b> \u2022 ").concat(NS.GAMES.length * NS.MAX_LEVEL, " livelli complessivi \u2022 oltre ").concat(NS.WORDS.length, " vocaboli inglesi \u2022 ripasso dilazionato \u2022 offline \u2022 nessuna pubblicit\u00E0.</p><button class=\"danger\" style=\"width:100%\" onclick=\"LogicLand.resetProgress()\">Azzera tutti i progressi</button></div><p class=\"tiny\" style=\"text-align:center\">LogicLand Kids ").concat(NS.APP_VERSION, " \u2022 schema dati ").concat(NS.SCHEMA_VERSION, "</p></div>");
+        }).join(''), "</div><div class=\"ageProgress\">").concat(Array.from({ length: NS.MAX_AGE - NS.MIN_AGE + 1 }, function (_, i) { return i + NS.MIN_AGE; }).map(function (age) { var x = ageStats(age); return "<div><b>".concat(age, " anni</b><span>liv. medio ").concat(x.avg, "/").concat(NS.MAX_LEVEL, " \u2022 completati ").concat(x.mastered, "/").concat(x.total, "</span></div>"); }).join(''), "</div></div>\n      <div class=\"parentCard\"><h3>\u2699\uFE0F Impostazioni</h3><div class=\"setting\"><label>Suoni</label><input type=\"checkbox\" id=\"soundSetting\" ").concat(state.settings.sound ? 'checked' : '', "></div><div class=\"setting\"><label>Mostra suggerimenti</label><input type=\"checkbox\" id=\"hintSetting\" ").concat(state.settings.hints ? 'checked' : '', "></div><div class=\"setting\"><label>Sblocca tutti i giochi (senza stelle)</label><input type=\"checkbox\" id=\"unlockSetting\" ").concat(state.settings.unlockAll ? 'checked' : '', "></div><div class=\"setting\"><label>Rotazione / adattamento tablet</label><span class=\"tiny\">Attiva automaticamente layout portrait / landscape</span></div><button class=\"secondary\" style=\"width:100%;margin-top:10px\" onclick=\"LogicLand.speakLine('apple','en-GB')\">\uD83D\uDD0A Prova pronuncia inglese: APPLE</button><button class=\"primary\" style=\"width:100%;margin-top:10px\" onclick=\"LogicLand.saveSettings()\">Salva impostazioni</button></div>\n      <div class=\"parentCard\"><h3>\uD83D\uDCBE Backup per cambio telefono</h3><p class=\"tiny\">Il codice include profilo, tutti i ").concat(NS.GAMES.length, " giochi, livelli, stelle, monete, statistiche e progresso dell\u2019inglese. I vecchi backup LLK2/LLK3/LLK4/LLK5 restano importabili.</p><textarea id=\"backup\" class=\"codebox\" placeholder=\"Qui comparir\u00E0 il codice di backup\"></textarea><div class=\"footerBtns\" style=\"margin-top:9px\"><button class=\"primary\" onclick=\"LogicLand.makeBackup()\">Crea / copia</button><button class=\"secondary\" onclick=\"LogicLand.restoreBackup()\">Ripristina</button></div></div>\n      <div class=\"parentCard\"><h3>\uD83E\uDDE9 Contenuti</h3><p class=\"tiny\"><b>").concat(NS.GAMES.length, " giochi</b> \u2022 <b>").concat(NS.MAX_LEVEL, " livelli per gioco</b> \u2022 ").concat(NS.GAMES.length * NS.MAX_LEVEL, " livelli complessivi \u2022 oltre ").concat(NS.WORDS.length, " vocaboli inglesi \u2022 ripasso dilazionato \u2022 offline \u2022 nessuna pubblicit\u00E0.</p><button class=\"danger\" style=\"width:100%\" onclick=\"LogicLand.resetProgress()\">Azzera tutti i progressi</button></div><p class=\"tiny\" style=\"text-align:center\">LogicLand Kids ").concat(NS.APP_VERSION, " \u2022 schema dati ").concat(NS.SCHEMA_VERSION, "</p></div>");
     }
     function saveProfile() { var name = document.getElementById('profileName').value.trim().slice(0, 18), age = Number(document.getElementById('profileAge').value); state.profile.name = name || 'Esploratrice'; state.profile.age = NS.clamp(age, NS.MIN_AGE, NS.MAX_AGE); selectedAge = state.profile.age; save(); toast('Profilo salvato ✅'); }
-    function saveSettings() { state.settings.sound = document.getElementById('soundSetting').checked; state.settings.hints = document.getElementById('hintSetting').checked; save(); toast('Impostazioni salvate ✅'); }
+    function saveSettings() { state.settings.sound = document.getElementById('soundSetting').checked; state.settings.hints = document.getElementById('hintSetting').checked; state.settings.unlockAll = document.getElementById('unlockSetting').checked; save(); toast('Impostazioni salvate ✅'); }
     function makeBackup() {
         return __awaiter(this, void 0, void 0, function () { var code, box, _e_1; var _a; return __generator(this, function (_b) {
             switch (_b.label) {
@@ -396,7 +421,7 @@ var __read = (this && this.__read) || function (o, n) {
         renderHome();
         return true;
     } return false; }
-    Object.assign(NS, { renderHome: renderHome, handleBack: handleBack, selectAge: selectAge, selectCategory: selectCategory, startGame: startGame, answer: answer, advance: advance, renderParents: renderParents, saveProfile: saveProfile, saveSettings: saveSettings, makeBackup: makeBackup, restoreBackup: restoreBackup, resetProgress: resetProgress, about: about });
+    Object.assign(NS, { beginLevel: beginLevel, lockedInfo: lockedInfo, renderHome: renderHome, handleBack: handleBack, selectAge: selectAge, selectCategory: selectCategory, startGame: startGame, answer: answer, advance: advance, renderParents: renderParents, saveProfile: saveProfile, saveSettings: saveSettings, makeBackup: makeBackup, restoreBackup: restoreBackup, resetProgress: resetProgress, about: about });
     applyTabletLayout();
     window.addEventListener('resize', applyTabletLayout);
     window.addEventListener('orientationchange', applyTabletLayout);

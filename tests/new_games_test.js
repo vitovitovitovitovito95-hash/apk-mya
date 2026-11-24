@@ -4,7 +4,7 @@ global.window=global;global.LogicLand={};
 const holder={innerHTML:'',querySelectorAll:()=>[],querySelector:()=>null};
 global.document={getElementById:()=>holder};
 const root=path.join(__dirname,'../app/js');
-for(const f of ['polyfills.js','core.js','data.js','games-new.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','data-es.js','games-new.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
 const N=global.LogicLand;
 function check(c,msg){if(!c)throw new Error(msg);}
 const keys=['unblock','dots','water','checkers','chess'];let renders=0;
@@ -23,6 +23,6 @@ for(const key of keys){let last=-1;
    renders++;
  }
 }
-check(N.GAMES.length===22,'Expected 22 actual games');
+check(N.GAMES.length===28,'Expected 28 actual games');
 check(N.MAX_LEVEL===15&&N.STARTING_LIVES===3,'Progression contract failed');
 console.log(`OK: ${renders} interactive game renders, all 15 levels, progressive parameters.`);

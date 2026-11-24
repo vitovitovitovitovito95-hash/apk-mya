@@ -3,14 +3,14 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 global.window=global;global.LogicLand={};
 global.document={querySelector:()=>null,getElementById:()=>null};
 const root=path.resolve(__dirname,'..','app','js');
-for(const f of ['polyfills.js','core.js','data.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-new.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','data-es.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-new.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
 const NS=global.LogicLand;
 function assert(x,msg){if(!x)throw new Error(msg);}
 assert(NS.MIN_AGE===6&&NS.MAX_AGE===6,'V6 must focus only on age 6');
 assert(NS.MAX_LEVEL===15,'There must be exactly 15 levels per game');
 assert(NS.STARTING_LIVES===3,'There must be three starting lives');
 assert(NS.MAX_ERRORS_PER_LEVEL===2,'Three lives mean the third error ends the level');
-assert(NS.GAMES.length===22,'Expected 22 active age-6 games');
+assert(NS.GAMES.length===28,'Expected 28 active age-6 games');
 assert(NS.GAMES.every(g=>g.age===6),'Every active game must be age 6');
 assert(NS.AGE6_DIFFICULTY&&NS.AGE6_DIFFICULTY.length===15,'Missing age-6 difficulty contract');
 for(let i=1;i<15;i++){
@@ -33,4 +33,4 @@ for(let i=1;i<15;i++){
   assert(d[i].spawnMs<d[i-1].spawnMs,`Dodge spawn interval not decreasing L${i+1}`);
   assert(d[i].gapPx<d[i-1].gapPx,`Dodge gap not shrinking L${i+1}`);
 }
-for(const key of ['unblock','dots','water','checkers','chess']){let prev=-1;for(let l=1;l<=15;l++){let p=NS.newGameProfile(l,key);assert(p&&p.level===l,'New game level incorrect '+key);assert(p.load>prev,'New game load not increasing '+key+' level '+l);prev=p.load;}}console.log('OK: 22 games, 15 levels, 3 lives, progressive core, arcade and new puzzle configurations.');
+for(const key of ['unblock','dots','water','checkers','chess']){let prev=-1;for(let l=1;l<=15;l++){let p=NS.newGameProfile(l,key);assert(p&&p.level===l,'New game level incorrect '+key);assert(p.load>prev,'New game load not increasing '+key+' level '+l);prev=p.load;}}console.log('OK: 28 games, 15 levels, 3 lives, progressive core, arcade and new puzzle configurations.');

@@ -70,7 +70,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
     };
     function audioFiles(text, lang) {
-        var keyLang = (lang || 'en-GB').indexOf('it') === 0 ? 'it' : 'en';
+        var l = (lang || 'en-GB').toLowerCase(), keyLang = l.indexOf('it') === 0 ? 'it' : l.indexOf('es') === 0 ? 'es' : 'en';
         var index = NS.AUDIO_INDEX || {};
         var norm = String(text || '').trim().toLowerCase();
         var direct = index[keyLang + '|' + norm];
@@ -78,7 +78,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             return [BASE_AUDIO + direct];
         // Sentences composed dynamically, and lists of words at high levels:
         // concatenate the prerecorded word pronunciation files.
-        var parts = norm.match(/[a-zà-ÿ]+(?:['’][a-zà-ÿ]+)?/g) || [];
+        if (keyLang === 'en' || keyLang === 'es') {
+            var dot = index[keyLang + '|' + norm + '.'];
+            if (dot)
+                return [BASE_AUDIO + dot];
+        }
+        var parts = norm.match(/[a-zà-ÿñ]+(?:['’][a-zà-ÿ]+)?/g) || [];
         var files = [];
         for (var i = 0; i < parts.length; i++) {
             var f = index[keyLang + '|' + parts[i]];
@@ -87,9 +92,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
         return files;
     }
-    NS.speakLine = function (text, lang) {
+    NS.speakLine = function (text, lang, slow) {
         if (!text)
             return false;
+        NS.lastSpoken = [text, lang];
         NS.stopEnglishAudio();
         var serial = playbackSerial;
         var files = audioFiles(text, lang);
@@ -122,6 +128,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             };
             audio.src = files[i];
             try {
+                audio.playbackRate = slow ? 0.72 : 1;
+                if ('preservesPitch' in audio)
+                    audio.preservesPitch = true;
+            }
+            catch (_r) { }
+            try {
                 var result = audio.play();
                 if (result && typeof result.catch === 'function') {
                     result.catch(function () {
@@ -144,6 +156,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         return true;
     };
     NS.speak = NS.speakLine;
+    NS.speakSlow = function () { if (NS.lastSpoken)
+        NS.speakLine(NS.lastSpoken[0], NS.lastSpoken[1], true); };
     function soundBtn(text, lang, label) {
         return "<button class=\"speak\" aria-label=\"".concat(label || 'Ascolta', "\" onclick=\"LogicLand.speakLine('").concat(NS.escapeHtml(text), "','").concat(lang || 'en-GB', "')\">\uD83D\uDD0A ").concat(label || 'Audio', "</button>");
     }

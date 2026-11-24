@@ -37,7 +37,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 window.LogicLand = window.LogicLand || {};
 (function (NS) {
-    NS.APP_VERSION = '9.1.0';
+    NS.APP_VERSION = '9.2.0';
     NS.SCHEMA_VERSION = 8;
     NS.MIN_AGE = 6;
     NS.MAX_AGE = 6;
@@ -45,9 +45,9 @@ window.LogicLand = window.LogicLand || {};
     NS.QUESTIONS_PER_LEVEL = 5;
     // v9: più domande per livello (6 → 8), contenuti partono 3 livelli più avanti,
     // e un tempo massimo per risposta che si accorcia a ogni livello (30s → 9s).
-    NS.questionsFor = function (level) { return 6 + Math.floor((NS.clamp(Number(level) || 1, 1, 15) - 1) / 5); };
-    NS.contentLevel = function (level) { return Math.min(15, (NS.clamp(Number(level) || 1, 1, 15)) + 3); };
-    NS.secondsFor = function (level) { return Math.max(9, Math.round(31.5 - NS.clamp(Number(level) || 1, 1, 15) * 1.5)); };
+    NS.questionsFor = function (level) { return [5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10][NS.clamp(Number(level) || 1, 1, 15) - 1]; };
+    NS.contentLevel = function (level) { return NS.clamp(Number(level) || 1, 1, 15); }; // v9.2: nessun salto artificiale, ogni livello ha la sua tabella
+    NS.secondsFor = function (level) { return Math.round(30 - (NS.clamp(Number(level) || 1, 1, 15) - 1) * 18 / 14); };
     NS.STARTING_LIVES = 3;
     NS.MAX_ERRORS_PER_LEVEL = 2;
     NS.DAY_MS = 86400000;

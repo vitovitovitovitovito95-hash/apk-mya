@@ -16,7 +16,7 @@
     if(NS.fx)NS.fx.play(ok?'good':'bad',true);
   }
 
-  function topbar(){return `<div class="top"><div class="toprow"><div class="avatar">${NS.escapeHtml(state.profile.avatar||'🦊')}</div><div class="brand">LogicLand <b class="vTag">v9</b><small>GIOCA • PENSA • IMPARA</small></div><div class="pill">⭐ ${state.economy.stars}</div><div class="pill">🪙 ${state.economy.coins}</div></div></div>`;}
+  function topbar(){return `<div class="top"><div class="toprow"><div class="avatar">${NS.escapeHtml(state.profile.avatar||'🦊')}</div><div class="brand">LogicLand <b class="vTag">v9.2</b><small>GIOCA • PENSA • IMPARA</small></div><div class="pill">⭐ ${state.economy.stars}</div><div class="pill">🪙 ${state.economy.coins}</div></div></div>`;}
 
   function dailyMissionHtml(){
     NS.ensureDaily(state);const d=state.daily,games=Math.min(3,d.gamesCompleted),eng=Math.min(5,d.englishCorrect),done=games>=3&&eng>=5;
@@ -24,12 +24,16 @@
     return `<div class="daily ${done?'done':''}">${done?'✅':'🎯'} Missione di oggi: giochi ${games}/3 • parole inglesi ${eng}/5${done?' • completata!':''}</div>`;
   }
 
-  const iconMap={40:'count',41:'math',42:'sudoku',1:'math',5:'sudoku',7:'odd',8:'matrix',9:'matrix',11:'puzzle',14:'memory',16:'english',21:'puzzle',31:'count',32:'odd',33:'memory',34:'english',35:'matrix',51:'tetris',52:'dodge',53:'unblock',54:'dots',55:'water',56:'checkers',57:'chess'};
-  function cardImage(g){return `<img class="gameArtwork" src="img/${iconMap[g.id]||'puzzle'}.webp" alt="" loading="lazy">`;}
+  const iconMap={1:'math',5:'sudoku',7:'odd',8:'matrix',9:'matrix',11:'puzzle',14:'memory',16:'english',21:'puzzle',31:'count',32:'odd',33:'memory',34:'english',35:'matrix',51:'tetris',52:'dodge',53:'unblock',54:'dots',55:'water',56:'checkers',57:'chess'};
+  function cardImage(g){return iconMap[g.id]&&!g.v9?`<img class="gameArtwork" src="img/${iconMap[g.id]}.webp" alt="" loading="lazy">`:`<div class="gameArtwork emojiArt art-${g.world}"><span>${g.icon}</span></div>`;}
+  // v9.2: i giochi più complessi si sbloccano con le stelle accumulate
+  const UNLOCK={32:5,70:5,71:5,61:5,5:12,11:12,41:12,53:12,54:12,72:12,73:12,9:20,42:20,56:20,57:30};
+  function needStars(g){return state.settings.unlockAll?0:Math.max(0,(UNLOCK[g.id]||0)-state.economy.stars);}
+  function lockedInfo(id){const g=NS.GAMES.find(x=>x.id===Number(id));toast(`🔒 ${g.name}: servono ancora ${needStars(g)} ⭐ (ne servono ${UNLOCK[g.id]} in tutto). Completa altri livelli!`);}
   function gameCard(g,index){
     const s=gameState(g.id),pct=Math.floor((Math.max(1,s.level)-1)/NS.MAX_LEVEL*100),delay=Math.min(14,index||0)*45;
-    const worldIcon={math:'🔢',logic:'🧠',visual:'👁️',english:'🇬🇧',arcade:'🎮'}[g.world]||'⭐';
-    return `<button class="card gameTile world-${g.world}${g.v9?' isNew':''}" style="-webkit-animation-delay:${delay}ms;animation-delay:${delay}ms" onclick="LogicLand.startGame(${g.id})">${cardImage(g)}<span class="worldChip">${worldIcon}</span>${g.v9?'<span class="newChip">NUOVO</span>':''}<div class="gameTileCopy"><h3>${NS.escapeHtml(g.name)}</h3><p>${NS.escapeHtml(g.desc)}</p><div class="gameTileProgress"><span>Livello ${s.level} / ${NS.MAX_LEVEL}</span><span>⭐ ${Math.min(3,s.best||0)}</span></div><div class="miniTrack"><i style="width:${pct}%"></i></div></div></button>`;
+    const worldIcon={math:'🔢',logic:'🧠',visual:'👁️',english:'🇬🇧',arcade:'🎮',brain:'⚡',spanish:'🇪🇸'}[g.world]||'⭐';const lockN=needStars(g);
+    return `<button class="card gameTile world-${g.world}${g.v9?' isNew':''}${lockN?' locked':''}" style="-webkit-animation-delay:${delay}ms;animation-delay:${delay}ms" onclick="LogicLand.${lockN?'lockedInfo':'startGame'}(${g.id})">${cardImage(g)}${lockN?`<span class="lockBadge">🔒 ${UNLOCK[g.id]} ⭐</span>`:''}<span class="worldChip">${worldIcon}</span>${g.v9?'<span class="newChip">NUOVO</span>':''}<div class="gameTileCopy"><h3>${NS.escapeHtml(g.name)}</h3><p>${NS.escapeHtml(g.desc)}</p><div class="gameTileProgress"><span>Livello ${s.level} / ${NS.MAX_LEVEL}</span><span>⭐ ${Math.min(3,s.best||0)}</span></div><div class="miniTrack"><i style="width:${pct}%"></i></div></div></button>`;
   }
   function selectCategory(category){selectedCategory=category;renderHome();}
   function renderHome(ageOverride){
@@ -37,10 +41,10 @@
     stopTimer();NS.stopArcade?.();NS.stopPuzzle?.();current=null;NS.ensureDaily(state);
     save();
     const name=NS.escapeHtml(state.profile.name||'Esploratrice'),games=NS.GAMES;
-    const categories=[['Tutti','Tutti'],['Logica','logic'],['Figure','visual'],['Numeri','math'],['Inglese','english'],['Abilità','arcade']];
+    const categories=[['Tutti','Tutti'],['Logica','logic'],['Numeri','math'],['Cervello','brain'],['Figure','visual'],['Inglese','english'],['Spagnolo','spanish'],['Abilità','arcade']];
     const visible=selectedCategory==='Tutti'?games:games.filter(g=>g.world===selectedCategory);
     const tabs=categories.map(c=>`<button class="categoryTab ${selectedCategory===c[1]?'active':''}" onclick="LogicLand.selectCategory('${c[1]}')">${c[0]}</button>`).join('');
-    document.getElementById('app').innerHTML=topbar()+`<div class="wrap newHome"><section class="hero newHero"><div class="v9Ribbon">✨ NUOVA VERSIONE 9 · più logica, più sfida</div><h1>Ciao, ${name}! 🌈</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>${dailyMissionHtml()}</section><div class="homeHeading"><h2>🎲 Scegli il tuo gioco</h2><span>${games.length} giochi · 15 livelli · ⏱️ a tempo</span></div><div class="categoryTabs">${tabs}</div><div class="grid gameGallery">${visible.map(gameCard).join('')}</div><div class="nav"><button class="secondary" style="flex:1" onclick="LogicLand.renderParents()">👨‍👩‍👧 Zona genitori</button><button class="secondary" onclick="LogicLand.about()">ℹ️</button></div></div>`;
+    document.getElementById('app').innerHTML=topbar()+`<div class="wrap newHome"><section class="hero newHero"><div class="v9Ribbon">✨ NOVITÀ 9.2 · livelli veri, spagnolo e giochi per la mente</div><h1>Ciao, ${name}! 🌈</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>${dailyMissionHtml()}</section><div class="homeHeading"><h2>🎲 Scegli il tuo gioco</h2><span>${games.length} giochi · 15 livelli · ⏱️ a tempo</span></div><div class="categoryTabs">${tabs}</div><div class="grid gameGallery">${visible.map(gameCard).join('')}</div><div class="nav"><button class="secondary" style="flex:1" onclick="LogicLand.renderParents()">👨‍👩‍👧 Zona genitori</button><button class="secondary" onclick="LogicLand.about()">ℹ️</button></div></div>`;
   }
 
   function selectAge(age){selectedAge=NS.clamp(Number(age),NS.MIN_AGE,NS.MAX_AGE);renderHome(selectedAge);}
@@ -56,16 +60,16 @@
 
   function gameShell(body,progressOverride=null){
     const st=gameState(current.id),pct=progressOverride===null?Math.min(100,round/NS.questionsFor(st.level)*100):NS.clamp(progressOverride,0,100);
-    document.getElementById('app').innerHTML=topbar()+`<div class="wrap"><div class="gameHead"><button class="back" onclick="LogicLand.renderHome(${selectedAge})">←</button><div class="gameTitle"><h2>${current.icon} ${NS.escapeHtml(current.name)}</h2><div>Livello ${st.level}/${NS.MAX_LEVEL} • ${NS.escapeHtml(current.group)}<br><small>${NS.difficultyLabel(st.level)}</small></div></div><div class="gameStatus">${lifeHtml()}<span class="badge">${current.arcade?'L'+st.level:score+'/'+NS.questionsFor(st.level)+' ✓'}</span></div></div><div class="progress"><i id="levelProgress" style="width:${pct}%"></i></div>${body}</div>`;
+    document.getElementById('app').innerHTML=topbar()+`<div class="wrap"><div class="gameHead"><button class="back" onclick="LogicLand.renderHome(${selectedAge})">←</button><div class="gameTitle"><h2>${current.icon} ${NS.escapeHtml(current.name)}</h2><div>Livello ${st.level}/${NS.MAX_LEVEL} • ${NS.escapeHtml(current.group)}<br><small>${NS.LEVEL_INFO&&NS.LEVEL_INFO[current.id]?NS.escapeHtml(NS.LEVEL_INFO[current.id][st.level-1]):NS.difficultyLabel(st.level)}</small></div></div><div class="gameStatus">${lifeHtml()}<span class="badge">${current.arcade?'L'+st.level:score+'/'+NS.questionsFor(st.level)+' ✓'}</span></div></div><div class="progress"><i id="levelProgress" style="width:${pct}%"></i></div>${body}</div>`;
   }
 
-  function makeQuestion(id,level){const fn=NS.MathGames[id]||NS.VisualGames[id]||NS.EnglishGames[id];if(!fn)throw new Error(`Generatore mancante per gioco ${id}`);return fn(current&&current.v9?level:NS.contentLevel(level),state);}
+  function makeQuestion(id,level){const fn=NS.MathGames[id]||NS.VisualGames[id]||NS.EnglishGames[id];if(!fn)throw new Error(`Generatore mancante per gioco ${id}`);return fn(level,state);}
 
   // v9: conto alla rovescia per ogni domanda (più breve a ogni livello). Allo scadere si perde una vita.
   let timerId=null,timerEnd=0,timerTotal=0;
   function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
   function startTimer(extraMs){
-    stopTimer();const level=gameState(current.id).level;timerTotal=NS.secondsFor(level)*({1:2,5:2,9:2,40:2,41:2.5,42:2.5}[current.id]||1)*1000;timerEnd=Date.now()+timerTotal+(extraMs||0);
+    stopTimer();const level=gameState(current.id).level;timerTotal=NS.secondsFor(level)*({1:2,5:2,9:2,11:2,31:1.5,34:1.5,61:1.5,40:2,41:2.5,42:2.5,73:1.5}[current.id]||1)*1000;timerEnd=Date.now()+timerTotal+(extraMs||0);
     const tick=()=>{const bar=document.getElementById('qTimerBar'),label=document.getElementById('qTimerLabel');if(!bar||!current){stopTimer();return;}
       const left=Math.max(0,timerEnd-Date.now()),frac=Math.min(1,left/timerTotal);bar.style.width=(frac*100)+'%';bar.className=frac<.25?'danger':frac<.5?'warn':'';
       if(label)label.textContent=Math.ceil(Math.min(left,timerTotal)/1000)+'s';
@@ -84,16 +88,25 @@
     const opts=x.options?`<div class="options">${x.options.map(o=>{const value=o&&typeof o==='object'?(o.value??o.label):o;const label=o&&typeof o==='object'?(o.label??o.value):o;return `<button class="opt" data-value="${NS.escapeHtml(value)}" onclick="LogicLand.answer(this)">${label}</button>`;}).join('')}</div>`:'';
     gameShell(`<div class="question"><div class="qicon">${x.icon||current.icon}</div><h3>${x.prompt}</h3>${x.sub?`<p>${x.sub}</p>`:''}${x.visual||''}${x.custom||''}</div><div class="qTimer"><span id="qTimerLabel"></span><div><i id="qTimerBar"></i></div></div>${opts}<div id="feedback"></div>`);if(x.afterRender)setTimeout(x.afterRender,50);
     startTimer((x.meta&&x.meta.age6Metrics&&x.meta.age6Metrics.exposureMs)||0);
+    if(x.autoSpeak&&state.settings.sound!==false)setTimeout(()=>{if(question===x)NS.speakLine(x.autoSpeak[0],x.autoSpeak[1]);},450);
   }
 
   function startGame(id){
     NS.stopEnglishAudio?.();
     NS.stopArcade?.();
     stopTimer();current=NS.GAMES.find(g=>g.id===Number(id));if(!current)return;
-    selectedAge=current.age;round=0;score=0;lives=NS.STARTING_LIVES;locked=false;
-    if(current.arcade)return startArcadeLevel();
-    nextQuestion();
+    if(needStars(current)){const id2=current.id;current=null;return lockedInfo(id2);}
+    selectedAge=current.age;round=0;score=0;lives=NS.STARTING_LIVES;locked=true;
+    showLevelIntro();
   }
+  // v9.2: schermata di inizio livello: che cosa cambia in questo livello.
+  function showLevelIntro(){
+    const gs=gameState(current.id),lv=gs.level,info=NS.LEVEL_INFO&&NS.LEVEL_INFO[current.id]?NS.LEVEL_INFO[current.id][lv-1]:'',prev=lv>1&&NS.LEVEL_INFO&&NS.LEVEL_INFO[current.id]?NS.LEVEL_INFO[current.id][lv-2]:'';
+    const isQ=!current.arcade,secs=isQ?Math.round(NS.secondsFor(lv)*({1:2,5:2,9:2,11:2,31:1.5,34:1.5,61:1.5,40:2,41:2.5,42:2.5,73:1.5}[current.id]||1)):0;
+    const stars=Array.from({length:15},(_,i)=>`<i class="${i<lv-1?'done':i===lv-1?'now':''}"></i>`).join('');
+    gameShell(`<div class="question levelIntro"><div class="lvBadge">${lv}</div><h3>Livello ${lv} di ${NS.MAX_LEVEL}</h3><div class="lvPath">${stars}</div>${info?`<div class="lvNew"><b>${lv>1?'🆕 Cosa cambia:':'🎯 Obiettivo:'}</b> ${NS.escapeHtml(info)}</div>`:''}${prev&&prev!==info?`<div class="lvPrev">Prima: ${NS.escapeHtml(prev)}</div>`:''}<div class="lvStats">${isQ?`<span>❓ ${NS.questionsFor(lv)} domande</span><span>⏱️ ${secs}s a domanda</span>`:'<span>🎮 sfida interattiva</span>'}<span>❤️ 3 vite</span></div><button class="nextBtn" onclick="LogicLand.beginLevel()">▶ Inizia</button></div>`,0);
+  }
+  function beginLevel(){if(!current)return;locked=false;if(current.arcade)return startArcadeLevel();nextQuestion();}
 
   function nextQuestion(){
     if(round>=NS.questionsFor(gameState(current.id).level))return finishLevel();
@@ -111,9 +124,9 @@
     if(locked)return;const value=source?.dataset?.value??source,ok=String(value)===String(question.answer);locked=true;const fast=timerEnd-Date.now()>timerTotal/2;stopTimer();
     document.querySelectorAll('.opt').forEach(b=>{if(String(b.dataset.value)===String(question.answer))b.classList.add('correct');});if(source&&source.classList&&!ok){source.classList.add('wrong');if(NS.fx)NS.fx.shake(source);}if(ok&&source&&source.classList&&NS.fx)NS.fx.burst(source);
     const gs=gameState(current.id);
-    if(ok){score++;state.totals.correct++;gs.correct++;state.economy.streak++;state.economy.coins+=2+(gs.level>7?1:0)+(fast?1:0);state.economy.xp+=10;if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,true);beep(true);gs.lastPlayed=new Date().toISOString();save();}
+    if(ok){score++;state.totals.correct++;gs.correct++;state.economy.streak++;state.economy.coins+=2+(gs.level>7?1:0)+(fast?1:0);state.economy.xp+=10;if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,true);beep(true);if(question.sayAfter)setTimeout(()=>NS.speakLine(question.sayAfter[0],question.sayAfter[1]),350);gs.lastPlayed=new Date().toISOString();save();}
     else{
-      if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,false);beep(false);
+      if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,false);beep(false);if(question.sayAfter)setTimeout(()=>NS.speakLine(question.sayAfter[0],question.sayAfter[1]),450);
       const keepGoing=registerMistake('Risposta sbagliata.');
       if(!keepGoing)return;
     }
@@ -165,13 +178,13 @@
     document.getElementById('app').innerHTML=topbar()+`<div class="wrap"><div class="gameHead"><button class="back" onclick="LogicLand.renderHome(${selectedAge})">←</button><div class="gameTitle"><h2>👨‍👩‍👧 Zona genitori</h2><div>Progressi, età, impostazioni e backup</div></div></div>
       <div class="parentCard"><h3>👧 Profilo</h3><div class="setting"><label>Nome mostrato nell’app</label><input id="profileName" maxlength="18" value="${NS.escapeHtml(state.profile.name)}"></div><div class="setting"><label>Età / percorso consigliato</label><select id="profileAge">${Array.from({length:NS.MAX_AGE-NS.MIN_AGE+1},(_,i)=>i+NS.MIN_AGE).map(a=>`<option value="${a}" ${a===Number(state.profile.age)?'selected':''}>${a} anni</option>`).join('')}</select></div><button class="primary" style="width:100%;margin-top:10px" onclick="LogicLand.saveProfile()">Salva profilo</button></div>
       <div class="parentCard"><h3>📊 Progressi</h3><div class="statrow"><span>Precisione generale</span><b>${acc}%</b></div><div class="bar"><i style="width:${acc}%"></i></div><div class="statrow"><span>Livello medio</span><b>${avg}/${NS.MAX_LEVEL}</b></div><div class="statrow"><span>Sessioni completate</span><b>${state.totals.sessions}</b></div><div class="statrow"><span>Parole consolidate</span><b>${learned}</b></div><div class="statrow"><span>Parole da ripassare ora</span><b>${review}</b></div><div class="worldProgress">${worlds.map(([label,key])=>{const x=worldStats(key);return `<div class="worldMini"><b>${label}</b><small>${x.acc}% corrette • liv. ${x.avg}</small></div>`;}).join('')}</div><div class="ageProgress">${Array.from({length:NS.MAX_AGE-NS.MIN_AGE+1},(_,i)=>i+NS.MIN_AGE).map(age=>{const x=ageStats(age);return `<div><b>${age} anni</b><span>liv. medio ${x.avg}/${NS.MAX_LEVEL} • completati ${x.mastered}/${x.total}</span></div>`;}).join('')}</div></div>
-      <div class="parentCard"><h3>⚙️ Impostazioni</h3><div class="setting"><label>Suoni</label><input type="checkbox" id="soundSetting" ${state.settings.sound?'checked':''}></div><div class="setting"><label>Mostra suggerimenti</label><input type="checkbox" id="hintSetting" ${state.settings.hints?'checked':''}></div><div class="setting"><label>Rotazione / adattamento tablet</label><span class="tiny">Attiva automaticamente layout portrait / landscape</span></div><button class="secondary" style="width:100%;margin-top:10px" onclick="LogicLand.speakLine('apple','en-GB')">🔊 Prova pronuncia inglese: APPLE</button><button class="primary" style="width:100%;margin-top:10px" onclick="LogicLand.saveSettings()">Salva impostazioni</button></div>
+      <div class="parentCard"><h3>⚙️ Impostazioni</h3><div class="setting"><label>Suoni</label><input type="checkbox" id="soundSetting" ${state.settings.sound?'checked':''}></div><div class="setting"><label>Mostra suggerimenti</label><input type="checkbox" id="hintSetting" ${state.settings.hints?'checked':''}></div><div class="setting"><label>Sblocca tutti i giochi (senza stelle)</label><input type="checkbox" id="unlockSetting" ${state.settings.unlockAll?'checked':''}></div><div class="setting"><label>Rotazione / adattamento tablet</label><span class="tiny">Attiva automaticamente layout portrait / landscape</span></div><button class="secondary" style="width:100%;margin-top:10px" onclick="LogicLand.speakLine('apple','en-GB')">🔊 Prova pronuncia inglese: APPLE</button><button class="primary" style="width:100%;margin-top:10px" onclick="LogicLand.saveSettings()">Salva impostazioni</button></div>
       <div class="parentCard"><h3>💾 Backup per cambio telefono</h3><p class="tiny">Il codice include profilo, tutti i ${NS.GAMES.length} giochi, livelli, stelle, monete, statistiche e progresso dell’inglese. I vecchi backup LLK2/LLK3/LLK4/LLK5 restano importabili.</p><textarea id="backup" class="codebox" placeholder="Qui comparirà il codice di backup"></textarea><div class="footerBtns" style="margin-top:9px"><button class="primary" onclick="LogicLand.makeBackup()">Crea / copia</button><button class="secondary" onclick="LogicLand.restoreBackup()">Ripristina</button></div></div>
       <div class="parentCard"><h3>🧩 Contenuti</h3><p class="tiny"><b>${NS.GAMES.length} giochi</b> • <b>${NS.MAX_LEVEL} livelli per gioco</b> • ${NS.GAMES.length*NS.MAX_LEVEL} livelli complessivi • oltre ${NS.WORDS.length} vocaboli inglesi • ripasso dilazionato • offline • nessuna pubblicità.</p><button class="danger" style="width:100%" onclick="LogicLand.resetProgress()">Azzera tutti i progressi</button></div><p class="tiny" style="text-align:center">LogicLand Kids ${NS.APP_VERSION} • schema dati ${NS.SCHEMA_VERSION}</p></div>`;
   }
 
   function saveProfile(){const name=document.getElementById('profileName').value.trim().slice(0,18),age=Number(document.getElementById('profileAge').value);state.profile.name=name||'Esploratrice';state.profile.age=NS.clamp(age,NS.MIN_AGE,NS.MAX_AGE);selectedAge=state.profile.age;save();toast('Profilo salvato ✅');}
-  function saveSettings(){state.settings.sound=document.getElementById('soundSetting').checked;state.settings.hints=document.getElementById('hintSetting').checked;save();toast('Impostazioni salvate ✅');}
+  function saveSettings(){state.settings.sound=document.getElementById('soundSetting').checked;state.settings.hints=document.getElementById('hintSetting').checked;state.settings.unlockAll=document.getElementById('unlockSetting').checked;save();toast('Impostazioni salvate ✅');}
 
   async function makeBackup(){const code=NS.exportBackup(state),box=document.getElementById('backup');box.value=code;box.focus();box.select();try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(code);}else document.execCommand('copy');toast('Backup copiato negli appunti ✅');}catch(_e){toast('Backup creato: copialo e conservalo');}}
   function restoreBackup(){const raw=document.getElementById('backup').value.trim();if(!raw)return toast('Incolla prima il codice di backup');try{state=NS.importBackup(raw);selectedAge=state.profile.age;save();toast('Backup ripristinato ✅');setTimeout(renderParents,400);}catch(err){toast(err.message||'Codice di backup non valido');}}
@@ -188,7 +201,7 @@
 
 
   function handleBack(){if(current){renderHome();return true;}return false;}
-  Object.assign(NS,{renderHome,handleBack,selectAge,selectCategory,startGame,answer,advance,renderParents,saveProfile,saveSettings,makeBackup,restoreBackup,resetProgress,about});
+  Object.assign(NS,{beginLevel,lockedInfo,renderHome,handleBack,selectAge,selectCategory,startGame,answer,advance,renderParents,saveProfile,saveSettings,makeBackup,restoreBackup,resetProgress,about});
   applyTabletLayout();
   window.addEventListener('resize',applyTabletLayout);
   window.addEventListener('orientationchange',applyTabletLayout);

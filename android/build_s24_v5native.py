@@ -14,8 +14,8 @@ ASSETS=ROOT/'app'
 OUT=ROOT/'dist'
 PACKAGE='com.logicland.kids.v9s24'
 ACTIVITY='com.logicland.kids.MainActivity'
-VERSION='9.1.0'
-VERSION_CODE=90100
+VERSION='9.2.0'
+VERSION_CODE=90200
 
 
 def axml_patch(data):
@@ -102,7 +102,7 @@ def patch_resource_package(data):
         pos+=size
     if not found:raise RuntimeError('No resource package chunk')
     # v9: app label visibly different from v8 (same byte length keeps every string-pool offset valid).
-    old_label=b'\x0e\x0eLogicLand Kids\x00';new_label=b'\x0e\x0eLogicLand v9.1\x00'
+    old_label=b'\x0e\x0eLogicLand Kids\x00';new_label=b'\x0e\x0eLogicLand v9.2\x00'
     assert len(old_label)==len(new_label) and bytes(d).count(old_label)==1,'App label not found in resources.arsc'
     i=bytes(d).find(old_label);d[i:i+len(old_label)]=new_label
     return bytes(d)
@@ -159,7 +159,7 @@ def build():
     subprocess.run(['jarsigner','-keystore',str(ks),'-storepass',pw,'-keypass',pw,'-sigalg','SHA256withRSA','-digestalg','SHA-256',str(jarsigned),'logicland-v8'],check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     aligned=OUT/'tmp-v1-aligned.apk'
     zipalign_v1(jarsigned,aligned)
-    signed=OUT/'LogicLandKids-v9.1-Samsung-S24Ultra.apk'
+    signed=OUT/'LogicLandKids-v9.2-Samsung-S24Ultra.apk'
     sign_v2(aligned,signed,ks,pw)
     verify2=verify_v2(signed)
     v1=subprocess.run(['jarsigner','-verify',str(signed)],capture_output=True,text=True)

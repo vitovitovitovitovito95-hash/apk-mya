@@ -1,3 +1,10 @@
+# LogicLand Kids — Stato v9.2
+
+- v9.2: 28 giochi. Livelli in tabelle a 15 righe (`src/js/games-v92-levels.js`), lingue EN/ES
+  (`games-v92-lang.js`, `data-es.js`), allenamento mentale 70–73 (`games-v92-brain.js`), sblocco a stelle e
+  schermata livello in `app.js`. Audio Pico (`tools/build_audio_v92.py`). Test principale: `tests/v92_levels_test.js`.
+- APK 9.2 (versionCode 90200) firmati con le stesse chiavi v9 → aggiornano la 9.1. Installazione fisica: da verificare.
+
 # LogicLand Kids — Stato v9.1
 
 - v9.1: 22 giochi (nuovi 40/41/42 in `src/js/games-v9-logic.js`, 21 e 35 accorpati in 8), boost contenuti +3 livelli, 6–8 domande, timer per domanda, nuovo tema, nome app “LogicLand v9.1”, versionCode 90100.
@@ -5,7 +12,7 @@
 
 - Base v8.4. 21 giochi, 15 livelli, 3 vite, backup schema 8, MP3 offline invariati.
 - Nuovi generatori v9 (`src/js/games-v9-levels.js`) per Numero Mancante, Intruso, Coppie Gemelle,
-  Conta e Scegli, Blocchi Logici, Domino, Memoria Visiva. Test: `tests/v9_levels_test.js`.
+  Conta e Scegli, Blocchi Logici, Domino, Memoria Visiva. Test (ora): `tests/v92_levels_test.js`.
 - Grafica/animazioni v9: fondo di `app/css/styles.css` + `src/js/fx.js` (suoni, coriandoli, scintille).
 - PWA per iOS: `app/manifest.webmanifest`, `app/sw.js` (generato), `app/icons/`, workflow Pages manuale.
 - APK v9.0 (versionCode 90000) con NUOVE chiavi e package `com.logicland.kids.v9s24` / `.v9asus`:

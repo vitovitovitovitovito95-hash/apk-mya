@@ -405,3 +405,76 @@ body:after{background:radial-gradient(circle at 60% 40%,rgba(255,230,120,.45),rg
 .pyrCell.blank{background:#fff;border:2px dashed #e8664a;color:#e8664a}
 .pyrCell.ask{background:#ffd84d;border-color:#d99b00;color:#5b2d00;-webkit-animation:pulse 1.4s ease-in-out infinite;animation:pulse 1.4s ease-in-out infinite}
 @media (max-width:380px){.pyrCell{width:50px}.eqRow{font-size:23px}}
+/* ===================== v9.2 ===================== */
+/* Copertine dei nuovi giochi */
+.emojiArt{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;font-size:74px;background:linear-gradient(135deg,#ffe08a,#ff9a3c)}
+.emojiArt span{-webkit-animation:bob 3s ease-in-out infinite;animation:bob 3s ease-in-out infinite;text-shadow:0 6px 0 rgba(0,0,0,.12)}
+.art-math{background:linear-gradient(135deg,#ffd36e,#ff8a4c)}.art-logic{background:linear-gradient(135deg,#8fb4ff,#5b6cff)}.art-brain{background:linear-gradient(135deg,#ffb1d8,#c25cff)}.art-spanish{background:linear-gradient(135deg,#ffd84d,#ff4d4d)}.art-visual{background:linear-gradient(135deg,#9ff0d2,#2fc49b)}.art-english{background:linear-gradient(135deg,#ffd0d8,#ff4d6d)}
+.gameTile.world-brain .gameArtwork{border-bottom-color:#ff5cc8}.gameTile.world-spanish .gameArtwork{border-bottom-color:#ffcc00}
+/* Giochi bloccati */
+.gameTile.locked{-webkit-filter:saturate(.35);filter:saturate(.35)}
+.gameTile.locked .gameArtwork{opacity:.55}
+.lockBadge{position:absolute;top:52px;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#2b2260;color:#ffd84d;font-weight:900;font-size:15px;padding:8px 14px;border-radius:999px;box-shadow:0 4px 0 rgba(0,0,0,.3);white-space:nowrap;z-index:2}
+/* Schermata inizio livello */
+.levelIntro{text-align:center}
+.lvBadge{width:84px;height:84px;line-height:84px;margin:0 auto 6px;border-radius:50%;background:linear-gradient(135deg,#ffd84d,#ff9a3c);color:#5b2d00;font-size:40px;font-weight:950;box-shadow:0 6px 0 #c76f00,0 0 0 6px #fff3c4;-webkit-animation:trophy .8s cubic-bezier(.2,.9,.3,1.4) both;animation:trophy .8s cubic-bezier(.2,.9,.3,1.4) both}
+.lvPath{margin:6px 0 12px}
+.lvPath i{display:inline-block;width:14px;height:14px;margin:2px;border-radius:50%;background:#e6e1ff}
+.lvPath i.done{background:#3ccf7a}.lvPath i.now{background:#ff9a3c;box-shadow:0 0 0 3px #ffe0b8;-webkit-animation:pulse 1.2s infinite;animation:pulse 1.2s infinite}
+.lvNew{background:#f3efff;border:3px solid #d9ceff;border-radius:16px;padding:12px;font-size:16px;font-weight:800;color:#3a2a9a;margin:6px 0}
+.lvPrev{font-size:12px;color:#8a83b8;margin:4px 0 8px;font-weight:700}
+.lvStats span{display:inline-block;margin:4px;padding:7px 11px;border-radius:999px;background:#fff3c4;font-weight:850;font-size:13px;color:#5b2d00}
+/* Gettoni colorati (intruso, gemelle, sequenze) */
+.tkStrip{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;margin:12px 0}
+.tkCell{position:relative;min-width:52px;height:52px;margin:3px;border-radius:14px;background:#f4f1ff;display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;-webkit-animation:popIn .3s both;animation:popIn .3s both}
+.tkCell small{position:absolute;top:1px;left:5px;font-size:9px;color:#8b94a8;font-weight:900}
+.tk{font-size:28px;line-height:1;font-family:Arial,'DejaVu Sans',sans-serif;white-space:nowrap;text-shadow:0 2px 0 rgba(0,0,0,.08)}
+.tk.tkBig{font-size:40px}
+.tkDir{display:inline-block;font-style:normal;font-size:17px;margin-left:2px;color:#2b2260}
+.tkBlank{display:inline-block;width:34px;height:34px;border-radius:9px;background:#ddd6ff}
+.optTok .tk{font-size:32px}.optTok .tk.tkBig{font-size:42px}
+.optShadow{font-size:26px;letter-spacing:3px}
+.bigEmoji{font-size:46px;vertical-align:middle;margin-right:6px}
+/* Blocchi logici */
+.dConds{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center;margin:8px 0}
+.dChip{display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;background:#fff3c4;border:3px solid #ffd84d;border-radius:14px;padding:6px 10px;margin:3px;font-weight:900;font-size:15px;color:#3a2a9a}
+.dChip.neg{background:#ffe0e6;border-color:#ff4d6d}.dChip.neg b{color:#fff;background:#ff4d6d;border-radius:6px;padding:1px 5px;margin-right:4px}
+.dChip .sw{display:inline-block;width:18px;height:18px;border-radius:5px;margin-right:5px}
+.dMini{display:inline-block;margin-right:5px;-webkit-transform:scale(.6);transform:scale(.6)}
+.dJoin{margin:0 4px;color:#3a2a9a;font-size:14px}.dJoin.or{color:#ff4d6d}
+.dGroup{display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;border:3px dashed #ff4d6d;border-radius:18px;padding:2px;margin:2px}
+.dBoard{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;margin:10px 0;background:#f4f1ff;border-radius:18px;padding:8px}
+.dCell{position:relative;width:70px;height:66px;display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;-webkit-animation:popIn .3s both;animation:popIn .3s both}
+.dCell small{position:absolute;top:0;left:4px;font-size:11px;font-weight:900;color:#6b5fa6}
+.dBlock{display:block;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+/* Sudoku: bordi dei riquadri */
+.sudokuTile.sdR{border-right:3px solid #4b2fd8!important}.sudokuTile.sdB{border-bottom:3px solid #4b2fd8!important}
+/* Audio */
+.speakRow{display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;margin-top:10px}
+.speak.big{font-size:18px;padding:12px 20px;margin:0 5px;background:#4b2fd8;color:#fff;border-radius:16px;box-shadow:0 5px 0 #2b1a8a}
+.speak.slow{font-size:16px;padding:12px 16px;margin:0 5px;background:#fff3c4;color:#5b2d00;border-radius:16px;box-shadow:0 5px 0 #d99b00}
+.sentence{display:inline-block;font-size:22px;font-weight:850;color:#2b2260;margin:6px 0}
+/* Allenamento mentale */
+.brainHead{text-align:center;margin-bottom:8px}.brainHead strong{font-size:21px;color:#3a2a9a}.brainHead p{margin:4px 0 0;color:#6b5fa6;font-weight:700;font-size:13px}
+.bgGrid{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;margin:10px auto;background:#2b2260;border-radius:16px;padding:5px;box-sizing:content-box}
+.bgCell{box-sizing:border-box;border:4px solid #2b2260!important;border-radius:12px;background:#4b3fa0;padding:0;-webkit-transition:background .15s;transition:background .15s}
+.bgCell.on{background:#ffd84d;box-shadow:0 0 18px #ffd84d}.bgCell.ok{background:#3ccf7a}.bgCell.bad{background:#ff4d6d}.bgCell.miss{background:#ffd84d;opacity:.55}
+.nbTrail{text-align:center;height:24px;font-size:20px;color:#b9b0e8}.nbTrail span{margin:0 2px}
+.nbCard{width:150px;height:150px;line-height:150px;margin:6px auto;border-radius:24px;background:#fff;border:5px solid #c9bcff;font-size:84px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.12)}
+.nbCard.flip{-webkit-animation:flip .35s both;animation:flip .35s both}.nbCard.good{border-color:#3ccf7a}.nbCard.badc{border-color:#ff4d6d}
+.nbTimer{height:10px;border-radius:9px;background:#eee9ff;overflow:hidden;max-width:300px;margin:8px auto}.nbTimer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#3ccf7a,#ffbd32,#ff4d6d)}
+.nbBtns{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;max-width:420px;margin:10px auto 0}
+.nbBtn{width:48%;padding:18px 6px;border-radius:18px;font-size:19px;font-weight:950;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.nbBtn.yes{background:#3ccf7a}.nbBtn.no{background:#ff4d6d}.nbBtn:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+.stRule{text-align:center;font-size:18px;font-weight:900;padding:10px;border-radius:14px;margin:4px auto;max-width:420px}
+.stRule.ink{background:#ffe0ec;color:#b8004a}.stRule.word{background:#d9f2ff;color:#00508a}
+.stWord{text-align:center;font-size:52px;font-weight:950;letter-spacing:2px;margin:10px 0;font-family:Arial,sans-serif}
+.stWord.pop{-webkit-animation:popIn .3s both;animation:popIn .3s both}.stWord.good{-webkit-animation:correctPop .4s both;animation:correctPop .4s both}
+.stBtns{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;max-width:440px;margin:8px auto 0}
+.stBtn{width:31%;margin:1%;padding:16px 2px;border-radius:16px;font-weight:950;font-size:14px;box-shadow:0 5px 0 rgba(0,0,0,.22);text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.calcBox{text-align:center;margin:10px 0}
+.calcStart{display:inline-block;font-size:44px;font-weight:950;color:#3a2a9a;background:#f3efff;border-radius:20px;padding:6px 22px}
+.calcOp{font-size:54px;font-weight:950;color:#ff4d6d;margin:10px 0;min-height:66px}
+.calcOp.pop{-webkit-animation:popIn .35s both;animation:popIn .35s both}.calcOp.end{color:#3a2a9a}
+.calcDots i{display:inline-block;width:12px;height:12px;border-radius:50%;background:#e6e1ff;margin:2px}.calcDots i.on{background:#ff9a3c}
+.stBtn.trick{text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff}

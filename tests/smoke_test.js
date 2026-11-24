@@ -5,14 +5,14 @@ global.btoa=s=>Buffer.from(s,'binary').toString('base64');
 global.atob=s=>Buffer.from(s,'base64').toString('binary');
 global.document={querySelector:()=>null,getElementById:()=>null};
 const root=path.resolve(__dirname,'..','app','js');
-for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','data-es.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js','games-v92-levels.js','games-v92-lang.js','games-v92-brain.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
 const NS=global.LogicLand,state=NS.defaultState();
 function assert(x,msg){if(!x)throw new Error(msg);}
 let generated=0;
 for(const g of NS.GAMES){
   if(g.arcade){
     const a=NS.arcadeProfile(1)[g.arcade],b=NS.arcadeProfile(15)[g.arcade];
-    if(['tetris','dodge'].includes(g.arcade))assert(a&&b,`Arcade profile missing for ${g.name}`); else assert(['unblock','dots','water','checkers','chess'].includes(g.arcade),`Unknown interactive game ${g.arcade}`);
+    if(['tetris','dodge'].includes(g.arcade))assert(a&&b,`Arcade profile missing for ${g.name}`); else assert(['unblock','dots','water','checkers','chess','flashgrid','nback','stroop'].includes(g.arcade),`Unknown interactive game ${g.arcade}`);
     continue;
   }
   const fn=NS.MathGames[g.id]||NS.VisualGames[g.id]||NS.EnglishGames[g.id];
@@ -38,7 +38,7 @@ for(const g of NS.GAMES){
     lastLoad=load;
   }
 }
-assert(NS.GAMES.length===22,'Expected 22 games');
+assert(NS.GAMES.length===28,'Expected 28 games');
 assert(NS.GAMES.filter(g=>g.arcade==='tetris').length===1,'Tetris Junior missing');
 assert(NS.GAMES.filter(g=>g.arcade==='dodge').length===1,'Macchia Sprint missing');
 assert(NS.WORDS.length>=100,'Expected at least 100 English words');

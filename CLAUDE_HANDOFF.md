@@ -17,3 +17,13 @@ Regole permanenti: 21 giochi, 15 livelli per gioco, tre vite, pulsante livello s
 - `fx.js` prima di `app.js`. Non usare CSS custom properties (`var(--`) né `gap` su flex per Android 6.
 - Dopo modifiche a `app/` rigenerare `app/sw.js` con `python3 tools/build_pwa.py`.
 - Firmare con le chiavi v9 (fuori dal repo); package v9s24/v9asus, versionCode > 90000.
+
+## Vincoli v9.2
+- Ordine script: `data-es.js` dopo `data.js`; `games-v92-levels.js`, `games-v92-lang.js`, `games-v92-brain.js`
+  dopo `games-v9-logic.js` (sostituiscono i generatori di 1, 5, 7, 8, 11, 14, 16, 31, 32, 33, 34, 40, 41, 42).
+- Ogni nuova riga di livello deve mantenere `meta.age6Metrics.rank` strettamente crescente (ordine lessicografico)
+  rispetto al livello precedente: lo controlla `tests/v92_levels_test.js`, che verifica anche le risposte.
+- Nessun "boost" nascosto: `contentLevel(l)===l`. Domande per livello 5→10, secondi 30→12.
+- Giochi 70–72 sono puzzle interattivi (`NS.PuzzleGames.flashgrid/nback/stroop`), 73 è a domande.
+- Sblocco: tabella `UNLOCK` in `app.js`; `settings.unlockAll` lo disattiva.
+- Giochi ispirati al genere "brain training" ma originali: non copiare nomi, grafica o regole di prodotti esistenti.
