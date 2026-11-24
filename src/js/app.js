@@ -214,6 +214,18 @@
   window.addEventListener('resize',applyTabletLayout);
   window.addEventListener('orientationchange',applyTabletLayout);
   renderHome();
+  // iPhone/iPad nel browser: suggerisce come metterla sulla Home (così funziona come un'app, anche offline).
+  try{
+    const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    const standalone=navigator.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches);
+    let seen=false;try{seen=localStorage.getItem('llk_ios_hint')==='1';}catch(_e){}
+    if(ios&&!standalone&&!seen&&!window.LLK_NO_SW&&/^https?:$/.test(location.protocol)){
+      setTimeout(()=>{const d=document.createElement('div');d.className='iosHint';d.setAttribute('role','note');
+        d.innerHTML='📲 <b>Per averla come app:</b> tocca <b>Condividi</b> <span class="iosShare">⬆️</span> e poi <b>«Aggiungi alla schermata Home»</b>.<button type="button" aria-label="Chiudi">✕</button>';
+        d.querySelector('button').addEventListener('click',()=>{try{localStorage.setItem('llk_ios_hint','1');}catch(_e){}d.remove();});
+        document.body.appendChild(d);},1200);
+    }
+  }catch(_e){}
   // PWA (iPhone/iPad e browser): salva l'app per l'uso offline. Nell'APK (file://) non si attiva.
   try{if(!window.LLK_NO_SW&&'serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){const r=navigator.serviceWorker.register('sw.js');if(r&&r.catch)r.catch(()=>{});}}catch(_e){}
 })(window.LogicLand);
