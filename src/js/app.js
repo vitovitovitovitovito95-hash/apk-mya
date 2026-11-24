@@ -16,7 +16,7 @@
     if(NS.fx)NS.fx.play(ok?'good':'bad',true);
   }
 
-  function topbar(){return `<div class="top"><div class="toprow"><div class="avatar">${NS.escapeHtml(state.profile.avatar||'🦊')}</div><div class="brand">LogicLand <small>GIOCA • PENSA • IMPARA</small></div><div class="pill">⭐ ${state.economy.stars}</div><div class="pill">🪙 ${state.economy.coins}</div></div></div>`;}
+  function topbar(){return `<div class="top"><div class="toprow"><div class="avatar">${NS.escapeHtml(state.profile.avatar||'🦊')}</div><div class="brand">LogicLand <b class="vTag">v9</b><small>GIOCA • PENSA • IMPARA</small></div><div class="pill">⭐ ${state.economy.stars}</div><div class="pill">🪙 ${state.economy.coins}</div></div></div>`;}
 
   function dailyMissionHtml(){
     NS.ensureDaily(state);const d=state.daily,games=Math.min(3,d.gamesCompleted),eng=Math.min(5,d.englishCorrect),done=games>=3&&eng>=5;
@@ -24,22 +24,23 @@
     return `<div class="daily ${done?'done':''}">${done?'✅':'🎯'} Missione di oggi: giochi ${games}/3 • parole inglesi ${eng}/5${done?' • completata!':''}</div>`;
   }
 
-  const iconMap={1:'math',5:'sudoku',7:'odd',8:'matrix',9:'matrix',11:'puzzle',14:'memory',16:'english',21:'puzzle',31:'count',32:'odd',33:'memory',34:'english',35:'matrix',51:'tetris',52:'dodge',53:'unblock',54:'dots',55:'water',56:'checkers',57:'chess'};
+  const iconMap={40:'count',41:'math',42:'sudoku',1:'math',5:'sudoku',7:'odd',8:'matrix',9:'matrix',11:'puzzle',14:'memory',16:'english',21:'puzzle',31:'count',32:'odd',33:'memory',34:'english',35:'matrix',51:'tetris',52:'dodge',53:'unblock',54:'dots',55:'water',56:'checkers',57:'chess'};
   function cardImage(g){return `<img class="gameArtwork" src="img/${iconMap[g.id]||'puzzle'}.webp" alt="" loading="lazy">`;}
   function gameCard(g,index){
     const s=gameState(g.id),pct=Math.floor((Math.max(1,s.level)-1)/NS.MAX_LEVEL*100),delay=Math.min(14,index||0)*45;
-    return `<button class="card gameTile" style="-webkit-animation-delay:${delay}ms;animation-delay:${delay}ms" onclick="LogicLand.startGame(${g.id})">${cardImage(g)}<div class="gameTileCopy"><h3>${NS.escapeHtml(g.name)}</h3><p>${NS.escapeHtml(g.desc)}</p><div class="gameTileProgress"><span>Livello ${s.level} / ${NS.MAX_LEVEL}</span><span>⭐ ${Math.min(3,s.best||0)}</span></div><div class="miniTrack"><i style="width:${pct}%"></i></div></div></button>`;
+    const worldIcon={math:'🔢',logic:'🧠',visual:'👁️',english:'🇬🇧',arcade:'🎮'}[g.world]||'⭐';
+    return `<button class="card gameTile world-${g.world}${g.v9?' isNew':''}" style="-webkit-animation-delay:${delay}ms;animation-delay:${delay}ms" onclick="LogicLand.startGame(${g.id})">${cardImage(g)}<span class="worldChip">${worldIcon}</span>${g.v9?'<span class="newChip">NUOVO</span>':''}<div class="gameTileCopy"><h3>${NS.escapeHtml(g.name)}</h3><p>${NS.escapeHtml(g.desc)}</p><div class="gameTileProgress"><span>Livello ${s.level} / ${NS.MAX_LEVEL}</span><span>⭐ ${Math.min(3,s.best||0)}</span></div><div class="miniTrack"><i style="width:${pct}%"></i></div></div></button>`;
   }
   function selectCategory(category){selectedCategory=category;renderHome();}
   function renderHome(ageOverride){
     NS.stopEnglishAudio?.();
-    NS.stopArcade?.();NS.stopPuzzle?.();current=null;NS.ensureDaily(state);
+    stopTimer();NS.stopArcade?.();NS.stopPuzzle?.();current=null;NS.ensureDaily(state);
     save();
     const name=NS.escapeHtml(state.profile.name||'Esploratrice'),games=NS.GAMES;
     const categories=[['Tutti','Tutti'],['Logica','logic'],['Figure','visual'],['Numeri','math'],['Inglese','english'],['Abilità','arcade']];
     const visible=selectedCategory==='Tutti'?games:games.filter(g=>g.world===selectedCategory);
     const tabs=categories.map(c=>`<button class="categoryTab ${selectedCategory===c[1]?'active':''}" onclick="LogicLand.selectCategory('${c[1]}')">${c[0]}</button>`).join('');
-    document.getElementById('app').innerHTML=topbar()+`<div class="wrap newHome"><section class="hero newHero"><h1>Ciao, ${name}! 🌈</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>${dailyMissionHtml()}</section><div class="homeHeading"><h2>🎲 Scegli il tuo gioco</h2><span>${games.length} giochi · 15 livelli ciascuno</span></div><div class="categoryTabs">${tabs}</div><div class="grid gameGallery">${visible.map(gameCard).join('')}</div><div class="nav"><button class="secondary" style="flex:1" onclick="LogicLand.renderParents()">👨‍👩‍👧 Zona genitori</button><button class="secondary" onclick="LogicLand.about()">ℹ️</button></div></div>`;
+    document.getElementById('app').innerHTML=topbar()+`<div class="wrap newHome"><section class="hero newHero"><div class="v9Ribbon">✨ NUOVA VERSIONE 9 · più logica, più sfida</div><h1>Ciao, ${name}! 🌈</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>${dailyMissionHtml()}</section><div class="homeHeading"><h2>🎲 Scegli il tuo gioco</h2><span>${games.length} giochi · 15 livelli · ⏱️ a tempo</span></div><div class="categoryTabs">${tabs}</div><div class="grid gameGallery">${visible.map(gameCard).join('')}</div><div class="nav"><button class="secondary" style="flex:1" onclick="LogicLand.renderParents()">👨‍👩‍👧 Zona genitori</button><button class="secondary" onclick="LogicLand.about()">ℹ️</button></div></div>`;
   }
 
   function selectAge(age){selectedAge=NS.clamp(Number(age),NS.MIN_AGE,NS.MAX_AGE);renderHome(selectedAge);}
@@ -54,28 +55,48 @@
   }
 
   function gameShell(body,progressOverride=null){
-    const st=gameState(current.id),pct=progressOverride===null?Math.min(100,round/NS.QUESTIONS_PER_LEVEL*100):NS.clamp(progressOverride,0,100);
-    document.getElementById('app').innerHTML=topbar()+`<div class="wrap"><div class="gameHead"><button class="back" onclick="LogicLand.renderHome(${selectedAge})">←</button><div class="gameTitle"><h2>${current.icon} ${NS.escapeHtml(current.name)}</h2><div>Livello ${st.level}/${NS.MAX_LEVEL} • ${NS.escapeHtml(current.group)}<br><small>${NS.difficultyLabel(st.level)}</small></div></div><div class="gameStatus">${lifeHtml()}<span class="badge">${current.arcade?'L'+st.level:score+'/'+NS.QUESTIONS_PER_LEVEL+' ✓'}</span></div></div><div class="progress"><i id="levelProgress" style="width:${pct}%"></i></div>${body}</div>`;
+    const st=gameState(current.id),pct=progressOverride===null?Math.min(100,round/NS.questionsFor(st.level)*100):NS.clamp(progressOverride,0,100);
+    document.getElementById('app').innerHTML=topbar()+`<div class="wrap"><div class="gameHead"><button class="back" onclick="LogicLand.renderHome(${selectedAge})">←</button><div class="gameTitle"><h2>${current.icon} ${NS.escapeHtml(current.name)}</h2><div>Livello ${st.level}/${NS.MAX_LEVEL} • ${NS.escapeHtml(current.group)}<br><small>${NS.difficultyLabel(st.level)}</small></div></div><div class="gameStatus">${lifeHtml()}<span class="badge">${current.arcade?'L'+st.level:score+'/'+NS.questionsFor(st.level)+' ✓'}</span></div></div><div class="progress"><i id="levelProgress" style="width:${pct}%"></i></div>${body}</div>`;
   }
 
-  function makeQuestion(id,level){const fn=NS.MathGames[id]||NS.VisualGames[id]||NS.EnglishGames[id];if(!fn)throw new Error(`Generatore mancante per gioco ${id}`);return fn(level,state);}
+  function makeQuestion(id,level){const fn=NS.MathGames[id]||NS.VisualGames[id]||NS.EnglishGames[id];if(!fn)throw new Error(`Generatore mancante per gioco ${id}`);return fn(current&&current.v9?level:NS.contentLevel(level),state);}
+
+  // v9: conto alla rovescia per ogni domanda (più breve a ogni livello). Allo scadere si perde una vita.
+  let timerId=null,timerEnd=0,timerTotal=0;
+  function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
+  function startTimer(extraMs){
+    stopTimer();const level=gameState(current.id).level;timerTotal=NS.secondsFor(level)*({1:2,5:2,9:2,40:2,41:2.5,42:2.5}[current.id]||1)*1000;timerEnd=Date.now()+timerTotal+(extraMs||0);
+    const tick=()=>{const bar=document.getElementById('qTimerBar'),label=document.getElementById('qTimerLabel');if(!bar||!current){stopTimer();return;}
+      const left=Math.max(0,timerEnd-Date.now()),frac=Math.min(1,left/timerTotal);bar.style.width=(frac*100)+'%';bar.className=frac<.25?'danger':frac<.5?'warn':'';
+      if(label)label.textContent=Math.ceil(Math.min(left,timerTotal)/1000)+'s';
+      if(left<=0){stopTimer();timeUp();}};
+    tick();timerId=setInterval(tick,100);
+  }
+  function timeUp(){
+    if(locked)return;locked=true;beep(false);
+    document.querySelectorAll('.opt').forEach(b=>{if(String(b.dataset.value)===String(question.answer))b.classList.add('correct');});
+    const keepGoing=registerMistake('⏰ Tempo scaduto!');if(!keepGoing)return;
+    const gs=gameState(current.id),right=question.answerLabel||NS.escapeHtml(question.answer);
+    document.getElementById('feedback').innerHTML=`<div class="feedback bad">⏰ Tempo scaduto! La risposta era ${right}<div class="hint">Più veloce la prossima volta! Hai ancora ${lives} ${lives===1?'vita':'vite'}.</div></div><button class="nextBtn" onclick="LogicLand.advance()">${round===NS.questionsFor(gs.level)-1?'Concludi il livello':'Prossima sfida →'}</button>`;
+  }
 
   function renderQuestion(x){
     const opts=x.options?`<div class="options">${x.options.map(o=>{const value=o&&typeof o==='object'?(o.value??o.label):o;const label=o&&typeof o==='object'?(o.label??o.value):o;return `<button class="opt" data-value="${NS.escapeHtml(value)}" onclick="LogicLand.answer(this)">${label}</button>`;}).join('')}</div>`:'';
-    gameShell(`<div class="question"><div class="qicon">${x.icon||current.icon}</div><h3>${x.prompt}</h3>${x.sub?`<p>${x.sub}</p>`:''}${x.visual||''}${x.custom||''}</div>${opts}<div id="feedback"></div>`);if(x.afterRender)setTimeout(x.afterRender,50);
+    gameShell(`<div class="question"><div class="qicon">${x.icon||current.icon}</div><h3>${x.prompt}</h3>${x.sub?`<p>${x.sub}</p>`:''}${x.visual||''}${x.custom||''}</div><div class="qTimer"><span id="qTimerLabel"></span><div><i id="qTimerBar"></i></div></div>${opts}<div id="feedback"></div>`);if(x.afterRender)setTimeout(x.afterRender,50);
+    startTimer((x.meta&&x.meta.age6Metrics&&x.meta.age6Metrics.exposureMs)||0);
   }
 
   function startGame(id){
     NS.stopEnglishAudio?.();
     NS.stopArcade?.();
-    current=NS.GAMES.find(g=>g.id===Number(id));if(!current)return;
+    stopTimer();current=NS.GAMES.find(g=>g.id===Number(id));if(!current)return;
     selectedAge=current.age;round=0;score=0;lives=NS.STARTING_LIVES;locked=false;
     if(current.arcade)return startArcadeLevel();
     nextQuestion();
   }
 
   function nextQuestion(){
-    if(round>=NS.QUESTIONS_PER_LEVEL)return finishLevel();
+    if(round>=NS.questionsFor(gameState(current.id).level))return finishLevel();
     locked=false;question=makeQuestion(current.id,gameState(current.id).level);renderQuestion(question);
   }
 
@@ -87,29 +108,29 @@
   }
 
   function answer(source){
-    if(locked)return;const value=source?.dataset?.value??source,ok=String(value)===String(question.answer);locked=true;
+    if(locked)return;const value=source?.dataset?.value??source,ok=String(value)===String(question.answer);locked=true;const fast=timerEnd-Date.now()>timerTotal/2;stopTimer();
     document.querySelectorAll('.opt').forEach(b=>{if(String(b.dataset.value)===String(question.answer))b.classList.add('correct');});if(source&&source.classList&&!ok){source.classList.add('wrong');if(NS.fx)NS.fx.shake(source);}if(ok&&source&&source.classList&&NS.fx)NS.fx.burst(source);
     const gs=gameState(current.id);
-    if(ok){score++;state.totals.correct++;gs.correct++;state.economy.streak++;state.economy.coins+=2+(gs.level>7?1:0);state.economy.xp+=10;if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,true);beep(true);gs.lastPlayed=new Date().toISOString();save();}
+    if(ok){score++;state.totals.correct++;gs.correct++;state.economy.streak++;state.economy.coins+=2+(gs.level>7?1:0)+(fast?1:0);state.economy.xp+=10;if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,true);beep(true);gs.lastPlayed=new Date().toISOString();save();}
     else{
       if(current.eng&&question.word)NS.recordEnglishResult(state,question.word,false);beep(false);
       const keepGoing=registerMistake('Risposta sbagliata.');
       if(!keepGoing)return;
     }
     const feedback=document.getElementById('feedback'),right=question.answerLabel||NS.escapeHtml(question.answer),hint=state.settings.hints?(question.hint||'Osserva la regola e prova un passo alla volta.'):'Riprova nella prossima sfida.';
-    feedback.innerHTML=`<div class="feedback ${ok?'good':'bad'}">${ok?'🌟 Perfetto! Ottimo ragionamento.':'💪 Attenzione: la risposta giusta è '+right}<div class="hint">${ok?(state.economy.streak>=3?'Serie di '+state.economy.streak+' risposte corrette! 🔥':'Continua così!'):hint+` Hai ancora ${lives} ${lives===1?'vita':'vite'}.`}</div></div><button class="nextBtn" onclick="LogicLand.advance()">${round===NS.QUESTIONS_PER_LEVEL-1?'Concludi il livello':'Prossima sfida →'}</button>`;
+    feedback.innerHTML=`<div class="feedback ${ok?'good':'bad'}">${ok?(fast?'⚡ Velocissima! +1 🪙 bonus':'🌟 Perfetto! Ottimo ragionamento.'):'💪 Attenzione: la risposta giusta è '+right}<div class="hint">${ok?(state.economy.streak>=3?'Serie di '+state.economy.streak+' risposte corrette! 🔥':'Continua così!'):hint+` Hai ancora ${lives} ${lives===1?'vita':'vite'}.`}</div></div><button class="nextBtn" onclick="LogicLand.advance()">${round===NS.questionsFor(gs.level)-1?'Concludi il livello':'Prossima sfida →'}</button>`;
   }
 
   function advance(){round++;nextQuestion();}
 
   function failLevel(reason){
-    NS.stopArcade?.();NS.stopPuzzle?.();locked=true;
+    stopTimer();NS.stopArcade?.();NS.stopPuzzle?.();locked=true;
     const gs=gameState(current.id);state.totals.sessions++;save();
     gameShell(`<div class="question levelWin failLevel"><div class="trophy">💛</div><h2>Livello da riprovare</h2><p>${NS.escapeHtml(reason||'Hai esaurito le tre vite.')} Il livello termina quando vengono consumate tutte e <b>3 le vite</b>.</p><div class="lifeRule">❤️❤️❤️ → ogni errore consuma una vita → a 0 vite si ricomincia</div><button class="nextBtn" onclick="LogicLand.startGame(${current.id})">↺ Riprova livello ${gs.level}</button><button class="secondary" style="width:100%;margin-top:9px" onclick="LogicLand.renderHome(${selectedAge})">Torna al percorso</button></div>`,0);
   }
 
   function finishLevel(){
-    NS.stopArcade?.();NS.stopPuzzle?.();
+    stopTimer();NS.stopArcade?.();NS.stopPuzzle?.();
     const gs=gameState(current.id),old=gs.level,perfect=lives===NS.STARTING_LIVES,earned=perfect?3:2;
     gs.best=Math.max(gs.best||0,earned);gs.wins=(gs.wins||0)+1;state.economy.stars+=earned;state.economy.coins+=5*earned;state.economy.xp+=Math.max(20,score*5);state.totals.sessions++;state.daily.gamesCompleted++;
     if(gs.level<NS.MAX_LEVEL)gs.level++;save();
@@ -117,7 +138,7 @@
     const maxed=old>=NS.MAX_LEVEL;
     const mastery=maxed?'Hai completato anche il livello massimo! 🏅':`Hai sbloccato il livello ${gs.level}!`;
     const nextLabel=maxed?'↺ Rigioca livello 15':`Livello successivo ${gs.level} →`;
-    gameShell(`<div class="question levelWin"><div class="trophy">${perfect?'🏆':'🎉'}</div><h2>Livello ${old} completato!</h2><p>${current.arcade?'Sfida di abilità superata.':`Hai risolto <b>${score} sfide su ${NS.QUESTIONS_PER_LEVEL}</b>.`} ${mastery}</p><div class="reward"><span>+${earned} ⭐</span><span>+${5*earned} 🪙</span></div><button class="nextBtn nextLevelButton" onclick="LogicLand.startGame(${current.id})">${nextLabel}</button><button class="secondary" style="width:100%;margin-top:9px" onclick="LogicLand.renderHome(${selectedAge})">Torna al percorso</button></div>`,100);
+    gameShell(`<div class="question levelWin"><div class="trophy">${perfect?'🏆':'🎉'}</div><h2>Livello ${old} completato!</h2><p>${current.arcade?'Sfida di abilità superata.':`Hai risolto <b>${score} sfide su ${NS.questionsFor(old)}</b>.`} ${mastery}</p><div class="reward"><span>+${earned} ⭐</span><span>+${5*earned} 🪙</span></div><button class="nextBtn nextLevelButton" onclick="LogicLand.startGame(${current.id})">${nextLabel}</button><button class="secondary" style="width:100%;margin-top:9px" onclick="LogicLand.renderHome(${selectedAge})">Torna al percorso</button></div>`,100);
   }
 
   function startArcadeLevel(){
@@ -131,7 +152,7 @@
     gameShell(`${intro}<div id="arcadeMount" class="arcadeMount"></div><div id="arcadeProgressText" class="arcadeProgressText"></div>`,0);
     const starter=NS.ArcadeGames?.[current.arcade]||NS.PuzzleGames?.[current.arcade];
     if(!starter)return failLevel('Modulo arcade non disponibile.');
-    starter({level:gs.level,mountId:'arcadeMount',onMistake:(msg)=>registerMistake(msg),onProgress:(fraction,label)=>{const bar=document.getElementById('levelProgress');if(bar)bar.style.width=Math.round(fraction*100)+'%';const t=document.getElementById('arcadeProgressText');if(t)t.textContent=label;},onSuccess:()=>{score=lives===NS.STARTING_LIVES?NS.QUESTIONS_PER_LEVEL:NS.QUESTIONS_PER_LEVEL-1;state.totals.correct++;gs.correct++;beep(true);finishLevel();}});
+    starter({level:gs.level,mountId:'arcadeMount',onMistake:(msg)=>registerMistake(msg),onProgress:(fraction,label)=>{const bar=document.getElementById('levelProgress');if(bar)bar.style.width=Math.round(fraction*100)+'%';const t=document.getElementById('arcadeProgressText');if(t)t.textContent=label;},onSuccess:()=>{score=lives===NS.STARTING_LIVES?NS.questionsFor(gs.level):NS.questionsFor(gs.level)-1;state.totals.correct++;gs.correct++;beep(true);finishLevel();}});
   }
 
   function accuracy(correct,wrong){const t=correct+wrong;return t?Math.round(correct/t*100):0;}

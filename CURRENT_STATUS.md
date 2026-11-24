@@ -1,4 +1,7 @@
-# LogicLand Kids — Stato v9.0
+# LogicLand Kids — Stato v9.1
+
+- v9.1: 22 giochi (nuovi 40/41/42 in `src/js/games-v9-logic.js`, 21 e 35 accorpati in 8), boost contenuti +3 livelli, 6–8 domande, timer per domanda, nuovo tema, nome app “LogicLand v9.1”, versionCode 90100.
+
 
 - Base v8.4. 21 giochi, 15 livelli, 3 vite, backup schema 8, MP3 offline invariati.
 - Nuovi generatori v9 (`src/js/games-v9-levels.js`) per Numero Mancante, Intruso, Coppie Gemelle,

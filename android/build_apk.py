@@ -214,7 +214,7 @@ def axml_build():
     strings=[
       'android',ANDROID_URI,'manifest','package','versionCode','versionName','uses-sdk','minSdkVersion','targetSdkVersion',
       'application','label','allowBackup','supportsRtl','activity','name','exported','intent-filter','action','category',
-      PKG,'9.0','LogicLand Kids 9','com.logicland.kids.v9asus.MainActivity','android.intent.action.MAIN','android.intent.category.LAUNCHER'
+      PKG,'9.1','LogicLand v9.1','com.logicland.kids.v9asus.MainActivity','android.intent.action.MAIN','android.intent.category.LAUNCHER'
     ]
     idx={s:i for i,s in enumerate(strings)}
     rid={
@@ -247,11 +247,11 @@ def axml_build():
     out+=ns_node(START_NS,'android',ANDROID_URI)
     out+=start('manifest',[
       attr('package',PKG,TYPE_STRING,android=False),
-      attr('versionCode',dtype=TYPE_INT_DEC,data=90000),
-      attr('versionName','9.0')])
+      attr('versionCode',dtype=TYPE_INT_DEC,data=90100),
+      attr('versionName','9.1')])
     out+=start('uses-sdk',[attr('minSdkVersion',dtype=TYPE_INT_DEC,data=23),attr('targetSdkVersion',dtype=TYPE_INT_DEC,data=23)])
     out+=end('uses-sdk')
-    out+=start('application',[attr('label','LogicLand Kids 9'),attr('allowBackup',dtype=TYPE_INT_BOOLEAN,data=0xffffffff),attr('supportsRtl',dtype=TYPE_INT_BOOLEAN,data=0xffffffff)])
+    out+=start('application',[attr('label','LogicLand v9.1'),attr('allowBackup',dtype=TYPE_INT_BOOLEAN,data=0xffffffff),attr('supportsRtl',dtype=TYPE_INT_BOOLEAN,data=0xffffffff)])
     out+=start('activity',[attr('name','com.logicland.kids.v9asus.MainActivity'),attr('exported',dtype=TYPE_INT_BOOLEAN,data=0xffffffff)])
     out+=start('intent-filter',[])
     out+=start('action',[attr('name','android.intent.action.MAIN')]); out+=end('action')
@@ -279,7 +279,7 @@ def build_apk():
     alias=os.environ.get('LLK_SIGNING_ALIAS','logicland-debug')
     if not ks.exists():
         subprocess.run(['keytool','-genkeypair','-v','-keystore',str(ks),'-storepass',pw,'-keypass',pw,'-alias',alias,'-keyalg','RSA','-keysize','2048','-validity','10000','-dname','CN=LogicLand Kids v9 Asus, O=Local Build, C=IT'],check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
-    signed=BUILD/'LogicLandKids-v9.0-Asus-Android6.0.1.apk'
+    signed=BUILD/'LogicLandKids-v9.1-Asus-Android6.0.1.apk'
     shutil.copy2(unsigned,signed)
     subprocess.run(['jarsigner','-keystore',str(ks),'-storepass',pw,'-keypass',pw,'-sigalg','SHA256withRSA','-digestalg','SHA-256',str(signed),alias],check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
     verify=subprocess.run(['jarsigner','-verify',str(signed)],capture_output=True,text=True)

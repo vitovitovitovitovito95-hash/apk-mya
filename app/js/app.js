@@ -78,7 +78,7 @@ var __read = (this && this.__read) || function (o, n) {
         if (NS.fx)
             NS.fx.play(ok ? 'good' : 'bad', true);
     }
-    function topbar() { return "<div class=\"top\"><div class=\"toprow\"><div class=\"avatar\">".concat(NS.escapeHtml(state.profile.avatar || '🦊'), "</div><div class=\"brand\">LogicLand <small>GIOCA \u2022 PENSA \u2022 IMPARA</small></div><div class=\"pill\">\u2B50 ").concat(state.economy.stars, "</div><div class=\"pill\">\uD83E\uDE99 ").concat(state.economy.coins, "</div></div></div>"); }
+    function topbar() { return "<div class=\"top\"><div class=\"toprow\"><div class=\"avatar\">".concat(NS.escapeHtml(state.profile.avatar || '🦊'), "</div><div class=\"brand\">LogicLand <b class=\"vTag\">v9</b><small>GIOCA \u2022 PENSA \u2022 IMPARA</small></div><div class=\"pill\">\u2B50 ").concat(state.economy.stars, "</div><div class=\"pill\">\uD83E\uDE99 ").concat(state.economy.coins, "</div></div></div>"); }
     function dailyMissionHtml() {
         NS.ensureDaily(state);
         var d = state.daily, games = Math.min(3, d.gamesCompleted), eng = Math.min(5, d.englishCorrect), done = games >= 3 && eng >= 5;
@@ -91,16 +91,18 @@ var __read = (this && this.__read) || function (o, n) {
         }
         return "<div class=\"daily ".concat(done ? 'done' : '', "\">").concat(done ? '✅' : '🎯', " Missione di oggi: giochi ").concat(games, "/3 \u2022 parole inglesi ").concat(eng, "/5").concat(done ? ' • completata!' : '', "</div>");
     }
-    var iconMap = { 1: 'math', 5: 'sudoku', 7: 'odd', 8: 'matrix', 9: 'matrix', 11: 'puzzle', 14: 'memory', 16: 'english', 21: 'puzzle', 31: 'count', 32: 'odd', 33: 'memory', 34: 'english', 35: 'matrix', 51: 'tetris', 52: 'dodge', 53: 'unblock', 54: 'dots', 55: 'water', 56: 'checkers', 57: 'chess' };
+    var iconMap = { 40: 'count', 41: 'math', 42: 'sudoku', 1: 'math', 5: 'sudoku', 7: 'odd', 8: 'matrix', 9: 'matrix', 11: 'puzzle', 14: 'memory', 16: 'english', 21: 'puzzle', 31: 'count', 32: 'odd', 33: 'memory', 34: 'english', 35: 'matrix', 51: 'tetris', 52: 'dodge', 53: 'unblock', 54: 'dots', 55: 'water', 56: 'checkers', 57: 'chess' };
     function cardImage(g) { return "<img class=\"gameArtwork\" src=\"img/".concat(iconMap[g.id] || 'puzzle', ".webp\" alt=\"\" loading=\"lazy\">"); }
     function gameCard(g, index) {
         var s = gameState(g.id), pct = Math.floor((Math.max(1, s.level) - 1) / NS.MAX_LEVEL * 100), delay = Math.min(14, index || 0) * 45;
-        return "<button class=\"card gameTile\" style=\"-webkit-animation-delay:".concat(delay, "ms;animation-delay:").concat(delay, "ms\" onclick=\"LogicLand.startGame(").concat(g.id, ")\">").concat(cardImage(g), "<div class=\"gameTileCopy\"><h3>").concat(NS.escapeHtml(g.name), "</h3><p>").concat(NS.escapeHtml(g.desc), "</p><div class=\"gameTileProgress\"><span>Livello ").concat(s.level, " / ").concat(NS.MAX_LEVEL, "</span><span>\u2B50 ").concat(Math.min(3, s.best || 0), "</span></div><div class=\"miniTrack\"><i style=\"width:").concat(pct, "%\"></i></div></div></button>");
+        var worldIcon = { math: '🔢', logic: '🧠', visual: '👁️', english: '🇬🇧', arcade: '🎮' }[g.world] || '⭐';
+        return "<button class=\"card gameTile world-".concat(g.world).concat(g.v9 ? ' isNew' : '', "\" style=\"-webkit-animation-delay:").concat(delay, "ms;animation-delay:").concat(delay, "ms\" onclick=\"LogicLand.startGame(").concat(g.id, ")\">").concat(cardImage(g), "<span class=\"worldChip\">").concat(worldIcon, "</span>").concat(g.v9 ? '<span class="newChip">NUOVO</span>' : '', "<div class=\"gameTileCopy\"><h3>").concat(NS.escapeHtml(g.name), "</h3><p>").concat(NS.escapeHtml(g.desc), "</p><div class=\"gameTileProgress\"><span>Livello ").concat(s.level, " / ").concat(NS.MAX_LEVEL, "</span><span>\u2B50 ").concat(Math.min(3, s.best || 0), "</span></div><div class=\"miniTrack\"><i style=\"width:").concat(pct, "%\"></i></div></div></button>");
     }
     function selectCategory(category) { selectedCategory = category; renderHome(); }
     function renderHome(ageOverride) {
         var _a, _b, _c;
         (_a = NS.stopEnglishAudio) === null || _a === void 0 ? void 0 : _a.call(NS);
+        stopTimer();
         (_b = NS.stopArcade) === null || _b === void 0 ? void 0 : _b.call(NS);
         (_c = NS.stopPuzzle) === null || _c === void 0 ? void 0 : _c.call(NS);
         current = null;
@@ -110,7 +112,7 @@ var __read = (this && this.__read) || function (o, n) {
         var categories = [['Tutti', 'Tutti'], ['Logica', 'logic'], ['Figure', 'visual'], ['Numeri', 'math'], ['Inglese', 'english'], ['Abilità', 'arcade']];
         var visible = selectedCategory === 'Tutti' ? games : games.filter(function (g) { return g.world === selectedCategory; });
         var tabs = categories.map(function (c) { return "<button class=\"categoryTab ".concat(selectedCategory === c[1] ? 'active' : '', "\" onclick=\"LogicLand.selectCategory('").concat(c[1], "')\">").concat(c[0], "</button>"); }).join('');
-        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap newHome\"><section class=\"hero newHero\"><h1>Ciao, ".concat(name, "! \uD83C\uDF08</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>").concat(dailyMissionHtml(), "</section><div class=\"homeHeading\"><h2>\uD83C\uDFB2 Scegli il tuo gioco</h2><span>").concat(games.length, " giochi \u00B7 15 livelli ciascuno</span></div><div class=\"categoryTabs\">").concat(tabs, "</div><div class=\"grid gameGallery\">").concat(visible.map(gameCard).join(''), "</div><div class=\"nav\"><button class=\"secondary\" style=\"flex:1\" onclick=\"LogicLand.renderParents()\">\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67 Zona genitori</button><button class=\"secondary\" onclick=\"LogicLand.about()\">\u2139\uFE0F</button></div></div>");
+        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap newHome\"><section class=\"hero newHero\"><div class=\"v9Ribbon\">\u2728 NUOVA VERSIONE 9 \u00B7 pi\u00F9 logica, pi\u00F9 sfida</div><h1>Ciao, ".concat(name, "! \uD83C\uDF08</h1><p>Esplora i mondi di LogicLand: scegli un gioco e continua la tua avventura!</p>").concat(dailyMissionHtml(), "</section><div class=\"homeHeading\"><h2>\uD83C\uDFB2 Scegli il tuo gioco</h2><span>").concat(games.length, " giochi \u00B7 15 livelli \u00B7 \u23F1\uFE0F a tempo</span></div><div class=\"categoryTabs\">").concat(tabs, "</div><div class=\"grid gameGallery\">").concat(visible.map(gameCard).join(''), "</div><div class=\"nav\"><button class=\"secondary\" style=\"flex:1\" onclick=\"LogicLand.renderParents()\">\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67 Zona genitori</button><button class=\"secondary\" onclick=\"LogicLand.about()\">\u2139\uFE0F</button></div></div>");
     }
     function selectAge(age) { selectedAge = NS.clamp(Number(age), NS.MIN_AGE, NS.MAX_AGE); renderHome(selectedAge); }
     function lifeHtml() {
@@ -123,21 +125,66 @@ var __read = (this && this.__read) || function (o, n) {
     }
     function gameShell(body, progressOverride) {
         if (progressOverride === void 0) { progressOverride = null; }
-        var st = gameState(current.id), pct = progressOverride === null ? Math.min(100, round / NS.QUESTIONS_PER_LEVEL * 100) : NS.clamp(progressOverride, 0, 100);
-        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap\"><div class=\"gameHead\"><button class=\"back\" onclick=\"LogicLand.renderHome(".concat(selectedAge, ")\">\u2190</button><div class=\"gameTitle\"><h2>").concat(current.icon, " ").concat(NS.escapeHtml(current.name), "</h2><div>Livello ").concat(st.level, "/").concat(NS.MAX_LEVEL, " \u2022 ").concat(NS.escapeHtml(current.group), "<br><small>").concat(NS.difficultyLabel(st.level), "</small></div></div><div class=\"gameStatus\">").concat(lifeHtml(), "<span class=\"badge\">").concat(current.arcade ? 'L' + st.level : score + '/' + NS.QUESTIONS_PER_LEVEL + ' ✓', "</span></div></div><div class=\"progress\"><i id=\"levelProgress\" style=\"width:").concat(pct, "%\"></i></div>").concat(body, "</div>");
+        var st = gameState(current.id), pct = progressOverride === null ? Math.min(100, round / NS.questionsFor(st.level) * 100) : NS.clamp(progressOverride, 0, 100);
+        document.getElementById('app').innerHTML = topbar() + "<div class=\"wrap\"><div class=\"gameHead\"><button class=\"back\" onclick=\"LogicLand.renderHome(".concat(selectedAge, ")\">\u2190</button><div class=\"gameTitle\"><h2>").concat(current.icon, " ").concat(NS.escapeHtml(current.name), "</h2><div>Livello ").concat(st.level, "/").concat(NS.MAX_LEVEL, " \u2022 ").concat(NS.escapeHtml(current.group), "<br><small>").concat(NS.difficultyLabel(st.level), "</small></div></div><div class=\"gameStatus\">").concat(lifeHtml(), "<span class=\"badge\">").concat(current.arcade ? 'L' + st.level : score + '/' + NS.questionsFor(st.level) + ' ✓', "</span></div></div><div class=\"progress\"><i id=\"levelProgress\" style=\"width:").concat(pct, "%\"></i></div>").concat(body, "</div>");
     }
     function makeQuestion(id, level) { var fn = NS.MathGames[id] || NS.VisualGames[id] || NS.EnglishGames[id]; if (!fn)
-        throw new Error("Generatore mancante per gioco ".concat(id)); return fn(level, state); }
+        throw new Error("Generatore mancante per gioco ".concat(id)); return fn(current && current.v9 ? level : NS.contentLevel(level), state); }
+    // v9: conto alla rovescia per ogni domanda (più breve a ogni livello). Allo scadere si perde una vita.
+    var timerId = null, timerEnd = 0, timerTotal = 0;
+    function stopTimer() { if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+    } }
+    function startTimer(extraMs) {
+        stopTimer();
+        var level = gameState(current.id).level;
+        timerTotal = NS.secondsFor(level) * ({ 1: 2, 5: 2, 9: 2, 40: 2, 41: 2.5, 42: 2.5 }[current.id] || 1) * 1000;
+        timerEnd = Date.now() + timerTotal + (extraMs || 0);
+        var tick = function () {
+            var bar = document.getElementById('qTimerBar'), label = document.getElementById('qTimerLabel');
+            if (!bar || !current) {
+                stopTimer();
+                return;
+            }
+            var left = Math.max(0, timerEnd - Date.now()), frac = Math.min(1, left / timerTotal);
+            bar.style.width = (frac * 100) + '%';
+            bar.className = frac < .25 ? 'danger' : frac < .5 ? 'warn' : '';
+            if (label)
+                label.textContent = Math.ceil(Math.min(left, timerTotal) / 1000) + 's';
+            if (left <= 0) {
+                stopTimer();
+                timeUp();
+            }
+        };
+        tick();
+        timerId = setInterval(tick, 100);
+    }
+    function timeUp() {
+        if (locked)
+            return;
+        locked = true;
+        beep(false);
+        document.querySelectorAll('.opt').forEach(function (b) { if (String(b.dataset.value) === String(question.answer))
+            b.classList.add('correct'); });
+        var keepGoing = registerMistake('⏰ Tempo scaduto!');
+        if (!keepGoing)
+            return;
+        var gs = gameState(current.id), right = question.answerLabel || NS.escapeHtml(question.answer);
+        document.getElementById('feedback').innerHTML = "<div class=\"feedback bad\">\u23F0 Tempo scaduto! La risposta era ".concat(right, "<div class=\"hint\">Pi\u00F9 veloce la prossima volta! Hai ancora ").concat(lives, " ").concat(lives === 1 ? 'vita' : 'vite', ".</div></div><button class=\"nextBtn\" onclick=\"LogicLand.advance()\">").concat(round === NS.questionsFor(gs.level) - 1 ? 'Concludi il livello' : 'Prossima sfida →', "</button>");
+    }
     function renderQuestion(x) {
         var opts = x.options ? "<div class=\"options\">".concat(x.options.map(function (o) { var _a, _b; var value = o && typeof o === 'object' ? ((_a = o.value) !== null && _a !== void 0 ? _a : o.label) : o; var label = o && typeof o === 'object' ? ((_b = o.label) !== null && _b !== void 0 ? _b : o.value) : o; return "<button class=\"opt\" data-value=\"".concat(NS.escapeHtml(value), "\" onclick=\"LogicLand.answer(this)\">").concat(label, "</button>"); }).join(''), "</div>") : '';
-        gameShell("<div class=\"question\"><div class=\"qicon\">".concat(x.icon || current.icon, "</div><h3>").concat(x.prompt, "</h3>").concat(x.sub ? "<p>".concat(x.sub, "</p>") : '').concat(x.visual || '').concat(x.custom || '', "</div>").concat(opts, "<div id=\"feedback\"></div>"));
+        gameShell("<div class=\"question\"><div class=\"qicon\">".concat(x.icon || current.icon, "</div><h3>").concat(x.prompt, "</h3>").concat(x.sub ? "<p>".concat(x.sub, "</p>") : '').concat(x.visual || '').concat(x.custom || '', "</div><div class=\"qTimer\"><span id=\"qTimerLabel\"></span><div><i id=\"qTimerBar\"></i></div></div>").concat(opts, "<div id=\"feedback\"></div>"));
         if (x.afterRender)
             setTimeout(x.afterRender, 50);
+        startTimer((x.meta && x.meta.age6Metrics && x.meta.age6Metrics.exposureMs) || 0);
     }
     function startGame(id) {
         var _a, _b;
         (_a = NS.stopEnglishAudio) === null || _a === void 0 ? void 0 : _a.call(NS);
         (_b = NS.stopArcade) === null || _b === void 0 ? void 0 : _b.call(NS);
+        stopTimer();
         current = NS.GAMES.find(function (g) { return g.id === Number(id); });
         if (!current)
             return;
@@ -151,7 +198,7 @@ var __read = (this && this.__read) || function (o, n) {
         nextQuestion();
     }
     function nextQuestion() {
-        if (round >= NS.QUESTIONS_PER_LEVEL)
+        if (round >= NS.questionsFor(gameState(current.id).level))
             return finishLevel();
         locked = false;
         question = makeQuestion(current.id, gameState(current.id).level);
@@ -183,6 +230,8 @@ var __read = (this && this.__read) || function (o, n) {
             return;
         var value = (_b = (_a = source === null || source === void 0 ? void 0 : source.dataset) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : source, ok = String(value) === String(question.answer);
         locked = true;
+        var fast = timerEnd - Date.now() > timerTotal / 2;
+        stopTimer();
         document.querySelectorAll('.opt').forEach(function (b) { if (String(b.dataset.value) === String(question.answer))
             b.classList.add('correct'); });
         if (source && source.classList && !ok) {
@@ -198,7 +247,7 @@ var __read = (this && this.__read) || function (o, n) {
             state.totals.correct++;
             gs.correct++;
             state.economy.streak++;
-            state.economy.coins += 2 + (gs.level > 7 ? 1 : 0);
+            state.economy.coins += 2 + (gs.level > 7 ? 1 : 0) + (fast ? 1 : 0);
             state.economy.xp += 10;
             if (current.eng && question.word)
                 NS.recordEnglishResult(state, question.word, true);
@@ -215,11 +264,12 @@ var __read = (this && this.__read) || function (o, n) {
                 return;
         }
         var feedback = document.getElementById('feedback'), right = question.answerLabel || NS.escapeHtml(question.answer), hint = state.settings.hints ? (question.hint || 'Osserva la regola e prova un passo alla volta.') : 'Riprova nella prossima sfida.';
-        feedback.innerHTML = "<div class=\"feedback ".concat(ok ? 'good' : 'bad', "\">").concat(ok ? '🌟 Perfetto! Ottimo ragionamento.' : '💪 Attenzione: la risposta giusta è ' + right, "<div class=\"hint\">").concat(ok ? (state.economy.streak >= 3 ? 'Serie di ' + state.economy.streak + ' risposte corrette! 🔥' : 'Continua così!') : hint + " Hai ancora ".concat(lives, " ").concat(lives === 1 ? 'vita' : 'vite', "."), "</div></div><button class=\"nextBtn\" onclick=\"LogicLand.advance()\">").concat(round === NS.QUESTIONS_PER_LEVEL - 1 ? 'Concludi il livello' : 'Prossima sfida →', "</button>");
+        feedback.innerHTML = "<div class=\"feedback ".concat(ok ? 'good' : 'bad', "\">").concat(ok ? (fast ? '⚡ Velocissima! +1 🪙 bonus' : '🌟 Perfetto! Ottimo ragionamento.') : '💪 Attenzione: la risposta giusta è ' + right, "<div class=\"hint\">").concat(ok ? (state.economy.streak >= 3 ? 'Serie di ' + state.economy.streak + ' risposte corrette! 🔥' : 'Continua così!') : hint + " Hai ancora ".concat(lives, " ").concat(lives === 1 ? 'vita' : 'vite', "."), "</div></div><button class=\"nextBtn\" onclick=\"LogicLand.advance()\">").concat(round === NS.questionsFor(gs.level) - 1 ? 'Concludi il livello' : 'Prossima sfida →', "</button>");
     }
     function advance() { round++; nextQuestion(); }
     function failLevel(reason) {
         var _a, _b;
+        stopTimer();
         (_a = NS.stopArcade) === null || _a === void 0 ? void 0 : _a.call(NS);
         (_b = NS.stopPuzzle) === null || _b === void 0 ? void 0 : _b.call(NS);
         locked = true;
@@ -230,6 +280,7 @@ var __read = (this && this.__read) || function (o, n) {
     }
     function finishLevel() {
         var _a, _b;
+        stopTimer();
         (_a = NS.stopArcade) === null || _a === void 0 ? void 0 : _a.call(NS);
         (_b = NS.stopPuzzle) === null || _b === void 0 ? void 0 : _b.call(NS);
         var gs = gameState(current.id), old = gs.level, perfect = lives === NS.STARTING_LIVES, earned = perfect ? 3 : 2;
@@ -251,7 +302,7 @@ var __read = (this && this.__read) || function (o, n) {
         var maxed = old >= NS.MAX_LEVEL;
         var mastery = maxed ? 'Hai completato anche il livello massimo! 🏅' : "Hai sbloccato il livello ".concat(gs.level, "!");
         var nextLabel = maxed ? '↺ Rigioca livello 15' : "Livello successivo ".concat(gs.level, " \u2192");
-        gameShell("<div class=\"question levelWin\"><div class=\"trophy\">".concat(perfect ? '🏆' : '🎉', "</div><h2>Livello ").concat(old, " completato!</h2><p>").concat(current.arcade ? 'Sfida di abilità superata.' : "Hai risolto <b>".concat(score, " sfide su ").concat(NS.QUESTIONS_PER_LEVEL, "</b>."), " ").concat(mastery, "</p><div class=\"reward\"><span>+").concat(earned, " \u2B50</span><span>+").concat(5 * earned, " \uD83E\uDE99</span></div><button class=\"nextBtn nextLevelButton\" onclick=\"LogicLand.startGame(").concat(current.id, ")\">").concat(nextLabel, "</button><button class=\"secondary\" style=\"width:100%;margin-top:9px\" onclick=\"LogicLand.renderHome(").concat(selectedAge, ")\">Torna al percorso</button></div>"), 100);
+        gameShell("<div class=\"question levelWin\"><div class=\"trophy\">".concat(perfect ? '🏆' : '🎉', "</div><h2>Livello ").concat(old, " completato!</h2><p>").concat(current.arcade ? 'Sfida di abilità superata.' : "Hai risolto <b>".concat(score, " sfide su ").concat(NS.questionsFor(old), "</b>."), " ").concat(mastery, "</p><div class=\"reward\"><span>+").concat(earned, " \u2B50</span><span>+").concat(5 * earned, " \uD83E\uDE99</span></div><button class=\"nextBtn nextLevelButton\" onclick=\"LogicLand.startGame(").concat(current.id, ")\">").concat(nextLabel, "</button><button class=\"secondary\" style=\"width:100%;margin-top:9px\" onclick=\"LogicLand.renderHome(").concat(selectedAge, ")\">Torna al percorso</button></div>"), 100);
     }
     function startArcadeLevel() {
         var _a, _b, _c;
@@ -268,7 +319,7 @@ var __read = (this && this.__read) || function (o, n) {
             return failLevel('Modulo arcade non disponibile.');
         starter({ level: gs.level, mountId: 'arcadeMount', onMistake: function (msg) { return registerMistake(msg); }, onProgress: function (fraction, label) { var bar = document.getElementById('levelProgress'); if (bar)
                 bar.style.width = Math.round(fraction * 100) + '%'; var t = document.getElementById('arcadeProgressText'); if (t)
-                t.textContent = label; }, onSuccess: function () { score = lives === NS.STARTING_LIVES ? NS.QUESTIONS_PER_LEVEL : NS.QUESTIONS_PER_LEVEL - 1; state.totals.correct++; gs.correct++; beep(true); finishLevel(); } });
+                t.textContent = label; }, onSuccess: function () { score = lives === NS.STARTING_LIVES ? NS.questionsFor(gs.level) : NS.questionsFor(gs.level) - 1; state.totals.correct++; gs.correct++; beep(true); finishLevel(); } });
     }
     function accuracy(correct, wrong) { var t = correct + wrong; return t ? Math.round(correct / t * 100) : 0; }
     function worldStats(world) { var ids = NS.GAMES.filter(function (g) { return g.world === world; }).map(function (g) { return g.id; }); var c = 0, w = 0, lv = 0; ids.forEach(function (id) { var s = gameState(id); c += s.correct || 0; w += s.wrong || 0; lv += s.level || 1; }); return { acc: accuracy(c, w), avg: ids.length ? Math.round(lv / ids.length * 10) / 10 : 0 }; }

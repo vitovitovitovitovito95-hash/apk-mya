@@ -4,7 +4,7 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 global.window=global;global.LogicLand={};global.document={querySelector:()=>null,getElementById:()=>null};
 global.btoa=s=>Buffer.from(s,'binary').toString('base64');global.atob=s=>Buffer.from(s,'base64').toString('binary');
 const dir=path.join(__dirname,'../app/js');
-for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-v83-challenges.js','games-v9-levels.js','fx.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js','fx.js'])vm.runInThisContext(fs.readFileSync(path.join(dir,f),'utf8'),{filename:f});
 const N=global.LogicLand,state=N.defaultState();
 function check(ok,msg){if(!ok)throw new Error(msg);}
 const strip=html=>[...html.matchAll(/<span>(?:<small>\d+<\/small>)?([^<]*)<\/span>/g)].map(m=>m[1]);
@@ -47,6 +47,36 @@ for(let l=1;l<=15;l++){
     check(new Set(optVals(q)).size===q.options.length&&optVals(q).includes(String(q.answer)),'Memory L'+l+' options');
   }
 }
+// v9.1: nuovi giochi di logica e somme, con verifica indipendente delle risposte.
+let logicQ=0;
+for(let l=1;l<=15;l++)for(let t=0;t<300;t++){
+  for(const id of [40,41,42]){
+    const q=N.MathGames[id](l,state);logicQ++;
+    check(/^\d+$/.test(q.answer),'Game '+id+' L'+l+' non-numeric/negative answer '+q.answer);
+    check(optVals(q).includes(q.answer)&&new Set(optVals(q)).size===q.options.length,'Game '+id+' L'+l+' options');
+    if(id===42){ // ricostruisce la piramide dai valori visibili e verifica che la risposta sia coerente
+      const rows=[...q.visual.matchAll(/<div class="pyrRow">(.*?)<\/div>/g)].map(m=>[...m[1].matchAll(/<span class="pyrCell([^"]*)">([^<]*)<\/span>/g)].map(x=>x[1].includes('ask')?'?':x[2]===''?null:Number(x[2])));
+      rows.reverse(); // rows[0]=base
+      const unknown={};rows.forEach((r,i)=>r.forEach((v,j)=>{if(v===null||v==='?')unknown[i+','+j]=1;}));
+      // risolve per sostituzione ripetuta
+      const val=rows.map(r=>r.map(v=>typeof v==='number'?v:null));
+      for(let it=0;it<20;it++)for(let i=1;i<val.length;i++)for(let j=0;j<val[i].length;j++){
+        const a=val[i-1][j],b=val[i-1][j+1],c=val[i][j];
+        if(c===null&&a!==null&&b!==null)val[i][j]=a+b;
+        if(c!==null&&a===null&&b!==null)val[i-1][j]=c-b;
+        if(c!==null&&a!==null&&b===null)val[i-1][j+1]=c-a;
+      }
+      // con la cima nota e tutto il centro nascosto serve la combinazione binomiale
+      let ai,aj;rows.forEach((r,i)=>r.forEach((v,j)=>{if(v==='?'){ai=i;aj=j;}}));
+      let got=val[ai][aj];
+      if(got===null&&ai===0){const n=rows[0].length,top=val[n-1][0],C=[[1],[1,1],[1,2,1],[1,3,3,1]][n-1];let sum=0,ok=true;for(let j=0;j<n;j++)if(j!==aj){if(val[0][j]===null)ok=false;else sum+=C[j]*val[0][j];}check(ok&&top!==null,'Pyramid L'+l+' not solvable');got=(top-sum)/C[aj];}
+      check(String(got)===q.answer,'Pyramid L'+l+' wrong answer '+got+' vs '+q.answer);
+    }
+  }
+}
+check(N.GAMES.length===22&&!N.GAMES.some(g=>g.id===21||g.id===35),'Figure games 21/35 should be merged into 8');
+check(N.contentLevel(1)===4&&N.questionsFor(15)===8&&N.secondsFor(15)<N.secondsFor(1),'v9 difficulty boost');
+console.log('PASS v9.1: '+logicQ+' logic/sum questions verified (sums, picture equations, number pyramids)');
 check(typeof N.fx.confetti==='function'&&typeof N.fx.play==='function','fx module missing');
-check(N.APP_VERSION==='9.0.0','version');
+check(N.APP_VERSION==='9.1.0','version');
 console.log('PASS v9.0: '+n+' questions; single-feature outliers, near-twins, mixed counting, hidden terms, inverse memory');

@@ -1,3 +1,29 @@
+# LogicLand Kids 9.1 — Difficoltà vera, più logica, nuovo tema
+
+Richiesta: “i giochi non sono più difficili, la grafica è uguale; più logica, giochi di somme”.
+
+## Riconoscibile a colpo d'occhio
+- Nome app **“LogicLand v9.1”**, icona con **badge rosso “9”** (S24), etichetta `v9` nell'app, banner “NUOVA VERSIONE 9”.
+
+## Difficoltà per TUTTI i giochi
+- I contenuti dei giochi a domande partono **3 livelli più avanti** (il livello 1 ora equivale al vecchio livello 4).
+- **6 → 8 domande** per livello (prima 5).
+- **Timer per ogni domanda**: da 30 s (L1) a 9 s (L15), doppio tempo per i giochi di ragionamento; allo scadere si perde una vita. Risposta veloce = moneta bonus.
+- Tetris: più righe, caduta più veloce, più righe-ostacolo. Macchia Sprint: più ostacoli, più veloce, varchi più stretti.
+- Water Sort: 3–6 colori, provette da 4, molti più mescolamenti.
+- Dama: il computer ragiona 1–3 mosse avanti fin dal livello 1 e sbaglia molto meno. Scacchi: computer più forte, più catture richieste.
+
+## Nuovi giochi di logica e somme
+- ➕ **Somme di Oggetti**: gruppi da sommare, sottrazioni, cestini uguali (moltiplicazione), zampe/ruote, problemi in due passaggi.
+- 🧮 **Equazioni con Figure**: ogni frutto vale un numero; da 1 a 4 incognite, con −, × e sistemi (a+b, b+c, a+c).
+- 🔺 **Piramide dei Numeri**: ogni mattone è la somma dei due sotto; trova la cima o, nei livelli alti, un numero della base all'indietro con i mattoni intermedi nascosti.
+- **Pezzo Mancante** e **Domino dei Colori** (troppo simili) sono stati accorpati in **Sequenze di Figure**. Totale: 22 giochi.
+
+## Nuovo tema grafico “Mondo Magico”
+- Sfondo viola-rosa, pulsanti colorati 3D, schede con colore del mondo, etichette “NUOVO”, barra tempo, risposte verde/rosso piene.
+
+---
+
 # LogicLand Kids 9.0 — Livelli più impegnativi, nuova grafica, versione iOS (PWA)
 
 Base: v8.4. Restano 21 giochi × 15 livelli, 3 vite, backup schema 8, audio MP3 offline,

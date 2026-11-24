@@ -13,7 +13,7 @@
   function profile(level,game){var i=level-1;return Object.assign({level:level,load:100+level*25},{
     unblock:{obstacles:Math.min(4,1+Math.floor(i/3)),extraMoves:i+2,blockSize:i>=9?3:2},
     dots:{size:4+Math.floor(i/3),pairs:Math.min(5,2+Math.floor(i/3)),segments:(4+Math.floor(i/3))*Math.min(5,2+Math.floor(i/3))},
-    water:{colors:Math.min(5,2+Math.floor(i/3)),capacity:i>=5?4:3,mixes:4+level*2},
+    water:{colors:Math.min(6,3+Math.floor(i/3)),capacity:i>=2?4:3,mixes:8+level*3},
     checkers:{captures:1+Math.floor(i/5),decoys:i},
     chess:{steps:1+Math.floor(i/5),blockers:Math.floor(i/3),piece:Math.min(5,Math.floor(i/2))}
   }[game]);}

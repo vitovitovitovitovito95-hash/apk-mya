@@ -1,12 +1,17 @@
 'use strict';
 window.LogicLand = window.LogicLand || {};
 (function(NS){
-  NS.APP_VERSION = '9.0.0';
+  NS.APP_VERSION = '9.1.0';
   NS.SCHEMA_VERSION = 8;
   NS.MIN_AGE = 6;
   NS.MAX_AGE = 6;
   NS.MAX_LEVEL = 15;
   NS.QUESTIONS_PER_LEVEL = 5;
+  // v9: più domande per livello (6 → 8), contenuti partono 3 livelli più avanti,
+  // e un tempo massimo per risposta che si accorcia a ogni livello (30s → 9s).
+  NS.questionsFor = level => 6+Math.floor((NS.clamp(Number(level)||1,1,15)-1)/5);
+  NS.contentLevel = level => Math.min(15,(NS.clamp(Number(level)||1,1,15))+3);
+  NS.secondsFor = level => Math.max(9,Math.round(31.5-NS.clamp(Number(level)||1,1,15)*1.5));
   NS.STARTING_LIVES = 3;
   NS.MAX_ERRORS_PER_LEVEL = 2;
   NS.DAY_MS = 86400000;
@@ -34,16 +39,16 @@ window.LogicLand = window.LogicLand || {};
     return {
       level,
       tetris:{
-        targetLines:1+level,
-        fallMs:Math.max(280,980-(level-1)*44),
-        pieceTypes:Math.min(7,2+Math.floor((level+1)/2)),
-        garbageRows:Math.floor((level-1)/4)
+        targetLines:2+level,
+        fallMs:Math.max(200,820-(level-1)*44),
+        pieceTypes:Math.min(7,3+Math.floor((level+1)/2)),
+        garbageRows:Math.floor((level+1)/3)
       },
       dodge:{
-        targetObstacles:4+level,
-        speed:2.0+(level-1)*0.20,
-        spawnMs:Math.max(660,1520-(level-1)*58),
-        gapPx:Math.max(96,176-(level-1)*5),
+        targetObstacles:6+Math.floor(level*1.5),
+        speed:2.6+(level-1)*0.26,
+        spawnMs:Math.max(520,1300-(level-1)*55),
+        gapPx:Math.max(80,160-(level-1)*5.5),
         playerStep:Math.min(34,22+Math.floor(level/2))
       }
     };

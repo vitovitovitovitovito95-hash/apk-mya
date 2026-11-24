@@ -59,8 +59,8 @@
     var el=start(opts);if(!el)return null;var lv=opts.level,n=8,rows=3;
     // All 24 pieces from level 1; successive levels improve the opponent,
     // not by deleting pieces or falsifying the board state.
-    var depth=lv<=3?0:lv<=7?1:lv<=12?2:3;
-    var botQuality=Math.min(.98,.13+lv*.056);
+    var depth=lv<=2?1:lv<=7?2:3;
+    var botQuality=Math.min(.99,.45+lv*.037);
     var turns=0,selected=null,actions=[],board,whiteCount=0,redo=0,botBusy=false;
     var symbols={w:'⛀',W:'⛁',b:'⛂',B:'⛃'};
     function newBoard(){if(current&&current.timer)clearTimeout(current.timer);board=Array.from({length:n},function(){return Array(n).fill('');});for(var y=0;y<rows;y++)for(var x=0;x<n;x++){if((x+y)%2===1)board[y][x]='b';if((x+(n-1-y))%2===1)board[n-1-y][x]='w';}
@@ -143,8 +143,8 @@
     var level=opts.level,selected=null,board,turn=0,actions=[],captured=0,botBusy=false;
     // Full normal starting army: 16 + 16 pieces, from level one.
     // Capture targets and computer skill both progress through the 15 levels.
-    var target=level<=10?Math.ceil(level*.6):0;
-    var aiDepth=level<=3?0:level<=8?1:2,quality=Math.min(.99,.12+level*.057);
+    var target=level<=10?Math.ceil(level*.8):0;
+    var aiDepth=level<=3?1:2,quality=Math.min(.99,.4+level*.04);
     function setup(){if(current&&current.timer)clearTimeout(current.timer);
       board=Array.from({length:8},function(){return Array(8).fill('');});
       var black='rnbqkbnr',white='RNBQKBNR';

@@ -163,7 +163,7 @@
                 nums.push(String(k));
         var c = Math.min(length, nChoices(l));
         var options = sh([String(idx)].concat(sh(nums).slice(0, c - 1))).map(function (v) { return { label: 'Posizione ' + (Number(v) + 1), value: v }; });
-        return q(7, l, { prompt: 'Quale pezzo è diverso dagli altri?', sub: l >= 5 ? 'Attenzione: cambia un solo dettaglio!' : '', visual: strip(arr, true), options: options, answer: String(idx),
+        return q(7, l, { prompt: 'Quale pezzo è diverso dagli altri?', sub: l >= 5 ? 'Attenzione: cambia un solo dettaglio!' : '', visual: strip(arr, true), options: options, answer: String(idx), answerLabel: 'Posizione ' + (idx + 1),
             hint: f === 1 ? 'Guarda i colori.' : f === 2 ? 'Controlla colore e forma.' : 'Controlla colore, forma e direzione della freccia.' }, { visibleItems: length, featureCount: f, differingFeatures: l < 5 ? f : 1, choices: c });
     }
     /* ---------- 33. Coppie Gemelle ---------- */
@@ -197,7 +197,7 @@
         var tricky = pool.filter(function (p) { var s = p.split('-'); return p !== answer && (Number(s[0]) === pos[0] || Number(s[1]) === pos[1] || Number(s[0]) === pos[1] || Number(s[1]) === pos[0]); });
         var opts = choices(answer, l >= 6 ? tricky.concat(pool) : pool, nChoices(l));
         return q(33, l, { prompt: 'Dove sono le due figure identiche?', sub: l >= 5 ? 'Molte figure si somigliano: devono coincidere tutti i dettagli.' : '', visual: strip(list, true),
-            options: opts.map(function (v) { return { label: 'Pezzi ' + v.replace('-', ' e '), value: v }; }), answer: answer, hint: 'Confronta i dettagli uno alla volta.' }, { items: len, features: f, nearDuplicates: Math.round((len - 2) * nearShare), options: opts.length });
+            options: opts.map(function (v) { return { label: 'Pezzi ' + v.replace('-', ' e '), value: v }; }), answer: answer, answerLabel: 'Pezzi ' + pos[0] + ' e ' + pos[1], hint: 'Confronta i dettagli uno alla volta.' }, { items: len, features: f, nearDuplicates: Math.round((len - 2) * nearShare), options: opts.length });
     }
     /* ---------- 31 / 11. Conta e Scegli, Blocchi Logici ---------- */
     function counting(id, l) {

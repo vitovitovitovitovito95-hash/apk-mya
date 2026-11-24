@@ -5,7 +5,7 @@ global.btoa=s=>Buffer.from(s,'binary').toString('base64');
 global.atob=s=>Buffer.from(s,'base64').toString('binary');
 global.document={querySelector:()=>null,getElementById:()=>null};
 const root=path.resolve(__dirname,'..','app','js');
-for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
+for(const f of ['polyfills.js','core.js','data.js','storage.js','games-math.js','games-visual.js','games-english.js','games-extra.js','games-age6.js','games-v83-challenges.js','games-v9-levels.js','games-v9-logic.js'])vm.runInThisContext(fs.readFileSync(path.join(root,f),'utf8'),{filename:f});
 const NS=global.LogicLand,state=NS.defaultState();
 function assert(x,msg){if(!x)throw new Error(msg);}
 let generated=0;
@@ -38,7 +38,7 @@ for(const g of NS.GAMES){
     lastLoad=load;
   }
 }
-assert(NS.GAMES.length===21,'Expected 21 games');
+assert(NS.GAMES.length===22,'Expected 22 games');
 assert(NS.GAMES.filter(g=>g.arcade==='tetris').length===1,'Tetris Junior missing');
 assert(NS.GAMES.filter(g=>g.arcade==='dodge').length===1,'Macchia Sprint missing');
 assert(NS.WORDS.length>=100,'Expected at least 100 English words');
